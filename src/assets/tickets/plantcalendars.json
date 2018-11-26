@@ -1,0 +1,40 @@
+{
+  "data": 
+  [
+    {
+    "label": "Plant Calendars",
+    "data": "Plant Calendars",
+    "expandedIcon": "fa fa-folder-open",
+    "collapsedIcon": "fa fa-folder",
+    "children": [
+      {
+        "label": "To-Do's",
+        "data": "Planted To-Do's",
+        "expandedIcon": "fa fa-folder-open",
+        "collapsedIcon": "fa fa-folder",
+        "children": []
+      },
+      {
+        "label": "Tickets",
+        "data": "Planted Tickets",
+        "expandedIcon": "fa fa-folder-open",
+        "collapsedIcon": "fa fa-folder",
+        "children": []
+      },
+      {
+        "label": "Service Calls",
+        "data": " PlantedService Calls",
+        "expandedIcon": "fa fa-folder-open",
+        "collapsedIcon": "fa fa-folder",
+        "children": []
+      },
+      {
+        "label": "Outages",
+        "data": "Planted Outages",
+        "expandedIcon": "fa fa-folder-open",
+        "collapsedIcon": "fa fa-folder",
+        "children": []
+      }]
+    }
+  ]
+}

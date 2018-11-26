@@ -1,0 +1,40 @@
+.fc-italic,
+.fc-italic > div > span {
+  background-color: red; /* background color */
+  border-color: white;     /* border color */
+  color: white;           /* text color */
+}
+
+.filter-italic {
+  background-color: green ;
+}
+
+.filter-scroll {
+  /* width:256px; */
+  height: 256px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* dattepicker */
+body .ui-datepicker {
+  width: auto;
+}
+
+/* ui-tree */
+// body .ui-tree {
+//   border-style: none;
+// }
+
+.accordion-header {
+  border-style: none;
+}
+
+// body .ui-accordion .ui-accordion-header {
+//   border-style: none;
+// }
+
+/* ui-accordion */
+body .ui-accordion .ui-accordion-content {
+  padding: 0.25em;
+}

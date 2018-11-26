@@ -1,0 +1,49 @@
+
+<div class="ui-g-12">
+  <button pButton type="button"  (click)="goBack()" icon="fa-long-arrow-left"></button>
+  <button pButton type="button"  label="Save"></button>
+  <button pButton type="button"  label="Cancel"></button>
+</div>
+
+<div class="ui-g-6"  *ngIf="event">
+
+    <div class="ui-g-12">
+      <input class="ui-g-12" pInputText id="title" [(ngModel)]="event.title" />
+    </div>
+    <p-calendar class="ui-g-5" [(ngModel)]="event.start"
+                dateFormat="yy-mm-dd"
+                dataType="string"
+                [disabledDays]="[0,6]"
+                [showTime]="true"></p-calendar>
+      <div class="ui-g-2">TO</div>
+    <p-calendar class="ui-g-5" [(ngModel)]="event.end"
+                dateFormat="yy-mm-dd"
+                dataType="string"
+                [disabledDays]="[0,6]"
+                [showTime]="true"></p-calendar>
+    <div class="ui-g-12"><p-checkbox [(ngModel)]="event.allDay" binary="true" label="All Day"></p-checkbox></div>
+</div>
+
+
+
+<div class="ui-g-6">
+  <p-tabView class="header">
+    <p-tabPanel header="Detail Service Call">
+      <div class="ui-padding">
+        <div>Basic</div>
+        <input class="ui-g-12" type="text" pInputText placeholder="Plant">
+      </div>
+      <div class="ui-padding">
+        <div>Basic</div>
+        <input class="ui-g-12" type="text" pInputText placeholder="Plant">
+      </div>
+      <div class="ui-padding">
+        <div>Basic</div>
+        <input class="ui-g-12" type="text" pInputText placeholder="Plant">
+      </div>
+      <div class="ui-padding">
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
