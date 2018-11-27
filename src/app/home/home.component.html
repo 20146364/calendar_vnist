@@ -11,13 +11,13 @@
   </p-toolbar>
   <div class="ui-g">
     <!-- <div class="ui-g-1"></div> -->
-    <!-- FullCalendar -->
+    <!-- FullCalendar [defaultView]="selectedView" -->
       <div class="ui-g-10 ui-g-nopad">
       <p-schedule [events]="events" [header]="header" [eventLimit]="4" [editable]="true"
                   [weekNumbers]="true" [aspectRatio]="2" [contentHeight]="500"
                   (onDayClick)="handleDayClick($event)" (onEventClick)="handleEventClick($event)"
                   (onViewRender)="fetchEvents($event)"
-                  [defaultView]="selectedView"
+                  
                   [defaultDate]="selectedDate"
                   [businessHours]="businessHours"
                   timezone="local"
