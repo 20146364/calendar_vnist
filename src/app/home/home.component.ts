@@ -1,20 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router'
+import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { CalendarService} from "../services/calendar.service"
+import { CalendarService} from '../services/calendar.service';
 import * as crypto from 'crypto-js';
-import { Config } from "../services/config"
+import { Config } from '../services/config';
 import { ViewEncapsulation } from '@angular/core';
 
-// import {MenuItem,TreeNode} from 'primeng/components/common/api';
-// import {TicketsService} from '../services/tickets.service'
-import {PlantService} from '../services/plant.service'
-import {CategoryService} from '../services/category.service'
-import {PeopleService} from '../services/people.service'
+//  import {MenuItem,TreeNode} from 'primeng/components/common/api';
+//  import {TicketsService} from '../services/tickets.service';
+import {PlantService} from '../services/plant.service';
+import {CategoryService} from '../services/category.service';
+import {PeopleService} from '../services/people.service';
 
 interface Ticket {
-  name: string,
-  value: string
+  name: string ;
+  value: string ;
 }
 
 @Component({
@@ -24,83 +24,85 @@ interface Ticket {
   encapsulation: ViewEncapsulation.None,
 })
 export class HomeComponent implements OnInit {
-  
-  //Tickets tree
+
+  // Tickets tree
   // calendarTicketsTree: TreeNode[];
 
   // selectedCalendarTicketsTree: TreeNode[];
 
-  //show my timesheet in fullcalendar
-  myTimeSheetChecked: boolean = false;
+  // show my timesheet in fullcalendar
+  myTimeSheetChecked = false;
 
-  //plants list
+  // plants list
   plantsList: any[];
 
-  //people todo list
+  // people todo list
   peopleToDosList: any[];
 
-  //categories todo list
+  // categories todo list
   categoriesToDosList: any[];
 
-  //people tickets list
+  // people tickets list
   peopleTicketsList: any[];
 
-  //categories tickets list
+  // categories tickets list
   categoriesTicketsList: any[];
 
-  //people SCs list
+  // people SCs list
   peopleSCsList: any[];
 
-  //categories SCs list
+  // categories SCs list
   categoriesSCsList: any[];
 
-  //people Outage list
+  // people Outage list
   peopleOutagesList: any[];
 
-  //categories Outage list
+  // categories Outage list
   categoriesOutagesList: any[];
 
-  //suggestions people list
+  // suggestions people list
   filteredPlantsMultiple: any[];
 
-  //suggestions people list
+  // suggestions people list
   filteredPeopleMultiple: any[];
 
-  //suggestions categories list
+  // suggestions categories list
   filteredCategoriesMultiple: any[];
-  
 
-  // Calendar Tickets
+  //  Calendar Tickets
   calendarTickets: Ticket[];
   selectedCalendarTickets: Ticket[];
 
-  // calendar's status
+  //  calendar's status
   calendarStatus: Ticket[];
 
-  // Selected Service Call calendar
+  calendarToDosStatus: any[];
+  calendarSCsStatus: any[];
+
+  //  Selected Service Call calendar
   selectedSCTickets: Ticket[];
 
-  // Selected Todos calendar
+  //  Selected Todos calendar
   selectedTDTickets: Ticket[];
 
-  // Selected Todos Plant
+  //  Selected Todos Plant
   selectedToDosStatus: any[];
 
-  // Selected Tickets Plant
+  //  Selected Tickets Plant
   selectedTicketsStatus: any[];
 
-  // Selected SCs Plant
+  //  Selected SCs Plant
   selectedSCsStatus: any[];
 
-  // Selected Outages Plant
+  //  Selected Outages Plant
   selectedOutagesStatus: any[];
 
-  //plant's status
+  // plant's status
   plantStatus: any[];
 
-  title: string = "Calendar View";
+  title = 'Calendar View';
 
-  //Event
+  // Event
   events: any[];
 
   header: any;
@@ -108,7 +110,7 @@ export class HomeComponent implements OnInit {
   event: MyEvent;
 
   dialogVisible = false;
-  dialogNewVisible= false;
+  dialogNewVisible = false;
   idGen = 100;
 
   selectedEvent: any;
@@ -116,16 +118,16 @@ export class HomeComponent implements OnInit {
   selectedDate: any;
 
   businessHours = {
-    start: '6:00', // a start time (10am in this example)
-    end: '20:00', // an end time (6pm in this example)
+    start: '6:00', //  a start time (10am in this example)
+    end: '20:00', //  an end time (6pm in this example)
 
     dow: [ 1, 2, 3, 4, 5]
     // days of week. an array of zero-based day of week integers (0=Sunday)
     // (Monday-Thursday in this example)
   };
   options = {
-    "firstDay" : 1,
-    "showNonCurrentDates": false
+    'firstDay' : 1,
+    'showNonCurrentDates': false,
   };
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
 
@@ -138,19 +140,19 @@ export class HomeComponent implements OnInit {
     this.header = {
       left: 'prev,next today',
       center: 'title',
-      right: 'month,agendaWeek,agendaDay,listMonth'
+      right: 'month,agendaWeek,agendaDay'
     };
-    if (this.calendarSrv.getSelectedEvent() != 0) {
+    if (this.calendarSrv.getSelectedEvent() !== 0) {
       this.selectedEvent = this.calendarSrv.getSelectedEvent();
       this.selectedView = this.selectedEvent.view.name;
       this.selectedDate = this.selectedEvent.calEvent.start.format();
     }
-    // console.log(crypto.HmacSHA512('localhost:8765:15','88960fc4c89939f3653ecae729c94138731d00c0b3ef96b187026080123062d2'));
-    // this.calendarSrv.getExampleData('POST').subscribe(data => {
-    //     console.log('data');
-    //   }, error => {
-    //     console.log('error');
-    //   })
+    //  console.log(crypto.HmacSHA512('localhost:8765:15','88960fc4c89939f3653ecae729c94138731d00c0b3ef96b187026080123062d2'));
+    //  this.calendarSrv.getExampleData('POST').subscribe(data => {
+    //      console.log('data');
+    //    }, error => {
+    //      console.log('error');
+    //    })
   }
 
   ngOnInit() {
@@ -158,25 +160,27 @@ export class HomeComponent implements OnInit {
       {
         'id': 1,
         'title': 'All Day Event',
-        'start': '2018-11-11'
+        'start': '2018-11-11',
+        'end': '2018-11-12'
       },
       {
         'id': 2,
         'title': 'Long Event',
         'start': '2018-11-05',
-        'end': '2018-11-02'
+        'end': '2018-11-07'
       },
       {
         'id': 3,
         'title': 'Event 12',
         'start': '2018-11-08',
+        'end': '2018-11-10',
         'className': 'highPriority'
       },
       {
         'id': 4,
         'title': 'Event Red',
-        'start': '2018-11-16T16:06:00',
-        'end': '2018-11-16T17:10:00',
+        'start': '2018-11-16',
+        'end': '2018-11-16',
         'color': 'red',
         'className': 'filter-italic'
       },
@@ -184,60 +188,67 @@ export class HomeComponent implements OnInit {
         'id': 5,
         'title': 'Conference 3',
         'start': '2018-11-11',
-        'end': '2018-11-13',
+        'end': '2018-11-13'
       },
       {
         'id': 6,
         'title': 'Conference 4',
         'start': '2018-11-25',
-        'end': '2018-11-25',
+        'end': '2018-11-25'
       },
       {
         'id': 7,
         'title': 'Conference 4',
-        'start': '2018-11-24T8:00:00',
-        'end': '2018-11-24T16:00:00',
+        'start': '2018-11-24',
+        'end': '2018-11-24'
       },
       {
         'id': 8,
         'title': 'Conference 5',
-        'start': '2018-11-23T10:00:00',
-        'end': '2018-11-23T17:00:00',
+        'start': '2018-11-23',
+        'end': '2018-11-23'
       }
 
     ];
 
     this.calendarTickets = [
-      {name: 'My TimeSheet', value: 'This is my calendar'},
+      {name: 'My TimeSheet', value: 'This is my calendar'}
     ];
 
-    this.calendarStatus = [
+    this.calendarToDosStatus = [
+      {name: 'Planted To-Do\'s', value: 'This is Planted To-Do\'s'},
+      {name: 'Started To-Do\'s', value: 'This is Started To-Do\'s'},
+      {name: 'Completed To-Do\'s', value: 'This is Completed To-Do\'s'},
+    ];
+
+    this.calendarSCsStatus = [
       {name: 'Planted SCs', value: 'This is Planted SCs'},
       {name: 'Started SCs', value: 'This is Started SCs'},
       {name: 'Completed SCs', value: 'This is Completed SCs'},
     ];
 
     this.plantStatus = [
-      {name: 'Planted ToDos', value: 'This is Planted ToDos'},
-      {name: 'Started ToDos', value: 'This is Started ToDos'},
-      {name: 'Completed ToDos', value: 'This is Completed ToDos'},
+      {name: 'Not yet due (blue)', value: 'Not yet due'},
+      {name: 'Due (yellow, orange)', value: 'Due'},
+      {name: 'Overdue (red)', value: 'Overdue'},
+      {name: 'Completed (green)', value: 'Completed'},
     ];
 
-    // this.calendarTicketsSrv.getMyCalendarTickets().then(files => this.calendarTicketsTree = files);
+    //  this.calendarTicketsSrv.getMyCalendarTickets().then(files => this.calendarTicketsTree = files);
   }
 
   handleDayClick(event) {
-    //let offset = new Date().getTimezoneOffset();
-    // console.log(offset);
-    // console.log(event.date.subtract(offset, 'minutes'));
-    // this.event.start = event.date.add(offset, 'minutes').toDate();
+    // let offset = new Date().getTimezoneOffset();
+    //  console.log(offset);
+    //  console.log(event.date.subtract(offset, 'minutes'));
+    //  this.event.start = event.date.add(offset, 'minutes').toDate();
     this.event = new MyEvent();
     this.event.start = event.date.toDate();
     this.dialogNewVisible = true;
   }
 
   handleEventClick(e) {
-
+    // console.log(e);
     this.calendarSrv.setSelectedEvent(e);
     this.event = new MyEvent();
     this.event.title = e.calEvent.title;
@@ -245,11 +256,11 @@ export class HomeComponent implements OnInit {
     const start = e.calEvent.start;
     const end = e.calEvent.end;
     if (e.view.name === 'month') {
-      //start.stripTime();
+      // start.stripTime();
     }
 
     if (end) {
-      //end.stripTime();
+      // end.stripTime();
       this.event.end = end.format();
     }
 
@@ -261,10 +272,12 @@ export class HomeComponent implements OnInit {
   }
 
   saveEvent() {
-    let offset = new Date().getTimezoneOffset();
-    // update or new
+    let offset;
+    offset = new Date().getTimezoneOffset();
+    //  update or new
     if (this.event.id) {
-      let index: number = this.findEventIndexById(this.event.id);
+      let index: number;
+      index = this.findEventIndexById(this.event.id);
       if (index >= 0) {
         this.events[index] = this.event;
       }
@@ -284,7 +297,8 @@ export class HomeComponent implements OnInit {
   }
 
   deleteEvent() {
-    let index: number = this.findEventIndexById(this.event.id);
+    let index: number;
+    index = this.findEventIndexById(this.event.id);
     if (index >= 0) {
       this.events.splice(index, 1);
     }
@@ -309,74 +323,84 @@ export class HomeComponent implements OnInit {
   }
 
   onSelectEnd(eventData) {
-    let offset = new Date().getTimezoneOffset();
+    let offset;
+    offset = new Date().getTimezoneOffset();
     console.log(eventData);
   }
 
-  gotoDate(event, selectedDate){
-    let date = new Date(event);
+  gotoDate(event, selectedDate) {
+    let date;
+    date = new Date(event);
     selectedDate.gotoDate(date);
   }
 
 
 
-  //filter plants
+  // filter plants
   filterPlantMultiple(event) {
-    let query = event.query;
+    let query;
+    query = event.query;
     this.plantService.getPlants().then(plants => {
       this.filteredPlantsMultiple = this.filterPlant(query, plants);
     });
   }
 
-  filterPlant(query, plants: any[]):any[] {
-    let filtered : any[] = [];
-    for(let i = 0; i < plants.length; i++) {
-      let plant = plants[i];
-      if(plant.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+  filterPlant(query, plants: any[]): any[] {
+    let filtered;
+    filtered = [];
+    for ( let i = 0; i < plants.length; i++) {
+      let plant;
+      plant = plants[i];
+      if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
         filtered.push(plant);
       }
     }
     return filtered;
   }
 
-  //filter people
+  // filter people
   filterPeopleMultiple(event) {
-    let query = event.query;
+    let query;
+    query = event.query;
     this.peopleService.getPeople().then(people => {
       this.filteredPeopleMultiple = this.filterPerson(query, people);
     });
   }
 
-  filterPerson(query, people: any[]):any[] {
-    let filtered : any[] = [];
-    for(let i = 0; i < people.length; i++) {
-      let person = people[i];
-      if(person.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+  filterPerson(query, people: any[]): any[] {
+    let filtered;
+    filtered = [];
+    for (let i = 0; i < people.length; i++) {
+      let person;
+      person = people[i];
+      if (person.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
         filtered.push(person);
       }
     }
     return filtered;
   }
 
-  //filter category
+  // filter category
   filterCategoryMultiple(event) {
-    let query = event.query;
+    let query;
+    query = event.query;
     this.categoryService.getCategories().then(categories => {
       this.filteredCategoriesMultiple = this.filterCategory(query, categories);
     });
   }
 
-  filterCategory(query, categories: any[]):any[] {
-    let filtered : any[] = [];
-    for(let i = 0; i < categories.length; i++) {
-      let category = categories[i];
-      if(category.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+  filterCategory(query, categories: any[]): any[] {
+    let filtered;
+    filtered = [];
+    for (let i = 0; i < categories.length; i++) {
+      let category;
+      category = categories[i];
+      if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
         filtered.push(category);
       }
     }
     return filtered;
   }
-
 }
 
 export class MyEvent {

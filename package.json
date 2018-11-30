@@ -30,11 +30,12 @@
     "font-awesome": "^4.7.0",
     "fullcalendar": "^4.0.0-alpha",
     "jquery": "^3.3.1",
+    "locale-js": "^1.1.1",
     "moment": "^2.22.2",
     "primeicons": "^1.0.0",
-    "primeng": "^6.1.7",
+    "primeng": "^7.0.0",
     "rxjs": "^6.3.3",
-    "zone.js": "^0.8.14"
+    "zone.js": "^0.8.26"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.10.6",

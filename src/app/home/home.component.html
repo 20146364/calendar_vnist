@@ -17,10 +17,10 @@
                   [weekNumbers]="true" [aspectRatio]="2" [contentHeight]="500"
                   (onDayClick)="handleDayClick($event)" (onEventClick)="handleEventClick($event)"
                   (onViewRender)="fetchEvents($event)"
-                  
+                  [defaultView]="selectedView"
                   [defaultDate]="selectedDate"
                   [businessHours]="businessHours"
-                  timezone="local"
+                  [timezone]="local"
                   [(options)] = "options"
                   id="calendar"
                   #gotoSelectedDate></p-schedule>
@@ -133,11 +133,11 @@
           <!-- <p-listbox [options]="calendarTickets" [(ngModel)]="selectedCalendarTickets" multiple="multiple" checkbox="checkbox" filter="filter" optionLabel="name"></p-listbox> -->
           <p-accordion>
             <p-accordionTab header="My To-Do's" class="accordion-header">
-              <p-listbox [options]="calendarStatus" [(ngModel)]="selectedTDTickets" multiple="multiple" checkbox="checkbox" optionLabel="name">
+              <p-listbox [options]="calendarToDosStatus" [(ngModel)]="selectedTDTickets" multiple="multiple" checkbox="checkbox" optionLabel="name">
               </p-listbox>
             </p-accordionTab>
             <p-accordionTab header="My Service Calls" class="accordion-header">
-              <p-listbox [options]="calendarStatus" [(ngModel)]="selectedSCTickets" multiple="multiple" checkbox="checkbox" optionLabel="name">
+              <p-listbox [options]="calendarSCsStatus" [(ngModel)]="selectedSCTickets" multiple="multiple" checkbox="checkbox" optionLabel="name">
               </p-listbox>
             </p-accordionTab>
           </p-accordion>

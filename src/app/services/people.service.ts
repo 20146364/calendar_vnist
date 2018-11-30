@@ -10,6 +10,6 @@ export class PeopleService {
     return this.http.get<any>('assets/people.json')
       .toPromise()
       .then(res => <any[]>res.data)
-      .then(data => { return data; });
+      .then(data =>  data);
     }
 }
