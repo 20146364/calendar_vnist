@@ -147,7 +147,7 @@ export class HomeComponent implements OnInit {
       this.selectedView = this.selectedEvent.view.name;
       this.selectedDate = this.selectedEvent.calEvent.start.format();
     }
-    //  console.log(crypto.HmacSHA512('localhost:8765:15','88960fc4c89939f3653ecae729c94138731d00c0b3ef96b187026080123062d2'));
+    //  console.log(crypto.HmacSHA512('localhost:15','88960fc4c89939f3653ecae729c94138731d00c0b3ef96b187026080123062d2'));
     //  this.calendarSrv.getExampleData('POST').subscribe(data => {
     //      console.log('data');
     //    }, error => {
@@ -160,53 +160,53 @@ export class HomeComponent implements OnInit {
       {
         'id': 1,
         'title': 'All Day Event',
-        'start': '2018-11-11',
-        'end': '2018-11-12'
+        'start': '2018-12-11',
+        'end': '2018-12-12'
       },
       {
         'id': 2,
         'title': 'Long Event',
-        'start': '2018-11-05',
-        'end': '2018-11-07'
+        'start': '2018-12-05',
+        'end': '2018-12-07'
       },
       {
         'id': 3,
         'title': 'Event 12',
-        'start': '2018-11-08',
-        'end': '2018-11-10',
+        'start': '2018-12-08',
+        'end': '2018-12-10',
         'className': 'highPriority'
       },
       {
         'id': 4,
         'title': 'Event Red',
-        'start': '2018-11-16',
-        'end': '2018-11-16',
+        'start': '2018-12-16',
+        'end': '2018-12-16',
         'color': 'red',
         'className': 'filter-italic'
       },
       {
         'id': 5,
         'title': 'Conference 3',
-        'start': '2018-11-11',
-        'end': '2018-11-13'
+        'start': '2018-12-11',
+        'end': '2018-12-13'
       },
       {
         'id': 6,
         'title': 'Conference 4',
-        'start': '2018-11-25',
-        'end': '2018-11-25'
+        'start': '2018-12-25',
+        'end': '2018-12-25'
       },
       {
         'id': 7,
         'title': 'Conference 4',
-        'start': '2018-11-24',
-        'end': '2018-11-24'
+        'start': '2018-12-24',
+        'end': '2018-12-24'
       },
       {
         'id': 8,
         'title': 'Conference 5',
-        'start': '2018-11-23',
-        'end': '2018-11-23'
+        'start': '2018-12-23',
+        'end': '2018-12-23'
       }
 
     ];
@@ -238,34 +238,34 @@ export class HomeComponent implements OnInit {
   }
 
   handleDayClick(event) {
-    // let offset = new Date().getTimezoneOffset();
-    //  console.log(offset);
-    //  console.log(event.date.subtract(offset, 'minutes'));
-    //  this.event.start = event.date.add(offset, 'minutes').toDate();
+    // // let offset = new Date().getTimezoneOffset();
+    // //  console.log(offset);
+    // //  console.log(event.date.subtract(offset, 'minutes'));
+    // //  this.event.start = event.date.add(offset, 'minutes').toDate();
     this.event = new MyEvent();
     this.event.start = event.date.toDate();
     this.dialogNewVisible = true;
   }
 
   handleEventClick(e) {
-    // console.log(e);
     this.calendarSrv.setSelectedEvent(e);
     this.event = new MyEvent();
     this.event.title = e.calEvent.title;
 
     const start = e.calEvent.start;
     const end = e.calEvent.end;
+    console.log(e.calEvent);
     if (e.view.name === 'month') {
       // start.stripTime();
     }
 
     if (end) {
       // end.stripTime();
-      this.event.end = end.format();
+      this.event.end = new Date(end);
     }
 
     this.event.id = e.calEvent.id;
-    this.event.start = start.format();
+     this.event.start = new Date(start);
     this.event.allDay = e.calEvent.allDay;
     this.dialogVisible = true;
 
@@ -406,8 +406,8 @@ export class HomeComponent implements OnInit {
 export class MyEvent {
   id: number;
   title: string;
-  start: string;
-  end: any;
+  start: Date;
+  end: Date;
   allDay = true;
   color: string;
   className: string;

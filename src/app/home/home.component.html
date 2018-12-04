@@ -14,10 +14,9 @@
     <!-- FullCalendar [defaultView]="selectedView" -->
       <div class="ui-g-10 ui-g-nopad">
       <p-schedule [events]="events" [header]="header" [eventLimit]="4" [editable]="true"
-                  [weekNumbers]="true" [aspectRatio]="2" [contentHeight]="500"
+                  [weekNumbers]="true" [aspectRatio]="2" 
                   (onDayClick)="handleDayClick($event)" (onEventClick)="handleEventClick($event)"
                   (onViewRender)="fetchEvents($event)"
-                  [defaultView]="selectedView"
                   [defaultDate]="selectedDate"
                   [businessHours]="businessHours"
                   timezone="local"
@@ -62,9 +61,9 @@
         </div>
         <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix">
-            <button type="button" pButton icon="fa-close" (click)="deleteEvent()" label="Delete" [disabled]="!event?.id"></button>
+            <button type="button" pButton icon="pi pi-times" (click)="deleteEvent()" label="Delete" [disabled]="!event?.id"></button>
             <!--<button type="button" pButton icon="fa-check" (click)="saveEvent()" label="Save" [disabled]="!event?.start"></button>-->
-            <button type="button" pButton icon="fa-edit" (click)="editEvent(event)" label="Edit" [disabled]="!event?.id"></button>
+            <button type="button" pButton icon="pi pi-pencil" (click)="editEvent(event)" label="Edit" [disabled]="!event?.id"></button>
           </div>
         </p-footer>
       </p-dialog>
@@ -104,7 +103,7 @@
         </div>
         <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix">
-            <button type="button" pButton icon="fa-check" (click)="saveEvent()" label="Save" [disabled]="!event?.start"></button>
+            <button type="button" pButton icon="pi pi-save" (click)="saveEvent()" label="Save" [disabled]="!event?.start"></button>
           </div>
         </p-footer>
       </p-dialog>

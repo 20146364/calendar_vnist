@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import { AuthenticationService } from "./authentication.service";
+import { AuthenticationService } from './authentication.service';
 import { Config } from './config';
 import * as moment from 'moment';
 import * as url from 'url';
@@ -12,7 +12,7 @@ export class CalendarService {
   data = 0;
   constructor(private auth: AuthenticationService, private http: Http) { }
 
-  getExampleData = (request_method, payload="\n") => {
+  getExampleData = (request_method, payload = '\n') => {
     // Normalize request contents
     let endpoint_url = url.parse(Config.api_endpoint);
     let host = endpoint_url.host;
