@@ -5,12 +5,19 @@ import { CalendarService} from '../services/calendar.service';
 import * as crypto from 'crypto-js';
 import { Config } from '../services/config';
 import { ViewEncapsulation } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 //  import {MenuItem,TreeNode} from 'primeng/components/common/api';
 //  import {TicketsService} from '../services/tickets.service';
 import {PlantService} from '../services/plant.service';
 import {CategoryService} from '../services/category.service';
 import {PeopleService} from '../services/people.service';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Accept':  'application/json'
+  })
+};
 
 interface Ticket {
   name: string ;
@@ -29,6 +36,8 @@ export class HomeComponent implements OnInit {
   // calendarTicketsTree: TreeNode[];
 
   // selectedCalendarTicketsTree: TreeNode[];
+
+  people: string[];
 
   // show my timesheet in fullcalendar
   myTimeSheetChecked = false;
@@ -132,7 +141,8 @@ export class HomeComponent implements OnInit {
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
 
   // constructor(private calendarTicketsSrv: TicketsService, private calendarSrv: CalendarService, private router: Router) {
-  constructor(private calendarSrv: CalendarService,
+  constructor(private http: HttpClient,
+              private calendarSrv: CalendarService,
               private router: Router,
               private plantService: PlantService,
               private categoryService: CategoryService,
@@ -156,6 +166,10 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+  //  let data =  $.ajax('/people/fetch?ids=48', { headers: { 'Accept': 'application/json' } }).done((data) =>{console.log(data)});
+
+    this.doGet();
+
     this.events = [
       {
         'id': 1,
@@ -334,8 +348,6 @@ export class HomeComponent implements OnInit {
     selectedDate.gotoDate(date);
   }
 
-
-
   // filter plants
   filterPlantMultiple(event) {
     let query;
@@ -400,6 +412,29 @@ export class HomeComponent implements OnInit {
       }
     }
     return filtered;
+  }
+
+  doGet() {
+    // let url;
+    // url = 'http://localhost/people/fetch?ids=48';
+    fetch('http://localhost/people/fetch?ids=48',
+    {
+      'credentials': 'include',
+      'headers': {
+        'accept': 'application/json',
+        'accept-language': 'en-US,en;q=0.9,vi;q=0.8,ja;q=0.7',
+        'x-requested-with': 'XMLHttpRequest'
+      },
+      'referrer': 'http://localhost/calendar',
+      'referrerPolicy': 'no-referrer-when-downgrade',
+      'body': null,
+      'method': 'GET',
+      'mode': 'cors'
+    }).then(function(response) {
+      return response.json();
+    }).then(function(myJson) {
+    console.log(JSON.stringify(myJson));
+  });
   }
 }
 

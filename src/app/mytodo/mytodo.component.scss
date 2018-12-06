@@ -1,5 +1,7 @@
-.ui-tabview li {
-    width: 33%;
+.tab-width {
+    li {
+        width: 25%;//calc(100% / 3);
+    }
 }
 
 // body .ui-accordion .ui-accordion-header,
@@ -33,26 +35,47 @@
 //     }
 // }
 
-// .ot-header {
-//     body .ui-accordion .ui-accordion-header,
-//     body .ui-accordion .ui-accordion-header .ui-state-active {
-//         background-color: #757575;
-//         color: white;
-//     }
+.sc-header {
+    .ui-accordion .ui-accordion-header a,
+    .ui-accordion .ui-accordion-header .ui-state-active {
+        background-color: #757575;
+        color: white;
+    }
+
+    .ui-accordion .ui-accordion-header:not(.ui-state-active):not(.ui-state-disabled):hover a {
+        background-color: #424242;
+        border: 1px solid #dbdbdb;
+        color: white;
+    }
+}
+
+.ot-header {
+    .ui-accordion .ui-accordion-header a,
+    .ui-accordion .ui-accordion-header.ui-state-active {
+        background-color: #F57C00;
+        color: white;
+    }
+
+    .ui-accordion .ui-accordion-header:not(.ui-state-active):not(.ui-state-disabled):hover a {
+        background-color: #EF6C00;
+        border: 1px solid #dbdbdb;
+        color: white;
+    }
+}
+
+
+// body .ui-accordion .ui-accordion-header,
+// body .ui-accordion .ui-accordion-header.ui-state-active {
+//     background-color: #757575;
+//     color: white;
 // }
 
-body .ui-accordion .ui-accordion-header,
-body .ui-accordion .ui-accordion-header.ui-state-active {
-    background-color: #757575;
-    color: white;
-}
+// body .ui-accordion .ui-accordion-header:hover {
+//     background-color: #424242;
+//     color: white;
+// }
 
-body .ui-accordion .ui-accordion-header:hover {
-    background-color: #424242;
-    color: white;
-}
-
-body .ui-accordion .ui-accordion-header a:hover {
-    background-color: #424242;
-    color: white;
-}
+// body .ui-accordion .ui-accordion-header a:hover {
+//     background-color: #424242;
+//     color: white;
+// }
