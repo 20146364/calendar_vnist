@@ -166,7 +166,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-  //  let data =  $.ajax('/people/fetch?ids=48', { headers: { 'Accept': 'application/json' } }).done((data) =>{console.log(data)});
 
     this.doGet();
 
@@ -433,8 +432,9 @@ export class HomeComponent implements OnInit {
     }).then(function(response) {
       return response.json();
     }).then(function(myJson) {
-    console.log(JSON.stringify(myJson));
-  });
+    console.log(myJson);
+    console.log(myJson.data[0].full_name);
+    });
   }
 }
 

@@ -98,69 +98,69 @@ export class MytodoComponent implements OnInit {
     ];
   }
 
-  // filter plants
-  filterPlantMultiple(event) {
-    let query;
-    query = event.query;
-    this.plantService.getPlants().then(plants => {
-      this.filteredPlantsMultiple = this.filterPlant(query, plants);
-    });
-  }
+  // // filter plants
+  // filterPlantMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.plantService.getPlants().then(plants => {
+  //     this.filteredPlantsMultiple = this.filterPlant(query, plants);
+  //   });
+  // }
 
-  filterPlant(query, plants: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for ( let i = 0; i < plants.length; i++) {
-      let plant;
-      plant = plants[i];
-      if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
-        filtered.push(plant);
-      }
-    }
-    return filtered;
-  }
+  // filterPlant(query, plants: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for ( let i = 0; i < plants.length; i++) {
+  //     let plant;
+  //     plant = plants[i];
+  //     if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
+  //       filtered.push(plant);
+  //     }
+  //   }
+  //   return filtered;
+  // }
 
-  // filter people
-  filterDueDateStatusMultiple(event) {
-    let query;
-    query = event.query;
-    this.peopleService.getPeople().then(people => {
-      this.filteredDueDateStatusMultiple = this.filterPerson(query, people);
-    });
-  }
+  // // filter people
+  // filterDueDateStatusMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.peopleService.getPeople().then(people => {
+  //     this.filteredDueDateStatusMultiple = this.filterPerson(query, people);
+  //   });
+  // }
 
-  filterPerson(query, people: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for (let i = 0; i < people.length; i++) {
-      let person;
-      person = people[i];
-      if (person.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-        filtered.push(person);
-      }
-    }
-    return filtered;
-  }
+  // filterPerson(query, people: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for (let i = 0; i < people.length; i++) {
+  //     let person;
+  //     person = people[i];
+  //     if (person.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+  //       filtered.push(person);
+  //     }
+  //   }
+  //   return filtered;
+  // }
 
-  // filter category
-  filterCategoryMultiple(event) {
-    let query;
-    query = event.query;
-    this.categoryService.getCategories().then(categories => {
-      this.filteredCategoriesMultiple = this.filterCategory(query, categories);
-    });
-  }
+  // // filter category
+  // filterCategoryMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.categoryService.getCategories().then(categories => {
+  //     this.filteredCategoriesMultiple = this.filterCategory(query, categories);
+  //   });
+  // }
 
-  filterCategory(query, categories: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for (let i = 0; i < categories.length; i++) {
-      let category;
-      category = categories[i];
-      if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-        filtered.push(category);
-      }
-    }
-    return filtered;
-  }
+  // filterCategory(query, categories: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for (let i = 0; i < categories.length; i++) {
+  //     let category;
+  //     category = categories[i];
+  //     if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+  //       filtered.push(category);
+  //     }
+  //   }
+  //   return filtered;
+  // }
 }
