@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy  } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { CalendarService} from '../services/calendar.service';
@@ -30,7 +30,7 @@ interface Ticket {
   styleUrls: ['./home.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   // Tickets tree
   // calendarTicketsTree: TreeNode[];
@@ -167,7 +167,24 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
 
-    this.doGet();
+    this.getPlantsList();
+    this.getCategoriesToDosList();
+    this.getPeopleToDosList();
+    this.getCategoriesTicketsList();
+    this.getPeopleTicketsList();
+    this.getCategoriesSCsList();
+    this.getPeopleSCsList();
+    this.getCategoriesOutagesList();
+    this.getPeopleOutagesList();
+    this.getMyTimeSheetChecked();
+    this.getSelectedSCTickets();
+    this.getSelectedToDosStatus();
+    this.getSelectedTicketsStatus();
+    this.getSelectedSCsStatus();
+    this.getSelectedOutagesStatus();
+    this.getSelectedTDTickets();
+
+    // this.doGet();
 
     this.events = [
       {
@@ -248,6 +265,26 @@ export class HomeComponent implements OnInit {
     ];
 
     //  this.calendarTicketsSrv.getMyCalendarTickets().then(files => this.calendarTicketsTree = files);
+  }
+
+  ngOnDestroy() {
+
+    this.setPlantsList();
+    this.setCategoriesToDosList();
+    this.setPeopleToDosList();
+    this.setCategoriesTicketsList();
+    this.setPeopleTicketsList();
+    this.setCategoriesSCsList();
+    this.setPeopleSCsList();
+    this.setCategoriesOutagesList();
+    this.setPeopleOutagesList();
+    this.setMyTimeSheetChecked();
+    this.setSelectedSCTickets();
+    this.setSelectedToDosStatus();
+    this.setSelectedTicketsStatus();
+    this.setSelectedSCsStatus();
+    this.setSelectedOutagesStatus();
+    this.setSelectedTDTickets();
   }
 
   handleDayClick(event) {
@@ -435,6 +472,294 @@ export class HomeComponent implements OnInit {
     console.log(myJson);
     console.log(myJson.data[0].full_name);
     });
+  }
+
+  // get old fillter plants list
+  getPlantsList() {
+    let myItem: any;
+    let key;
+    key = 'plantsList';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.plantsList = myItem;
+    }
+  }
+  // set current fillter plants list
+  setPlantsList() {
+    let key;
+    key = 'plantsList';
+    localStorage.setItem(key, JSON.stringify(this.plantsList));
+  }
+
+  // get old fillter category todo list
+  getCategoriesToDosList() {
+    let myItem: any;
+    let key;
+    key = 'categoriesToDosList';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.categoriesToDosList = myItem;
+    }
+  }
+  // set current fillter category todo list
+  setCategoriesToDosList() {
+    let key;
+    key = 'categoriesToDosList';
+    localStorage.setItem(key, JSON.stringify(this.categoriesToDosList));
+  }
+
+  // get old fillter people todo list
+  getPeopleToDosList() {
+    let myItem: any;
+    let key;
+    key = 'peopleToDosList';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.peopleToDosList = myItem;
+    }
+  }
+  // set current fillter people todo list
+  setPeopleToDosList() {
+    let key;
+    key = 'peopleToDosList';
+    localStorage.setItem(key, JSON.stringify(this.peopleToDosList));
+  }
+
+  // get old fillter category tickets list
+  getCategoriesTicketsList() {
+    let myItem: any;
+    let key;
+    key = 'categoriesTicketsList';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.categoriesTicketsList = myItem;
+    }
+  }
+  // set current fillter category tickets list
+  setCategoriesTicketsList() {
+    let key;
+    key = 'categoriesTicketsList';
+    localStorage.setItem(key, JSON.stringify(this.categoriesTicketsList));
+  }
+
+  // get old fillter people tickets list
+  getPeopleTicketsList() {
+    let myItem: any;
+    let key;
+    key = 'peopleTicketsList';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.peopleTicketsList = myItem;
+    }
+  }
+  // set current fillter people tickets list
+  setPeopleTicketsList() {
+    let key;
+    key = 'peopleTicketsList';
+    localStorage.setItem(key, JSON.stringify(this.peopleTicketsList));
+  }
+
+  // get old fillter category SCs list
+  getCategoriesSCsList() {
+    let myItem: any;
+    let key;
+    key = 'categoriesSCsList';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.categoriesSCsList = myItem;
+    }
+  }
+  // set current fillter category SCs list
+  setCategoriesSCsList() {
+    let key;
+    key = 'categoriesSCsList';
+    localStorage.setItem(key, JSON.stringify(this.categoriesSCsList));
+  }
+
+  // get old fillter people SCs list
+  getPeopleSCsList() {
+    let myItem: any;
+    let key;
+    key = 'peopleSCsList';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.peopleSCsList = myItem;
+    }
+  }
+  // set current fillter people SCs list
+  setPeopleSCsList() {
+    let key;
+    key = 'peopleSCsList';
+    localStorage.setItem(key, JSON.stringify(this.peopleSCsList));
+  }
+
+  // get old fillter category outages list
+  getCategoriesOutagesList() {
+    let myItem: any;
+    let key;
+    key = 'categoriesOutagesList';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.categoriesOutagesList = myItem;
+    }
+  }
+  // set current fillter category outages list
+  setCategoriesOutagesList() {
+    let key;
+    key = 'categoriesOutagesList';
+    localStorage.setItem(key, JSON.stringify(this.categoriesOutagesList));
+  }
+
+  // get old fillter people outages list
+  getPeopleOutagesList() {
+    let myItem: any;
+    let key;
+    key = 'peopleOutagesList';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.peopleOutagesList = myItem;
+    }
+  }
+  // set current fillter people outages list
+  setPeopleOutagesList() {
+    let key;
+    key = 'peopleOutagesList';
+    localStorage.setItem(key, JSON.stringify(this.peopleOutagesList));
+  }
+
+  // get old fillter My timesheet checkbox
+  getMyTimeSheetChecked() {
+    let myItem: any;
+    let key;
+    key = 'myTimeSheetChecked';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.myTimeSheetChecked = myItem;
+    }
+  }
+  // set current fillter My timesheet checkbox
+  setMyTimeSheetChecked() {
+    let key;
+    key = 'myTimeSheetChecked';
+    localStorage.setItem(key, JSON.stringify(this.myTimeSheetChecked));
+  }
+
+  // get old fillter My timesheet checkbox
+  getSelectedTDTickets() {
+    let myItem: any;
+    let key;
+    key = 'selectedTDTickets';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedTDTickets = myItem;
+    }
+  }
+  // set current fillter My timesheet checkbox
+  setSelectedTDTickets() {
+    let key;
+    key = 'selectedTDTickets';
+    localStorage.setItem(key, JSON.stringify(this.selectedTDTickets));
+  }
+
+  // get old fillter My timesheet checkbox
+  getSelectedSCTickets() {
+    let myItem: any;
+    let key;
+    key = 'selectedSCTickets';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedSCTickets = myItem;
+    }
+  }
+  // set current fillter My timesheet checkbox
+  setSelectedSCTickets() {
+    let key;
+    key = 'selectedSCTickets';
+    localStorage.setItem(key, JSON.stringify(this.selectedSCTickets));
+  }
+
+  // get old fillter My timesheet checkbox
+  getSelectedToDosStatus() {
+    let myItem: any;
+    let key;
+    key = 'selectedToDosStatus';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedToDosStatus = myItem;
+    }
+  }
+  // set current fillter My timesheet checkbox
+  setSelectedToDosStatus() {
+    let key;
+    key = 'selectedToDosStatus';
+    localStorage.setItem(key, JSON.stringify(this.selectedToDosStatus));
+  }
+
+  // get old fillter My timesheet checkbox
+  getSelectedTicketsStatus() {
+    let myItem: any;
+    let key;
+    key = 'selectedTicketsStatus';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedTicketsStatus = myItem;
+    }
+  }
+  // set current fillter My timesheet checkbox
+  setSelectedTicketsStatus() {
+    let key;
+    key = 'selectedTicketsStatus';
+    localStorage.setItem(key, JSON.stringify(this.selectedTicketsStatus));
+  }
+
+  // get old fillter My timesheet checkbox
+  getSelectedSCsStatus() {
+    let myItem: any;
+    let key;
+    key = 'selectedSCsStatus';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedSCsStatus = myItem;
+    }
+  }
+  // set current fillter My timesheet checkbox
+  setSelectedSCsStatus() {
+    let key;
+    key = 'selectedSCsStatus';
+    localStorage.setItem(key, JSON.stringify(this.selectedSCsStatus));
+  }
+
+  // get old fillter My timesheet checkbox
+  getSelectedOutagesStatus() {
+    let myItem: any;
+    let key;
+    key = 'selectedOutagesStatus';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedOutagesStatus = myItem;
+    }
+  }
+  // set current fillter My timesheet checkbox
+  setSelectedOutagesStatus() {
+    let key;
+    key = 'selectedOutagesStatus';
+    localStorage.setItem(key, JSON.stringify(this.selectedOutagesStatus));
   }
 }
 

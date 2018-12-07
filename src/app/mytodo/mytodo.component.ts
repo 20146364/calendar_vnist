@@ -2,7 +2,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import {PlantService} from '../services/plant.service';
 import {CategoryService} from '../services/category.service';
-import {PeopleService} from '../services/people.service';
+import {DuedateService} from '../services/duedate.service';
+import {CreatorchangedService} from '../services/creatorchanged.service';
 
 @Component({
   selector: 'app-mytodo',
@@ -22,6 +23,18 @@ export class MytodoComponent implements OnInit {
   sortBy: any[];
   selectedSortBy: any[];
 
+  // plants list
+  plantsList: any[];
+
+  // categories todo list
+  categoriesList: any[];
+
+  // due date status todo list
+  dueDateStatusList: any[];
+
+  // creator and changed people tickets list
+  creatorChangedList: any[];
+
   // suggestions people list
   filteredPlantsMultiple: any[];
 
@@ -39,7 +52,8 @@ export class MytodoComponent implements OnInit {
   constructor(
               private plantService: PlantService,
               private categoryService: CategoryService,
-              private peopleService: PeopleService, ) { }
+              private dueDateService: DuedateService,
+              private creatorChangedService: CreatorchangedService ) { }
 
   ngOnInit() {
 
@@ -98,69 +112,91 @@ export class MytodoComponent implements OnInit {
     ];
   }
 
-  // // filter plants
-  // filterPlantMultiple(event) {
-  //   let query;
-  //   query = event.query;
-  //   this.plantService.getPlants().then(plants => {
-  //     this.filteredPlantsMultiple = this.filterPlant(query, plants);
-  //   });
-  // }
+  // filter plants
+  filterPlantMultiple(event) {
+    let query;
+    query = event.query;
+    this.plantService.getPlants().then(plants => {
+      this.filteredPlantsMultiple = this.filterPlant(query, plants);
+    });
+  }
 
-  // filterPlant(query, plants: any[]): any[] {
-  //   let filtered;
-  //   filtered = [];
-  //   for ( let i = 0; i < plants.length; i++) {
-  //     let plant;
-  //     plant = plants[i];
-  //     if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
-  //       filtered.push(plant);
-  //     }
-  //   }
-  //   return filtered;
-  // }
+  filterPlant(query, plants: any[]): any[] {
+    let filtered;
+    filtered = [];
+    for ( let i = 0; i < plants.length; i++) {
+      let plant;
+      plant = plants[i];
+      if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
+        filtered.push(plant);
+      }
+    }
+    return filtered;
+  }
 
-  // // filter people
-  // filterDueDateStatusMultiple(event) {
-  //   let query;
-  //   query = event.query;
-  //   this.peopleService.getPeople().then(people => {
-  //     this.filteredDueDateStatusMultiple = this.filterPerson(query, people);
-  //   });
-  // }
+  // filter Due date
+  filterDueDateStatusMultiple(event) {
+    let query;
+    query = event.query;
+    this.dueDateService.getDueDates().then(dueDateStatuses => {
+      this.filteredDueDateStatusMultiple = this.filterDueDateStatus(query, dueDateStatuses);
+    });
+  }
 
-  // filterPerson(query, people: any[]): any[] {
-  //   let filtered;
-  //   filtered = [];
-  //   for (let i = 0; i < people.length; i++) {
-  //     let person;
-  //     person = people[i];
-  //     if (person.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-  //       filtered.push(person);
-  //     }
-  //   }
-  //   return filtered;
-  // }
+  filterDueDateStatus(query, dueDateStatuses: any[]): any[] {
+    let filtered;
+    filtered = [];
+    for (let i = 0; i < dueDateStatuses.length; i++) {
+      let status;
+      status = dueDateStatuses[i];
+      if (status.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+        filtered.push(status);
+      }
+    }
+    return filtered;
+  }
 
-  // // filter category
-  // filterCategoryMultiple(event) {
-  //   let query;
-  //   query = event.query;
-  //   this.categoryService.getCategories().then(categories => {
-  //     this.filteredCategoriesMultiple = this.filterCategory(query, categories);
-  //   });
-  // }
+  // filter category
+  filterCategoriesMultiple(event) {
+    let query;
+    query = event.query;
+    this.categoryService.getCategories().then(categories => {
+      this.filteredCategoriesMultiple = this.filterCategories(query, categories);
+    });
+  }
 
-  // filterCategory(query, categories: any[]): any[] {
-  //   let filtered;
-  //   filtered = [];
-  //   for (let i = 0; i < categories.length; i++) {
-  //     let category;
-  //     category = categories[i];
-  //     if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-  //       filtered.push(category);
-  //     }
-  //   }
-  //   return filtered;
-  // }
+  filterCategories(query, categories: any[]): any[] {
+    let filtered;
+    filtered = [];
+    for (let i = 0; i < categories.length; i++) {
+      let category;
+      category = categories[i];
+      if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+        filtered.push(category);
+      }
+    }
+    return filtered;
+  }
+
+  // filter Creator and changed person
+  filterCreatorChangedMultiple(event) {
+    let query;
+    query = event.query;
+    this.creatorChangedService.getCreatorChangeds().then(creatorChangeds => {
+      this.filteredCreatorChangedMultiple = this.filterCreatorChanged(query, creatorChangeds);
+    });
+  }
+
+  filterCreatorChanged(query, creatorChangeds: any[]): any[] {
+    let filtered;
+    filtered = [];
+    for (let i = 0; i < creatorChangeds.length; i++) {
+      let creatorChanged;
+      creatorChanged = creatorChangeds[i];
+      if (creatorChanged.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+        filtered.push(creatorChanged);
+      }
+    }
+    return filtered;
+  }
 }

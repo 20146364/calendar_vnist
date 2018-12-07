@@ -122,15 +122,15 @@
       </p-tree> -->
       <!-- <div>Selected Calendar Tickets: <span *ngFor="let ticket of selectedCalendarTicketsTree">{{ticket.label}}</span></div> -->
   
-      <p-accordion>
-        <p-accordionTab header="My Calendars" class="accordion-header">
+      <p-accordion [multiple]="true">
+        <p-accordionTab header="Element filters" class="accordion-header">
           <p-checkbox [(ngModel)]="myTimeSheetChecked" label="My TimeSheet" binary="true"></p-checkbox>
             <!-- <h3>Checked - {{myTimeSheetChecked}}</h3> -->
           <!-- <p-checkbox name="groupname" value="mytimesheet" [(ngModel)]="selectedTimeSheet"></p-checkbox> -->
           <!-- <p-tree [value]="calendarTicketsTree" selectionMode="checkbox" [(selection)]="selectedCalendarTicketsTree">
           </p-tree> -->
           <!-- <p-listbox [options]="calendarTickets" [(ngModel)]="selectedCalendarTickets" multiple="multiple" checkbox="checkbox" filter="filter" optionLabel="name"></p-listbox> -->
-          <p-accordion>
+          <p-accordion [multiple]="true">
             <p-accordionTab header="My To-Do's" class="accordion-header">
               <p-listbox [options]="calendarToDosStatus" [(ngModel)]="selectedTDTickets" multiple="multiple" checkbox="checkbox" optionLabel="name">
               </p-listbox>
@@ -141,12 +141,12 @@
             </p-accordionTab>
           </p-accordion>
         </p-accordionTab>
-        <p-accordionTab header="Plant Calendars">
+        <p-accordionTab header="General filters">
           <div class="ui-g-12"><label>Plants</label></div>
           <p-autoComplete [(ngModel)]="plantsList" [suggestions]="filteredPlantsMultiple" (completeMethod)="filterPlantMultiple($event)" styleClass="wid100"
             [minLength]="1" placeholder="Plants" field="name" [multiple]="true" scrollHeight="200px">
           </p-autoComplete>
-          <p-accordion>
+          <p-accordion [multiple]="true">
             <p-accordionTab header="To-Do's">
               <span class="ui-fluid">
                 <label>Categories</label>
