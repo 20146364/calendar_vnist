@@ -132,11 +132,11 @@
           <!-- <p-listbox [options]="calendarTickets" [(ngModel)]="selectedCalendarTickets" multiple="multiple" checkbox="checkbox" filter="filter" optionLabel="name"></p-listbox> -->
           <p-accordion [multiple]="true">
             <p-accordionTab header="My To-Do's" class="accordion-header">
-              <p-listbox [options]="calendarToDosStatus" [(ngModel)]="selectedTDTickets" multiple="multiple" checkbox="checkbox" optionLabel="name">
+              <p-listbox [options]="calendarToDosStatus" [(ngModel)]="selectedTDTickets" checkbox="checkbox" optionLabel="name">
               </p-listbox>
             </p-accordionTab>
             <p-accordionTab header="My Service Calls" class="accordion-header">
-              <p-listbox [options]="calendarSCsStatus" [(ngModel)]="selectedSCTickets" multiple="multiple" checkbox="checkbox" optionLabel="name">
+              <p-listbox [options]="calendarSCsStatus" [(ngModel)]="selectedSCTickets" checkbox="checkbox" optionLabel="name">
               </p-listbox>
             </p-accordionTab>
           </p-accordion>
