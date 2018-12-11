@@ -27,9 +27,9 @@ import { AccordionModule } from 'primeng/components/accordion/accordion';
 import { ToolbarModule } from 'primeng/components/toolbar/toolbar';
 import { SplitButtonModule } from 'primeng/components/splitbutton/splitbutton';
 import {ListboxModule} from 'primeng/components/listbox/listbox';
-import {TreeModule} from 'primeng/components/tree/tree';
 import {AutoCompleteModule} from 'primeng/components/autocomplete/autocomplete';
 import {ScrollPanelModule} from 'primeng/components/scrollpanel/scrollpanel';
+import {DropdownModule} from 'primeng/components/dropdown/dropdown';
 
 import { AuthenticationService } from './services/authentication.service';
 import { CalendarService } from './services/calendar.service';
@@ -67,9 +67,9 @@ import { PeopleService } from './services/people.service';
     SplitButtonModule,
     AccordionModule,
     ListboxModule,
-    TreeModule,
     AutoCompleteModule,
     ScrollPanelModule,
+    DropdownModule,
     AppRoutingModule
   ],
   providers: [AuthenticationService, CalendarService, PlantService, CategoryService, PeopleService],

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy  } from '@angular/core';
+import { Component, OnInit, AfterViewInit, AfterViewChecked, OnDestroy  } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { CalendarService} from '../services/calendar.service';
@@ -6,12 +6,15 @@ import * as crypto from 'crypto-js';
 import { Config } from '../services/config';
 import { ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import * as $ from 'jquery';
+import 'select2';
 
 //  import {MenuItem,TreeNode} from 'primeng/components/common/api';
 //  import {TicketsService} from '../services/tickets.service';
 import {PlantService} from '../services/plant.service';
 import {CategoryService} from '../services/category.service';
 import {PeopleService} from '../services/people.service';
+import { forEach } from '@angular/router/src/utils/collection';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -30,7 +33,33 @@ interface Ticket {
   styleUrls: ['./home.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
+
+  // Participating People SCs - sd
+  listParticipatingPeople: any[];
+  // selected people SCs - sd
+  selectedSCsPeople: any[];
+  seleteddemo: any;
+
+  // services status - sd
+  ticketStatuses: any[];
+
+  // categories Outage - sd
+  outageCategories: any[];
+
+  // creator and editor - sd
+  listCreatorEditor: any[];
+
+  // Plants list
+  listPlants: any[];
+
+  // time start
+  timeStart: Date;
+
+  // time end
+  timeEnd: Date;
+
+  singleSelect: any;
 
   // Tickets tree
   // calendarTicketsTree: TreeNode[];
@@ -57,8 +86,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   // categories tickets list
   categoriesTicketsList: any[];
 
-  // people SCs list
-  peopleSCsList: any[];
 
   // categories SCs list
   categoriesSCsList: any[];
@@ -123,7 +150,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   idGen = 100;
 
   selectedEvent: any;
-  selectedView: any;
+  selectedView = 'month';
   selectedDate: any;
 
   businessHours = {
@@ -167,24 +194,70 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.getPlantsList();
-    this.getCategoriesToDosList();
-    this.getPeopleToDosList();
-    this.getCategoriesTicketsList();
-    this.getPeopleTicketsList();
-    this.getCategoriesSCsList();
-    this.getPeopleSCsList();
-    this.getCategoriesOutagesList();
-    this.getPeopleOutagesList();
-    this.getMyTimeSheetChecked();
-    this.getSelectedSCTickets();
-    this.getSelectedToDosStatus();
-    this.getSelectedTicketsStatus();
-    this.getSelectedSCsStatus();
-    this.getSelectedOutagesStatus();
-    this.getSelectedTDTickets();
+    // this.getSelectedSCsPeople();
+    // this.initListPlant();
 
+
+    // this.getPlantsList();
+    // this.getCategoriesToDosList();
+    // this.getPeopleToDosList();
+    // this.getCategoriesTicketsList();
+    // this.getPeopleTicketsList();
+    // this.getCategoriesSCsList();
+    // this.getPeopleSCsList();
+    // this.getCategoriesOutagesList();
+    // this.getPeopleOutagesList();
+    // this.getMyTimeSheetChecked();
+    // this.getSelectedSCTickets();
+    // this.getSelectedToDosStatus();
+    // this.getSelectedTicketsStatus();
+    // this.getSelectedSCsStatus();
+    // this.getSelectedOutagesStatus();
+    // this.getSelectedTDTickets();
     // this.doGet();
+
+    this.listParticipatingPeople = [
+      {
+        'id': 1,
+        'firstname': 'Thuy',
+        'lastname': 'Dang Nhu'
+      },
+      {
+        'id': 2,
+        'firstname': 'Long',
+        'lastname': 'Trinh Thien'
+      },
+      {
+        'id': 3,
+        'firstname': 'Duong',
+        'lastname': 'Nguyen Van'
+      },
+      {
+        'id': 4,
+        'firstname': 'Hien',
+        'lastname': 'Pham Duc'
+      },
+    ];
+
+    this.ticketStatuses = [
+      {
+        'id': 1,
+        'name': 'All statuses',
+      },
+      {
+        'id': 2,
+        'name': 'Planed',
+      },
+      {
+        'id': 3,
+        'name': 'Started',
+      },
+      {
+        'id': 4,
+        'name': 'Ended',
+      },
+
+    ];
 
     this.events = [
       {
@@ -241,6 +314,65 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     ];
 
+    this.outageCategories = [
+      {
+        'id': 1,
+        'name': 'Category 1',
+      },
+      {
+        'id': 2,
+        'name': 'Category 2',
+      },
+      {
+        'id': 3,
+        'name': 'Category 3',
+      },
+    ];
+
+    this.listCreatorEditor = [
+      {
+        'id': 1,
+        'firstname': 'Kawasaki',
+        'lastname': 'Dang Nhu'
+      },
+      {
+        'id': 2,
+        'firstname': 'Kimura',
+        'lastname': 'Trinh Thien'
+      },
+      {
+        'id': 3,
+        'firstname': 'Yoshida',
+        'lastname': 'Nguyen Van'
+      },
+      {
+        'id': 4,
+        'firstname': 'Nakama',
+        'lastname': 'Pham Duc'
+      },
+    ];
+
+    this.listPlants = [
+      {
+        'id': 1,
+        'name': 'Ha Noi',
+      },
+      {
+        'id': 2,
+        'name': 'Hai Phong',
+      },
+      {
+        'id': 3,
+        'name': 'Da Nang',
+      },
+      {
+        'id': 4,
+        'name': 'Ho Chi Minh',
+      },
+    ];
+
+
+
     this.calendarTickets = [
       {name: 'My TimeSheet', value: 'This is my calendar'}
     ];
@@ -267,24 +399,40 @@ export class HomeComponent implements OnInit, OnDestroy {
     //  this.calendarTicketsSrv.getMyCalendarTickets().then(files => this.calendarTicketsTree = files);
   }
 
+  ngAfterViewInit() {
+    this.initListParticipatingPeople();
+    this.initOutageStatues();
+    this.initSCsStatues();
+    this.initOutageCategories();
+    this.initListCreatorEditor();
+    this.initListPlant();
+  }
+
+  ngAfterViewChecked() {
+    // this.initListPlant();
+
+  }
+
   ngOnDestroy() {
 
-    this.setPlantsList();
-    this.setCategoriesToDosList();
-    this.setPeopleToDosList();
-    this.setCategoriesTicketsList();
-    this.setPeopleTicketsList();
-    this.setCategoriesSCsList();
-    this.setPeopleSCsList();
-    this.setCategoriesOutagesList();
-    this.setPeopleOutagesList();
-    this.setMyTimeSheetChecked();
-    this.setSelectedSCTickets();
-    this.setSelectedToDosStatus();
-    this.setSelectedTicketsStatus();
-    this.setSelectedSCsStatus();
-    this.setSelectedOutagesStatus();
-    this.setSelectedTDTickets();
+    // this.setSelectedSCsPeople();
+
+    // this.setPlantsList();
+    // this.setCategoriesToDosList();
+    // this.setPeopleToDosList();
+    // this.setCategoriesTicketsList();
+    // this.setPeopleTicketsList();
+    // this.setCategoriesSCsList();
+    // this.setPeopleSCsList();
+    // this.setCategoriesOutagesList();
+    // this.setPeopleOutagesList();
+    // this.setMyTimeSheetChecked();
+    // this.setSelectedSCTickets();
+    // this.setSelectedToDosStatus();
+    // this.setSelectedTicketsStatus();
+    // this.setSelectedSCsStatus();
+    // this.setSelectedOutagesStatus();
+    // this.setSelectedTDTickets();
   }
 
   handleDayClick(event) {
@@ -384,75 +532,184 @@ export class HomeComponent implements OnInit, OnDestroy {
     selectedDate.gotoDate(date);
   }
 
-  // filter plants
-  filterPlantMultiple(event) {
-    let query;
-    query = event.query;
-    this.plantService.getPlants().then(plants => {
-      this.filteredPlantsMultiple = this.filterPlant(query, plants);
+  // init Services participating people
+  initListParticipatingPeople() {
+    $('.element-services-participating-people').select2({
+      // ajax: {
+      //   // $.ajax('/people/fetch?ids=48', { headers: { 'Accept': 'application/json' } }).done((data) =>{console.log(data)});
+      //   url: '/people/fetch?ids=48',
+      //   headers: { 'Accept': 'application/json' },
+      //   dataType: 'json'
+      //   // data: function (params) {
+      //   //   return {
+      //   //     q: params.term, // search term
+      //   //     page: params.page
+      //   //   };
+      // }
+
+
+    //   minimumInputLength: 2,
+    //   tags: [],
+    //   ajax: {
+    //     url: '/people/fetch?ids=48',
+    //     headers: { 'Accept': 'application/json' },
+    //     dataType: 'json',
+    //     type: 'GET',
+    //     delay: 250,
+    //     data: function (term) {
+    //       return {
+    //         term: term
+    //       };
+    //     },
+    //     results: function (data) {
+    //       return {
+    //         results: $.map(data, function (item) {
+    //           return {
+    //             text: item.fullname,
+    //             id: item.id
+    //           };
+    //         })
+    //       };
+    //     }
+    //   }
+    });
+
+
+    // $('.element-services-participating-people').on('change', function() {
+    //   let data;
+    //   data = [];
+    //   data.push($('.element-services-participating-people  option:selected').text());
+    //   // $("#test").val(data);
+    //   console.log('selected option');
+    //   console.log(data);
+    // });
+  }
+
+  // init Services participating people
+  initSCsStatues() {
+    $('.element-services-statuses').select2({
     });
   }
 
-  filterPlant(query, plants: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for ( let i = 0; i < plants.length; i++) {
-      let plant;
-      plant = plants[i];
-      if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
-        filtered.push(plant);
-      }
-    }
-    return filtered;
-  }
-
-  // filter people
-  filterPeopleMultiple(event) {
-    let query;
-    query = event.query;
-    this.peopleService.getPeople().then(people => {
-      this.filteredPeopleMultiple = this.filterPerson(query, people);
+  // init Services participating people
+  initOutageStatues() {
+    $('.element-outage-statuses').select2({
     });
   }
 
-  filterPerson(query, people: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for (let i = 0; i < people.length; i++) {
-      let person;
-      person = people[i];
-      if (person.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-        filtered.push(person);
-      }
-    }
-    return filtered;
-  }
-
-  // filter category
-  filterCategoryMultiple(event) {
-    let query;
-    query = event.query;
-    this.categoryService.getCategories().then(categories => {
-      this.filteredCategoriesMultiple = this.filterCategory(query, categories);
+  // init Outage categories
+  initOutageCategories() {
+    $('.element-outage-categories').select2({
     });
   }
 
-  filterCategory(query, categories: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for (let i = 0; i < categories.length; i++) {
-      let category;
-      category = categories[i];
-      if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-        filtered.push(category);
-      }
-    }
-    return filtered;
+  // init creator and editor list
+  initListCreatorEditor() {
+    $('.general-creator-editor').select2({
+    });
   }
+
+  // init plant list
+  initListPlant() {
+    $('.general-plant').select2({
+      // tags: true,
+      // ajax: {
+      //   url: '/plants/fetch',
+      //   headers: { 'Accept': 'application/json' },
+      //   dataType: 'json',
+      //   type: 'GET',
+      //   delay: 250,
+      //   data: function (term) {
+      //     return {
+      //       term: term
+      //     };
+      //   },
+      //   success: function(data) {
+      //     this.listPlants = [];
+      //     // console.log(data);
+      //     for (let i = 0; i < data.data.length; i++) {
+      //       this.listPlants.push(data.data[i]);
+      //       console.log(this.listPlants[i].name);
+      //     }
+      //     // this.listPlants.forEach(element => {
+      //     //   console.log(element.name);
+      //     // });
+      //     console.log(this.listPlants);
+      //   },
+      //   cache: true
+      // }
+    });
+  }
+
+
+  // // filter plants
+  // filterPlantMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.plantService.getPlants().then(plants => {
+  //     this.filteredPlantsMultiple = this.filterPlant(query, plants);
+  //   });
+  // }
+
+  // filterPlant(query, plants: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for ( let i = 0; i < plants.length; i++) {
+  //     let plant;
+  //     plant = plants[i];
+  //     if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
+  //       filtered.push(plant);
+  //     }
+  //   }
+  //   return filtered;
+  // }
+
+  // // filter people
+  // filterPeopleMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.peopleService.getPeople().then(people => {
+  //     this.filteredPeopleMultiple = this.filterPerson(query, people);
+  //   });
+  // }
+
+  // filterPerson(query, people: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for (let i = 0; i < people.length; i++) {
+  //     let person;
+  //     person = people[i];
+  //     if (person.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+  //       filtered.push(person);
+  //     }
+  //   }
+  //   return filtered;
+  // }
+
+  // // filter category
+  // filterCategoryMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.categoryService.getCategories().then(categories => {
+  //     this.filteredCategoriesMultiple = this.filterCategory(query, categories);
+  //   });
+  // }
+
+  // filterCategory(query, categories: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for (let i = 0; i < categories.length; i++) {
+  //     let category;
+  //     category = categories[i];
+  //     if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+  //       filtered.push(category);
+  //     }
+  //   }
+  //   return filtered;
+  // }
 
   doGet() {
-    // let url;
-    // url = 'http://localhost/people/fetch?ids=48';
+    // $.ajax('/people/fetch?ids=48', { headers: { 'Accept': 'application/json' } }).done((data) =>{console.log(data)});
     fetch('http://localhost/people/fetch?ids=48',
     {
       'credentials': 'include',
@@ -473,6 +730,60 @@ export class HomeComponent implements OnInit, OnDestroy {
     console.log(myJson.data[0].full_name);
     });
   }
+
+// get SCs people
+  getSelectedSCsPeople() {
+
+    // let stored_motivations;
+    // stored_motivations = JSON.parse(localStorage.getItem('element-services-participating-people'));
+    // if (stored_motivations !== null) {
+    //   $('.element-services-participating-people').each(function() {
+    //     for (let i = 0; i < stored_motivations.length; i++) {
+    //       if (this.value === stored_motivations[i]) {
+    //         this.selected = true;
+    //       }
+    //     }
+    //   });
+    // }
+    console.log(this.selectedSCsPeople);
+    let myItem: any;
+    let key;
+    key = 'selectedSCsPeople';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedSCsPeople = myItem;
+    }
+
+    console.log(this.selectedSCsPeople);
+    console.log('init: ');
+    console.log(localStorage);
+  }
+  // set SCs people
+  setSelectedSCsPeople() {
+    // $('.element-services-participating-people').change(function() {
+    //   let selected;
+    //   selected = []; // create an array to hold all currently selected motivations
+    //   // loop through each available motivation
+    //   $('.element-services-participating-people').each(function() {
+    //     // if it's selected, add it to the array above
+    //     if (this.selected) {
+    //       selected.push(this.value);
+    //     }
+    //   });
+    //   // store the array of selected options
+    //   localStorage.setItem('element-services-participating-people', JSON.stringify(selected));
+    //   console.log(localStorage);
+    // });
+    console.log(this.selectedSCsPeople);
+    let key;
+    key = 'selectedSCsPeople';
+    localStorage.setItem(key, JSON.stringify(this.selectedSCsPeople));
+    console.log(this.selectedSCsPeople);
+    console.log('destroy: ');
+    console.log(localStorage);
+  }
+
 
   // get old fillter plants list
   getPlantsList() {
@@ -582,23 +893,23 @@ export class HomeComponent implements OnInit, OnDestroy {
     localStorage.setItem(key, JSON.stringify(this.categoriesSCsList));
   }
 
-  // get old fillter people SCs list
-  getPeopleSCsList() {
-    let myItem: any;
-    let key;
-    key = 'peopleSCsList';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.peopleSCsList = myItem;
-    }
-  }
-  // set current fillter people SCs list
-  setPeopleSCsList() {
-    let key;
-    key = 'peopleSCsList';
-    localStorage.setItem(key, JSON.stringify(this.peopleSCsList));
-  }
+  // // get old fillter people SCs list
+  // getPeopleSCsList() {
+  //   let myItem: any;
+  //   let key;
+  //   key = 'peopleSCsList';
+  //   myItem = localStorage.getItem(key);
+  //   if (myItem !== 'undefined') {
+  //     myItem = JSON.parse(myItem);
+  //     this.peopleSCsList = myItem;
+  //   }
+  // }
+  // // set current fillter people SCs list
+  // setPeopleSCsList() {
+  //   let key;
+  //   key = 'peopleSCsList';
+  //   localStorage.setItem(key, JSON.stringify(this.peopleSCsList));
+  // }
 
   // get old fillter category outages list
   getCategoriesOutagesList() {
