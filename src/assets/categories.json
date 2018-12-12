@@ -1,8 +1,0 @@
-{
-  "data": [ 
-      {"name": "Category 1", "code": "HN"}, 
-      {"name": "Category 2", "code": "HP"}, 
-      {"name": "Category 3", "code": "TB"}, 
-      {"name": "Category 4", "code": "BG"}
-  ]
-}

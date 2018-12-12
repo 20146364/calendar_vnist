@@ -1,9 +1,7 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-
-import {PlantService} from '../services/plant.service';
-import {CategoryService} from '../services/category.service';
-import {DuedateService} from '../services/duedate.service';
-import {CreatorchangedService} from '../services/creatorchanged.service';
+import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
+import * as $ from 'jquery';
+import 'select2';
+import { Options } from 'select2';
 
 @Component({
   selector: 'app-mytodo',
@@ -13,7 +11,11 @@ import {CreatorchangedService} from '../services/creatorchanged.service';
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class MytodoComponent implements OnInit {
+export class MytodoComponent implements OnInit, OnDestroy {
+
+  // select2 option
+  public multipleOptions: Options;
+  public singleOptions: Options;
 
   title = 'My list todo';
 
@@ -23,39 +25,41 @@ export class MytodoComponent implements OnInit {
   sortBy: any[];
   selectedSortBy: any[];
 
-  // plants list
-  plantsList: any[];
+  // list Plants
+  listPlants: any[];
+  // selected plants
+  selectedPlant: any[];
 
-  // categories todo list
-  categoriesList: any[];
+  // list categories
+  Categories: any[];
+  // selected categories
+  selectedCategories: any[];
 
-  // due date status todo list
-  dueDateStatusList: any[];
+  // list due date statuses
+  listDueDateStatuses: any[];
+  // selected due date statuses
+  selectedDueDateStatuses: any[];
 
-  // creator and changed people tickets list
-  creatorChangedList: any[];
-
-  // suggestions people list
-  filteredPlantsMultiple: any[];
-
-  // suggestions people list
-  filteredCategoriesMultiple: any[];
-
-  // suggestions categories list
-  filteredDueDateStatusMultiple: any[];
-
-  // suggestions categories list
-  filteredCreatorChangedMultiple: any[];
+  // creator and editor
+  listCreatorEditor: any[];
+  // selected creator and editor
+  selectedCreatorEditor: any[];
 
   tickets: any[];
 
-  constructor(
-              private plantService: PlantService,
-              private categoryService: CategoryService,
-              private dueDateService: DuedateService,
-              private creatorChangedService: CreatorchangedService ) { }
+  constructor() { }
 
   ngOnInit() {
+
+    this.multipleOptions = {
+      width: '100%',
+      multiple: true,
+      tags: true
+    };
+    this.singleOptions = {
+      width: '100%',
+      tags: true
+    };
 
     this.tickets = [{
       name: 'SC 1',
@@ -93,6 +97,83 @@ export class MytodoComponent implements OnInit {
       startcontent: 'start of ticket 5'
     }];
 
+    this.listPlants = [
+      {
+        'id': 1,
+        'name': 'Ha Noi',
+      },
+      {
+        'id': 2,
+        'name': 'Hai Phong',
+      },
+      {
+        'id': 3,
+        'name': 'Da Nang',
+      },
+      {
+        'id': 4,
+        'name': 'Ho Chi Minh',
+      },
+    ];
+
+    this.Categories = [
+      {
+        'id': 1,
+        'name': 'Category 1',
+      },
+      {
+        'id': 2,
+        'name': 'Category 2',
+      },
+      {
+        'id': 3,
+        'name': 'Category 3',
+      },
+    ];
+
+    this.listDueDateStatuses = [
+      {
+        'id': 1,
+        'name': 'Not yet due',
+      },
+      {
+        'id': 2,
+        'name': 'Due',
+      },
+      {
+        'id': 3,
+        'name': 'Overdue',
+      },
+      {
+        'id': 4,
+        'name': 'Completed',
+      },
+    ];
+
+
+    this.listCreatorEditor = [
+      {
+        'id': 1,
+        'firstname': 'Kawasaki',
+        'lastname': 'Dang Nhu'
+      },
+      {
+        'id': 2,
+        'firstname': 'Kimura',
+        'lastname': 'Trinh Thien'
+      },
+      {
+        'id': 3,
+        'firstname': 'Yoshida',
+        'lastname': 'Nguyen Van'
+      },
+      {
+        'id': 4,
+        'firstname': 'Nakama',
+        'lastname': 'Pham Duc'
+      },
+    ];
+
     this.sortBy = [
       {
         id: 'dd',
@@ -110,93 +191,179 @@ export class MytodoComponent implements OnInit {
         label: 'Creator or last changed by'
       }
     ];
+
+    this.getSelectedPlants();
+    this.getSelectedCategories();
+    this.getSelectedDueDateStatuses();
+    this.getSelectedCreatorEditor();
   }
 
-  // filter plants
-  filterPlantMultiple(event) {
-    let query;
-    query = event.query;
-    this.plantService.getPlants().then(plants => {
-      this.filteredPlantsMultiple = this.filterPlant(query, plants);
-    });
+  ngOnDestroy() {
+
+    this.setSelectedPlants();
+    this.setSelectedCategories();
+    this.setSelectedDueDateStatuses();
+    this.setSelectedCreatorEditor();
   }
 
-  filterPlant(query, plants: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for ( let i = 0; i < plants.length; i++) {
-      let plant;
-      plant = plants[i];
-      if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
-        filtered.push(plant);
-      }
+  // get plants
+  getSelectedPlants() {
+    let myItem: any;
+    let key;
+    key = 'selectedPlant';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedPlant = myItem;
     }
-    return filtered;
+  }
+  // set plants
+  setSelectedPlants() {
+    let key;
+    key = 'selectedPlant';
+    localStorage.setItem(key, JSON.stringify(this.selectedPlant));
   }
 
-  // filter Due date
-  filterDueDateStatusMultiple(event) {
-    let query;
-    query = event.query;
-    this.dueDateService.getDueDates().then(dueDateStatuses => {
-      this.filteredDueDateStatusMultiple = this.filterDueDateStatus(query, dueDateStatuses);
-    });
-  }
-
-  filterDueDateStatus(query, dueDateStatuses: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for (let i = 0; i < dueDateStatuses.length; i++) {
-      let status;
-      status = dueDateStatuses[i];
-      if (status.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-        filtered.push(status);
-      }
+  // get categories
+  getSelectedCategories() {
+    let myItem: any;
+    let key;
+    key = 'selectedCategories';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedCategories = myItem;
     }
-    return filtered;
+  }
+  // set categories
+  setSelectedCategories() {
+    let key;
+    key = 'selectedCategories';
+    localStorage.setItem(key, JSON.stringify(this.selectedCategories));
   }
 
-  // filter category
-  filterCategoriesMultiple(event) {
-    let query;
-    query = event.query;
-    this.categoryService.getCategories().then(categories => {
-      this.filteredCategoriesMultiple = this.filterCategories(query, categories);
-    });
-  }
-
-  filterCategories(query, categories: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for (let i = 0; i < categories.length; i++) {
-      let category;
-      category = categories[i];
-      if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-        filtered.push(category);
-      }
+  // get due date statuses
+  getSelectedDueDateStatuses() {
+    let myItem: any;
+    let key;
+    key = 'selectedDueDateStatuses';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedDueDateStatuses = myItem;
     }
-    return filtered;
+  }
+  // set due date statuses
+  setSelectedDueDateStatuses() {
+    let key;
+    key = 'selectedDueDateStatuses';
+    localStorage.setItem(key, JSON.stringify(this.selectedDueDateStatuses));
   }
 
-  // filter Creator and changed person
-  filterCreatorChangedMultiple(event) {
-    let query;
-    query = event.query;
-    this.creatorChangedService.getCreatorChangeds().then(creatorChangeds => {
-      this.filteredCreatorChangedMultiple = this.filterCreatorChanged(query, creatorChangeds);
-    });
-  }
-
-  filterCreatorChanged(query, creatorChangeds: any[]): any[] {
-    let filtered;
-    filtered = [];
-    for (let i = 0; i < creatorChangeds.length; i++) {
-      let creatorChanged;
-      creatorChanged = creatorChangeds[i];
-      if (creatorChanged.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-        filtered.push(creatorChanged);
-      }
+  // get creator and editor
+  getSelectedCreatorEditor() {
+    let myItem: any;
+    let key;
+    key = 'selectedCreatorEditor';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedCreatorEditor = myItem;
     }
-    return filtered;
   }
+  // set creator and editor
+  setSelectedCreatorEditor() {
+    let key;
+    key = 'selectedCreatorEditor';
+    localStorage.setItem(key, JSON.stringify(this.selectedCreatorEditor));
+  }
+
+  // // filter plants
+  // filterPlantMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.plantService.getPlants().then(plants => {
+  //     this.filteredPlantsMultiple = this.filterPlant(query, plants);
+  //   });
+  // }
+
+  // filterPlant(query, plants: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for ( let i = 0; i < plants.length; i++) {
+  //     let plant;
+  //     plant = plants[i];
+  //     if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
+  //       filtered.push(plant);
+  //     }
+  //   }
+  //   return filtered;
+  // }
+
+  // // filter Due date
+  // filterDueDateStatusMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.dueDateService.getDueDates().then(dueDateStatuses => {
+  //     this.filteredDueDateStatusMultiple = this.filterDueDateStatus(query, dueDateStatuses);
+  //   });
+  // }
+
+  // filterDueDateStatus(query, dueDateStatuses: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for (let i = 0; i < dueDateStatuses.length; i++) {
+  //     let status;
+  //     status = dueDateStatuses[i];
+  //     if (status.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+  //       filtered.push(status);
+  //     }
+  //   }
+  //   return filtered;
+  // }
+
+  // // filter category
+  // filterCategoriesMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.categoryService.getCategories().then(categories => {
+  //     this.filteredCategoriesMultiple = this.filterCategories(query, categories);
+  //   });
+  // }
+
+  // filterCategories(query, categories: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for (let i = 0; i < categories.length; i++) {
+  //     let category;
+  //     category = categories[i];
+  //     if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+  //       filtered.push(category);
+  //     }
+  //   }
+  //   return filtered;
+  // }
+
+  // // filter Creator and changed person
+  // filterCreatorChangedMultiple(event) {
+  //   let query;
+  //   query = event.query;
+  //   this.creatorChangedService.getCreatorChangeds().then(creatorChangeds => {
+  //     this.filteredCreatorChangedMultiple = this.filterCreatorChanged(query, creatorChangeds);
+  //   });
+  // }
+
+  // filterCreatorChanged(query, creatorChangeds: any[]): any[] {
+  //   let filtered;
+  //   filtered = [];
+  //   for (let i = 0; i < creatorChangeds.length; i++) {
+  //     let creatorChanged;
+  //     creatorChanged = creatorChangeds[i];
+  //     if (creatorChanged.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+  //       filtered.push(creatorChanged);
+  //     }
+  //   }
+  //   return filtered;
+  // }
+
 }

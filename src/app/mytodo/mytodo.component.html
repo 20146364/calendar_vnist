@@ -38,29 +38,40 @@
             <p-checkbox name="groupSortBy" value={{category.val}} label={{category.label}} [(ngModel)]="selectedSortBy" inputId={{category.id}}></p-checkbox>
           </div>
       </div>
-      <!-- Selected caterogies: <span *ngFor="let category of selectedSortBy" style="margin-right:10px">{{category}}</span> -->
     </div>
     <hr>
     <div class="ui-g-12">
       <div class="ui-g-12"><label for="groupFilterBy">Plants</label></div>
-      <p-autoComplete [(ngModel)]="plantsList" [suggestions]="filteredPlantsMultiple" (completeMethod)="filterPlantMultiple($event)" styleClass="wid200"
+      <!-- <p-autoComplete [(ngModel)]="plantsList" [suggestions]="filteredPlantsMultiple" (completeMethod)="filterPlantMultiple($event)" styleClass="wid200"
         [minLength]="1" placeholder="Plants" field="name" [multiple]="true" scrollHeight="200px">
-      </p-autoComplete>
+      </p-autoComplete> -->
+      <ng-select2 [(ngModel)]="selectedPlant" [options]="multipleOptions">
+        <option *ngFor="let p of listPlants">{{p.name}}</option>
+      </ng-select2>
       <div class="ui-g-12"></div>
       <div class="ui-g-12"><label for="groupFilterBy">Categories</label></div>
-      <p-autoComplete [(ngModel)]="categoriesList" [suggestions]="filteredCategoriesMultiple" (completeMethod)="filterCategoriesMultiple($event)" styleClass="wid200"
+      <!-- <p-autoComplete [(ngModel)]="categoriesList" [suggestions]="filteredCategoriesMultiple" (completeMethod)="filterCategoriesMultiple($event)" styleClass="wid200"
         [minLength]="1" placeholder="Categories" field="name" [multiple]="true" scrollHeight="200px">
-      </p-autoComplete>
+      </p-autoComplete> -->
+      <ng-select2 [(ngModel)]="selectedCategories" [options]="multipleOptions">
+        <option *ngFor="let p of Categories">{{p.name}}</option>
+      </ng-select2>
       <div class="ui-g-12"></div>
       <div class="ui-g-12"><label for="groupFilterBy">Due Date Status</label></div>
-      <p-autoComplete [(ngModel)]="dueDateStatusList" [suggestions]="filteredDueDateStatusMultiple" (completeMethod)="filterDueDateStatusMultiple($event)" styleClass="wid200"
+      <!-- <p-autoComplete [(ngModel)]="dueDateStatusList" [suggestions]="filteredDueDateStatusMultiple" (completeMethod)="filterDueDateStatusMultiple($event)" styleClass="wid200"
         [minLength]="1" placeholder="Due Date Status" field="name" [multiple]="true" scrollHeight="200px">
-      </p-autoComplete>
+      </p-autoComplete> -->
+      <ng-select2 [(ngModel)]="selectedDueDateStatuses" [options]="multipleOptions">
+        <option *ngFor="let p of listDueDateStatuses">{{p.name}}</option>
+      </ng-select2>
       <div class="ui-g-12"></div>
       <div class="ui-g-12"><label for="groupFilterBy">Creator or last changed by</label></div>
-      <p-autoComplete [(ngModel)]="creatorChangedList" [suggestions]="filteredCreatorChangedMultiple" (completeMethod)="filterCreatorChangedMultiple($event)" styleClass="wid200"
+      <!-- <p-autoComplete [(ngModel)]="creatorChangedList" [suggestions]="filteredCreatorChangedMultiple" (completeMethod)="filterCreatorChangedMultiple($event)" styleClass="wid200"
         [minLength]="1" placeholder="Creator or last changed by" field="name" [multiple]="true" scrollHeight="200px">
-      </p-autoComplete>
+      </p-autoComplete> -->
+      <ng-select2 [(ngModel)]="selectedCreatorEditor" [options]="multipleOptions">
+        <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
+      </ng-select2>
     </div>
     </div>
 </div>

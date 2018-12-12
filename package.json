@@ -32,6 +32,7 @@
     "jquery": "^3.3.1",
     "locale-js": "^1.1.1",
     "moment": "^2.22.2",
+    "ng-select2": "^1.0.7-rc.1",
     "primeicons": "^1.0.0",
     "primeng": "^7.0.0",
     "rxjs": "^6.3.3",

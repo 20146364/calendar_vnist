@@ -117,54 +117,51 @@
       <p-accordionTab header="Element" class="accordion-header">
         <p-accordion [multiple]="true">
           <p-accordionTab header="Sevices" class="accordion-header">
-            <!-- <p-autoComplete [(ngModel)]="peopleToDosList" [suggestions]="filteredPeopleMultiple" (completeMethod)="filterPeopleMultiple($event)" styleClass="wid100"
-                [minLength]="1" placeholder="People" field="name" [multiple]="true" scrollHeight="200px">
-              </p-autoComplete> -->
               <!-- select2.org -->
-            <select  [(ngModel)]="seleteddemo" class="element-services-participating-people" multiple style="width: 100%">
-              <option>asdasd</option>
-              <option>vxcv</option>
-              <option>dfgd</option>
-              <option>erter</option>
-              <!-- <option *ngFor="let p of listParticipatingPeople " [ngValue]="p">{{p.firstname}}</option> -->
-            </select>
-            <label>{{seleteddemo}}</label>
             <label>Participating People</label>
-            <select  [(ngModel)]="selectedSCsPeople" class="element-services-participating-people" multiple="multiple" style="width: 100%">
+            <ng-select2 [(ngModel)]="selectedSCsPeople" [options]="multipleOptions">
               <option *ngFor="let p of listParticipatingPeople " [ngValue]="p">{{p.firstname}}</option>
-            </select>
-            <label>seleted person: {{selectedSCsPeople}}</label>
+            </ng-select2>
             <label>Status</label>
-            <select class="element-services-statuses" style="width: 100%">
+            <ng-select2 [(ngModel)]="selectedSCsStatus" [options]="singleOptions">
               <option *ngFor="let s of ticketStatuses">{{s.name}}</option>
-            </select>
-            
-            <!-- <p-dropdown [options]="statuses" [(ngModel)]="selectedStatus" placeholder="Select status" optionLabel="Status" [showClear]="true"></p-dropdown> -->
+            </ng-select2>
           </p-accordionTab>
           <p-accordionTab header="Outages" class="accordion-header">
             <label>Outages category</label>
-            <select class="element-outage-categories" multiple="multiple" style="width: 100%">
+            <!-- <select class="element-outage-categories" multiple="multiple" style="width: 100%">
               <option *ngFor="let c of outageCategories">{{c.name}}</option>
-            </select>
+            </select> -->
+            <ng-select2 [(ngModel)]="selectedOutageCategories" [options]="multipleOptions">
+              <option *ngFor="let c of outageCategories">{{c.name}}</option>
+            </ng-select2>
             <label>Status</label>
-            <select class="element-outage-statuses" style="width: 100%">
+            <!-- <select class="element-outage-statuses" style="width: 100%">
               <option *ngFor="let s of ticketStatuses">{{s.name}}</option>
-            </select>
+            </select> -->
+            <ng-select2 [(ngModel)]="selectedOutageStatus" [options]="singleOptions">
+              <option *ngFor="let s of ticketStatuses">{{s.name}}</option>
+            </ng-select2>
           </p-accordionTab>
           <p-accordionTab header="To-Dos" class="accordion-header">
-  
           </p-accordionTab>
         </p-accordion>
       </p-accordionTab>
       <p-accordionTab header="General" class="accordion-header">
         <label>Plants</label>
-        <select  class="general-plant" name="states[]" multiple="multiple" style="width: 100%">
+        <!-- <select  class="general-plant" name="states[]" multiple="multiple" style="width: 100%">
           <option *ngFor="let p of listPlants">{{p.name}}</option>
-        </select>
-        <label>Creator / Editor</label>
-        <select  class="general-creator-editor" name="states[]" multiple="multiple" style="width: 100%">
+        </select> -->
+        <ng-select2 [(ngModel)]="selectedPlant" [options]="multipleOptions">
+          <option *ngFor="let p of listPlants">{{p.name}}</option>
+        </ng-select2>
+        <label for="creator-editor">Creator / Editor</label>
+        <!-- <select  class="general-creator-editor" name="states[]" multiple="multiple" style="width: 100%">
           <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
-        </select>
+        </select> -->
+        <ng-select2 id="creator-editor" [(ngModel)]="selectedCreatorEditor" [options]="multipleOptions">
+          <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
+        </ng-select2>
         <label>Time Start</label>
         <div>
           <p-calendar [(ngModel)]="timeStart" [maxDate]="timeEnd" [showIcon]="true"></p-calendar>
@@ -175,93 +172,5 @@
         </div>
       </p-accordionTab>
     </p-accordion>
-
-    <!-- <p-accordion [multiple]="true">
-      <p-accordionTab header="Element filters" class="accordion-header">
-        <p-checkbox [(ngModel)]="myTimeSheetChecked" label="My TimeSheet" binary="true"></p-checkbox>
-          <p-accordion [multiple]="true">
-          <p-accordionTab header="My To-Do's" class="accordion-header">
-            <p-listbox [options]="calendarToDosStatus" [(ngModel)]="selectedTDTickets" checkbox="checkbox" optionLabel="name">
-            </p-listbox>
-          </p-accordionTab>
-          <p-accordionTab header="My Service Calls" class="accordion-header">
-            <p-listbox [options]="calendarSCsStatus" [(ngModel)]="selectedSCTickets" checkbox="checkbox" optionLabel="name">
-            </p-listbox>
-          </p-accordionTab>
-        </p-accordion>
-      </p-accordionTab>
-      <p-accordionTab header="General filters">
-        <div class="ui-g-12"><label>Plants</label></div>
-        <p-autoComplete [(ngModel)]="plantsList" [suggestions]="filteredPlantsMultiple" (completeMethod)="filterPlantMultiple($event)" styleClass="wid100"
-          [minLength]="1" placeholder="Plants" field="name" [multiple]="true" scrollHeight="200px">
-        </p-autoComplete>
-        <p-accordion [multiple]="true">
-          <p-accordionTab header="To-Do's">
-            <span class="ui-fluid">
-              <label>Categories</label>
-              <p-autoComplete [(ngModel)]="categoriesToDosList" [suggestions]="filteredCategoriesMultiple" (completeMethod)="filterCategoryMultiple($event)" styleClass="wid100"
-                [minLength]="1" placeholder="Categories" field="name" [multiple]="true" scrollHeight="200px">
-              </p-autoComplete>
-            </span>
-            <p-listbox [options]="plantStatus" [(ngModel)]="selectedToDosStatus" multiple="multiple" checkbox="checkbox" optionLabel="name">
-            </p-listbox>
-            <span class="ui-fluid">
-              <label>People</label>
-              <p-autoComplete [(ngModel)]="peopleToDosList" [suggestions]="filteredPeopleMultiple" (completeMethod)="filterPeopleMultiple($event)" styleClass="wid100"
-                [minLength]="1" placeholder="People" field="name" [multiple]="true" scrollHeight="200px">
-              </p-autoComplete>
-            </span>
-          </p-accordionTab>
-          <p-accordionTab header="Tickets">
-            <span class="ui-fluid">
-              <label>Categories</label>
-              <p-autoComplete [(ngModel)]="categoriesTicketsList" [suggestions]="filteredCategoriesMultiple" (completeMethod)="filterCategoryMultiple($event)" styleClass="wid100"
-                [minLength]="1" placeholder="Categories" field="name" [multiple]="true" scrollHeight="200px">
-              </p-autoComplete>
-            </span>
-            <p-listbox [options]="plantStatus" [(ngModel)]="selectedTicketsStatus" multiple="multiple" checkbox="checkbox" optionLabel="name">
-            </p-listbox>
-            <span class="ui-fluid">
-              <label>People</label>
-              <p-autoComplete [(ngModel)]="peopleTicketsList" [suggestions]="filteredPeopleMultiple" (completeMethod)="filterPeopleMultiple($event)" styleClass="wid100"
-                [minLength]="1" placeholder="People" field="name" [multiple]="true" scrollHeight="200px">
-              </p-autoComplete>
-            </span>
-          </p-accordionTab>
-          <p-accordionTab header="Service Calls">
-            <span class="ui-fluid">
-              <label>Categories</label>
-              <p-autoComplete [(ngModel)]="categoriesSCsList" [suggestions]="filteredCategoriesMultiple" (completeMethod)="filterCategoryMultiple($event)" styleClass="wid100"
-                [minLength]="1" placeholder="Categories" field="name" [multiple]="true" scrollHeight="200px">
-              </p-autoComplete>
-            </span>
-            <p-listbox [options]="plantStatus" [(ngModel)]="selectedSCsStatus" multiple="multiple" checkbox="checkbox" optionLabel="name">
-            </p-listbox>
-            <span class="ui-fluid">
-              <label>People</label>
-              <p-autoComplete [(ngModel)]="peopleSCsList" [suggestions]="filteredPeopleMultiple" (completeMethod)="filterPeopleMultiple($event)" styleClass="wid100"
-                [minLength]="1" placeholder="People" field="name" [multiple]="true" scrollHeight="200px">
-              </p-autoComplete>
-            </span>
-          </p-accordionTab>
-          <p-accordionTab header="Outages">
-            <span class="ui-fluid">
-              <label>Categories</label>
-              <p-autoComplete [(ngModel)]="categoriesOutagesList" [suggestions]="filteredCategoriesMultiple" (completeMethod)="filterCategoryMultiple($event)" styleClass="wid100"
-                [minLength]="1" placeholder="Categories" field="name" [multiple]="true" scrollHeight="200px">
-              </p-autoComplete>
-            </span>
-            <p-listbox [options]="plantStatus" [(ngModel)]="selectedOutagesStatus" multiple="multiple" checkbox="checkbox" optionLabel="name">
-            </p-listbox>
-            <span class="ui-fluid">
-              <label>People</label>
-              <p-autoComplete [(ngModel)]="peopleOutagesList" [suggestions]="filteredPeopleMultiple" (completeMethod)="filterPeopleMultiple($event)" styleClass="wid100"
-                [minLength]="1" placeholder="People" field="name" [multiple]="true" scrollHeight="200px">
-              </p-autoComplete>
-            </span>
-          </p-accordionTab>
-        </p-accordion>
-      </p-accordionTab>
-    </p-accordion> -->
   </div>
 </div>

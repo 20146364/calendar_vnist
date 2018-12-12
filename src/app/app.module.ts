@@ -22,21 +22,16 @@ import { ButtonModule } from 'primeng/primeng';
 import { TabViewModule } from 'primeng/primeng';
 import { CodeHighlighterModule } from 'primeng/primeng';
 import { InplaceModule } from 'primeng/primeng';
+import { NgSelect2Module } from 'ng-select2';
 
 import { AccordionModule } from 'primeng/components/accordion/accordion';
 import { ToolbarModule } from 'primeng/components/toolbar/toolbar';
 import { SplitButtonModule } from 'primeng/components/splitbutton/splitbutton';
 import {ListboxModule} from 'primeng/components/listbox/listbox';
-import {AutoCompleteModule} from 'primeng/components/autocomplete/autocomplete';
 import {ScrollPanelModule} from 'primeng/components/scrollpanel/scrollpanel';
-import {DropdownModule} from 'primeng/components/dropdown/dropdown';
 
 import { AuthenticationService } from './services/authentication.service';
 import { CalendarService } from './services/calendar.service';
-// import { TicketsService } from './services/tickets.service';
-import { PlantService } from './services/plant.service';
-import { CategoryService } from './services/category.service';
-import { PeopleService } from './services/people.service';
 
 @NgModule({
   declarations: [
@@ -45,7 +40,7 @@ import { PeopleService } from './services/people.service';
     EventDetailComponent,
     MytodoComponent,
     NewtodoComponent,
-    ComplianceComponent,
+    ComplianceComponent
   ],
   imports: [
     BrowserModule,
@@ -67,12 +62,11 @@ import { PeopleService } from './services/people.service';
     SplitButtonModule,
     AccordionModule,
     ListboxModule,
-    AutoCompleteModule,
     ScrollPanelModule,
-    DropdownModule,
+    NgSelect2Module,
     AppRoutingModule
   ],
-  providers: [AuthenticationService, CalendarService, PlantService, CategoryService, PeopleService],
+  providers: [AuthenticationService, CalendarService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

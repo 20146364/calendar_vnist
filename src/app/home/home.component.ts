@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, AfterViewChecked, OnDestroy  } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnChanges, OnDestroy  } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { CalendarService} from '../services/calendar.service';
@@ -8,12 +8,8 @@ import { ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as $ from 'jquery';
 import 'select2';
+import { Options } from 'select2';
 
-//  import {MenuItem,TreeNode} from 'primeng/components/common/api';
-//  import {TicketsService} from '../services/tickets.service';
-import {PlantService} from '../services/plant.service';
-import {CategoryService} from '../services/category.service';
-import {PeopleService} from '../services/people.service';
 import { forEach } from '@angular/router/src/utils/collection';
 
 const httpOptions = {
@@ -33,108 +29,44 @@ interface Ticket {
   styleUrls: ['./home.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
+export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
-  // Participating People SCs - sd
+  // select2 option
+  public multipleOptions: Options;
+  public singleOptions: Options;
+
+  // Participating People SCs
   listParticipatingPeople: any[];
-  // selected people SCs - sd
+  // selected people SCs
   selectedSCsPeople: any[];
-  seleteddemo: any;
 
-  // services status - sd
+  // services status
   ticketStatuses: any[];
+  // selected SCs status
+  selectedSCsStatus: any;
+  // selected outage status
+  selectedOutageStatus: any;
 
-  // categories Outage - sd
+  // categories Outage
   outageCategories: any[];
+  // selected categories Outage
+  selectedOutageCategories: any[];
 
-  // creator and editor - sd
+  // creator and editor
   listCreatorEditor: any[];
+  // selected creator and editor
+  selectedCreatorEditor: any[];
 
   // Plants list
   listPlants: any[];
+  // selected plants
+  selectedPlant: any[];
 
   // time start
   timeStart: Date;
 
   // time end
   timeEnd: Date;
-
-  singleSelect: any;
-
-  // Tickets tree
-  // calendarTicketsTree: TreeNode[];
-
-  // selectedCalendarTicketsTree: TreeNode[];
-
-  people: string[];
-
-  // show my timesheet in fullcalendar
-  myTimeSheetChecked = false;
-
-  // plants list
-  plantsList: any[];
-
-  // people todo list
-  peopleToDosList: any[];
-
-  // categories todo list
-  categoriesToDosList: any[];
-
-  // people tickets list
-  peopleTicketsList: any[];
-
-  // categories tickets list
-  categoriesTicketsList: any[];
-
-
-  // categories SCs list
-  categoriesSCsList: any[];
-
-  // people Outage list
-  peopleOutagesList: any[];
-
-  // categories Outage list
-  categoriesOutagesList: any[];
-
-  // suggestions people list
-  filteredPlantsMultiple: any[];
-
-  // suggestions people list
-  filteredPeopleMultiple: any[];
-
-  // suggestions categories list
-  filteredCategoriesMultiple: any[];
-
-  //  Calendar Tickets
-  calendarTickets: Ticket[];
-  selectedCalendarTickets: Ticket[];
-
-  //  calendar's status
-  calendarStatus: Ticket[];
-
-  calendarToDosStatus: any[];
-  calendarSCsStatus: any[];
-
-  //  Selected Service Call calendar
-  selectedSCTickets: Ticket[];
-
-  //  Selected Todos calendar
-  selectedTDTickets: Ticket[];
-
-  //  Selected Todos Plant
-  selectedToDosStatus: any[];
-
-  //  Selected Tickets Plant
-  selectedTicketsStatus: any[];
-
-  //  Selected SCs Plant
-  selectedSCsStatus: any[];
-
-  //  Selected Outages Plant
-  selectedOutagesStatus: any[];
-
-  // plant's status
-  plantStatus: any[];
 
   title = 'Calendar View';
 
@@ -170,10 +102,7 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
   // constructor(private calendarTicketsSrv: TicketsService, private calendarSrv: CalendarService, private router: Router) {
   constructor(private http: HttpClient,
               private calendarSrv: CalendarService,
-              private router: Router,
-              private plantService: PlantService,
-              private categoryService: CategoryService,
-              private peopleService: PeopleService, ) {
+              private router: Router) {
     this.header = {
       left: 'prev,next today',
       center: 'title',
@@ -194,26 +123,25 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
 
   ngOnInit() {
 
-    // this.getSelectedSCsPeople();
-    // this.initListPlant();
+    this.multipleOptions = {
+      width: '100%',
+      multiple: true,
+      tags: true
+    };
+    this.singleOptions = {
+      width: '100%',
+      tags: true
+    };
 
+    this.getSelectedSCsPeople();
+    this.getSelectedSCsStatus();
+    this.getSelectedOutageStatus();
+    this.getSelectedOutageCategories();
+    this.getSelectedPlant();
+    this.getSelectedCreatorEditor();
+    this.getSelectedTimeStart();
+    this.getSelectedTimeEnd();
 
-    // this.getPlantsList();
-    // this.getCategoriesToDosList();
-    // this.getPeopleToDosList();
-    // this.getCategoriesTicketsList();
-    // this.getPeopleTicketsList();
-    // this.getCategoriesSCsList();
-    // this.getPeopleSCsList();
-    // this.getCategoriesOutagesList();
-    // this.getPeopleOutagesList();
-    // this.getMyTimeSheetChecked();
-    // this.getSelectedSCTickets();
-    // this.getSelectedToDosStatus();
-    // this.getSelectedTicketsStatus();
-    // this.getSelectedSCsStatus();
-    // this.getSelectedOutagesStatus();
-    // this.getSelectedTDTickets();
     // this.doGet();
 
     this.listParticipatingPeople = [
@@ -371,68 +299,26 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       },
     ];
 
-
-
-    this.calendarTickets = [
-      {name: 'My TimeSheet', value: 'This is my calendar'}
-    ];
-
-    this.calendarToDosStatus = [
-      {name: 'Planted To-Do\'s', value: 'This is Planted To-Do\'s'},
-      {name: 'Started To-Do\'s', value: 'This is Started To-Do\'s'},
-      {name: 'Completed To-Do\'s', value: 'This is Completed To-Do\'s'},
-    ];
-
-    this.calendarSCsStatus = [
-      {name: 'Planted SCs', value: 'This is Planted SCs'},
-      {name: 'Started SCs', value: 'This is Started SCs'},
-      {name: 'Completed SCs', value: 'This is Completed SCs'},
-    ];
-
-    this.plantStatus = [
-      {name: 'Not yet due (blue)', value: 'Not yet due'},
-      {name: 'Due (yellow, orange)', value: 'Due'},
-      {name: 'Overdue (red)', value: 'Overdue'},
-      {name: 'Completed (green)', value: 'Completed'},
-    ];
-
     //  this.calendarTicketsSrv.getMyCalendarTickets().then(files => this.calendarTicketsTree = files);
   }
 
-  ngAfterViewInit() {
-    this.initListParticipatingPeople();
-    this.initOutageStatues();
-    this.initSCsStatues();
-    this.initOutageCategories();
-    this.initListCreatorEditor();
-    this.initListPlant();
+  ngOnChanges() {
+
   }
 
-  ngAfterViewChecked() {
-    // this.initListPlant();
-
+  ngAfterViewInit() {
   }
 
   ngOnDestroy() {
 
-    // this.setSelectedSCsPeople();
-
-    // this.setPlantsList();
-    // this.setCategoriesToDosList();
-    // this.setPeopleToDosList();
-    // this.setCategoriesTicketsList();
-    // this.setPeopleTicketsList();
-    // this.setCategoriesSCsList();
-    // this.setPeopleSCsList();
-    // this.setCategoriesOutagesList();
-    // this.setPeopleOutagesList();
-    // this.setMyTimeSheetChecked();
-    // this.setSelectedSCTickets();
-    // this.setSelectedToDosStatus();
-    // this.setSelectedTicketsStatus();
-    // this.setSelectedSCsStatus();
-    // this.setSelectedOutagesStatus();
-    // this.setSelectedTDTickets();
+    this.setSelectedSCsPeople();
+    this.setSelectedSCsStatus();
+    this.setSelectedOutageStatus();
+    this.setSelectedOutageCategories();
+    this.setSelectedPlant();
+    this.setSelectedCreatorEditor();
+    this.setSelectedTimeStart();
+    this.setSelectedTimeEnd();
   }
 
   handleDayClick(event) {
@@ -532,86 +418,7 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     selectedDate.gotoDate(date);
   }
 
-  // init Services participating people
-  initListParticipatingPeople() {
-    $('.element-services-participating-people').select2({
-      // ajax: {
-      //   // $.ajax('/people/fetch?ids=48', { headers: { 'Accept': 'application/json' } }).done((data) =>{console.log(data)});
-      //   url: '/people/fetch?ids=48',
-      //   headers: { 'Accept': 'application/json' },
-      //   dataType: 'json'
-      //   // data: function (params) {
-      //   //   return {
-      //   //     q: params.term, // search term
-      //   //     page: params.page
-      //   //   };
-      // }
-
-
-    //   minimumInputLength: 2,
-    //   tags: [],
-    //   ajax: {
-    //     url: '/people/fetch?ids=48',
-    //     headers: { 'Accept': 'application/json' },
-    //     dataType: 'json',
-    //     type: 'GET',
-    //     delay: 250,
-    //     data: function (term) {
-    //       return {
-    //         term: term
-    //       };
-    //     },
-    //     results: function (data) {
-    //       return {
-    //         results: $.map(data, function (item) {
-    //           return {
-    //             text: item.fullname,
-    //             id: item.id
-    //           };
-    //         })
-    //       };
-    //     }
-    //   }
-    });
-
-
-    // $('.element-services-participating-people').on('change', function() {
-    //   let data;
-    //   data = [];
-    //   data.push($('.element-services-participating-people  option:selected').text());
-    //   // $("#test").val(data);
-    //   console.log('selected option');
-    //   console.log(data);
-    // });
-  }
-
-  // init Services participating people
-  initSCsStatues() {
-    $('.element-services-statuses').select2({
-    });
-  }
-
-  // init Services participating people
-  initOutageStatues() {
-    $('.element-outage-statuses').select2({
-    });
-  }
-
-  // init Outage categories
-  initOutageCategories() {
-    $('.element-outage-categories').select2({
-    });
-  }
-
-  // init creator and editor list
-  initListCreatorEditor() {
-    $('.general-creator-editor').select2({
-    });
-  }
-
-  // init plant list
-  initListPlant() {
-    $('.general-plant').select2({
+    // $('.general-plant').select2({
       // tags: true,
       // ajax: {
       //   url: '/plants/fetch',
@@ -638,75 +445,7 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       //   },
       //   cache: true
       // }
-    });
-  }
-
-
-  // // filter plants
-  // filterPlantMultiple(event) {
-  //   let query;
-  //   query = event.query;
-  //   this.plantService.getPlants().then(plants => {
-  //     this.filteredPlantsMultiple = this.filterPlant(query, plants);
-  //   });
-  // }
-
-  // filterPlant(query, plants: any[]): any[] {
-  //   let filtered;
-  //   filtered = [];
-  //   for ( let i = 0; i < plants.length; i++) {
-  //     let plant;
-  //     plant = plants[i];
-  //     if ( plant.name.toLowerCase().indexOf(query.toLowerCase() ) === 0) {
-  //       filtered.push(plant);
-  //     }
-  //   }
-  //   return filtered;
-  // }
-
-  // // filter people
-  // filterPeopleMultiple(event) {
-  //   let query;
-  //   query = event.query;
-  //   this.peopleService.getPeople().then(people => {
-  //     this.filteredPeopleMultiple = this.filterPerson(query, people);
-  //   });
-  // }
-
-  // filterPerson(query, people: any[]): any[] {
-  //   let filtered;
-  //   filtered = [];
-  //   for (let i = 0; i < people.length; i++) {
-  //     let person;
-  //     person = people[i];
-  //     if (person.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-  //       filtered.push(person);
-  //     }
-  //   }
-  //   return filtered;
-  // }
-
-  // // filter category
-  // filterCategoryMultiple(event) {
-  //   let query;
-  //   query = event.query;
-  //   this.categoryService.getCategories().then(categories => {
-  //     this.filteredCategoriesMultiple = this.filterCategory(query, categories);
-  //   });
-  // }
-
-  // filterCategory(query, categories: any[]): any[] {
-  //   let filtered;
-  //   filtered = [];
-  //   for (let i = 0; i < categories.length; i++) {
-  //     let category;
-  //     category = categories[i];
-  //     if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-  //       filtered.push(category);
-  //     }
-  //   }
-  //   return filtered;
-  // }
+    // });
 
   doGet() {
     // $.ajax('/people/fetch?ids=48', { headers: { 'Accept': 'application/json' } }).done((data) =>{console.log(data)});
@@ -733,19 +472,6 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
 
 // get SCs people
   getSelectedSCsPeople() {
-
-    // let stored_motivations;
-    // stored_motivations = JSON.parse(localStorage.getItem('element-services-participating-people'));
-    // if (stored_motivations !== null) {
-    //   $('.element-services-participating-people').each(function() {
-    //     for (let i = 0; i < stored_motivations.length; i++) {
-    //       if (this.value === stored_motivations[i]) {
-    //         this.selected = true;
-    //       }
-    //     }
-    //   });
-    // }
-    console.log(this.selectedSCsPeople);
     let myItem: any;
     let key;
     key = 'selectedSCsPeople';
@@ -754,290 +480,15 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       myItem = JSON.parse(myItem);
       this.selectedSCsPeople = myItem;
     }
-
-    console.log(this.selectedSCsPeople);
-    console.log('init: ');
-    console.log(localStorage);
   }
   // set SCs people
   setSelectedSCsPeople() {
-    // $('.element-services-participating-people').change(function() {
-    //   let selected;
-    //   selected = []; // create an array to hold all currently selected motivations
-    //   // loop through each available motivation
-    //   $('.element-services-participating-people').each(function() {
-    //     // if it's selected, add it to the array above
-    //     if (this.selected) {
-    //       selected.push(this.value);
-    //     }
-    //   });
-    //   // store the array of selected options
-    //   localStorage.setItem('element-services-participating-people', JSON.stringify(selected));
-    //   console.log(localStorage);
-    // });
-    console.log(this.selectedSCsPeople);
     let key;
     key = 'selectedSCsPeople';
     localStorage.setItem(key, JSON.stringify(this.selectedSCsPeople));
-    console.log(this.selectedSCsPeople);
-    console.log('destroy: ');
-    console.log(localStorage);
   }
 
-
-  // get old fillter plants list
-  getPlantsList() {
-    let myItem: any;
-    let key;
-    key = 'plantsList';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.plantsList = myItem;
-    }
-  }
-  // set current fillter plants list
-  setPlantsList() {
-    let key;
-    key = 'plantsList';
-    localStorage.setItem(key, JSON.stringify(this.plantsList));
-  }
-
-  // get old fillter category todo list
-  getCategoriesToDosList() {
-    let myItem: any;
-    let key;
-    key = 'categoriesToDosList';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.categoriesToDosList = myItem;
-    }
-  }
-  // set current fillter category todo list
-  setCategoriesToDosList() {
-    let key;
-    key = 'categoriesToDosList';
-    localStorage.setItem(key, JSON.stringify(this.categoriesToDosList));
-  }
-
-  // get old fillter people todo list
-  getPeopleToDosList() {
-    let myItem: any;
-    let key;
-    key = 'peopleToDosList';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.peopleToDosList = myItem;
-    }
-  }
-  // set current fillter people todo list
-  setPeopleToDosList() {
-    let key;
-    key = 'peopleToDosList';
-    localStorage.setItem(key, JSON.stringify(this.peopleToDosList));
-  }
-
-  // get old fillter category tickets list
-  getCategoriesTicketsList() {
-    let myItem: any;
-    let key;
-    key = 'categoriesTicketsList';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.categoriesTicketsList = myItem;
-    }
-  }
-  // set current fillter category tickets list
-  setCategoriesTicketsList() {
-    let key;
-    key = 'categoriesTicketsList';
-    localStorage.setItem(key, JSON.stringify(this.categoriesTicketsList));
-  }
-
-  // get old fillter people tickets list
-  getPeopleTicketsList() {
-    let myItem: any;
-    let key;
-    key = 'peopleTicketsList';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.peopleTicketsList = myItem;
-    }
-  }
-  // set current fillter people tickets list
-  setPeopleTicketsList() {
-    let key;
-    key = 'peopleTicketsList';
-    localStorage.setItem(key, JSON.stringify(this.peopleTicketsList));
-  }
-
-  // get old fillter category SCs list
-  getCategoriesSCsList() {
-    let myItem: any;
-    let key;
-    key = 'categoriesSCsList';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.categoriesSCsList = myItem;
-    }
-  }
-  // set current fillter category SCs list
-  setCategoriesSCsList() {
-    let key;
-    key = 'categoriesSCsList';
-    localStorage.setItem(key, JSON.stringify(this.categoriesSCsList));
-  }
-
-  // // get old fillter people SCs list
-  // getPeopleSCsList() {
-  //   let myItem: any;
-  //   let key;
-  //   key = 'peopleSCsList';
-  //   myItem = localStorage.getItem(key);
-  //   if (myItem !== 'undefined') {
-  //     myItem = JSON.parse(myItem);
-  //     this.peopleSCsList = myItem;
-  //   }
-  // }
-  // // set current fillter people SCs list
-  // setPeopleSCsList() {
-  //   let key;
-  //   key = 'peopleSCsList';
-  //   localStorage.setItem(key, JSON.stringify(this.peopleSCsList));
-  // }
-
-  // get old fillter category outages list
-  getCategoriesOutagesList() {
-    let myItem: any;
-    let key;
-    key = 'categoriesOutagesList';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.categoriesOutagesList = myItem;
-    }
-  }
-  // set current fillter category outages list
-  setCategoriesOutagesList() {
-    let key;
-    key = 'categoriesOutagesList';
-    localStorage.setItem(key, JSON.stringify(this.categoriesOutagesList));
-  }
-
-  // get old fillter people outages list
-  getPeopleOutagesList() {
-    let myItem: any;
-    let key;
-    key = 'peopleOutagesList';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.peopleOutagesList = myItem;
-    }
-  }
-  // set current fillter people outages list
-  setPeopleOutagesList() {
-    let key;
-    key = 'peopleOutagesList';
-    localStorage.setItem(key, JSON.stringify(this.peopleOutagesList));
-  }
-
-  // get old fillter My timesheet checkbox
-  getMyTimeSheetChecked() {
-    let myItem: any;
-    let key;
-    key = 'myTimeSheetChecked';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.myTimeSheetChecked = myItem;
-    }
-  }
-  // set current fillter My timesheet checkbox
-  setMyTimeSheetChecked() {
-    let key;
-    key = 'myTimeSheetChecked';
-    localStorage.setItem(key, JSON.stringify(this.myTimeSheetChecked));
-  }
-
-  // get old fillter My timesheet checkbox
-  getSelectedTDTickets() {
-    let myItem: any;
-    let key;
-    key = 'selectedTDTickets';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.selectedTDTickets = myItem;
-    }
-  }
-  // set current fillter My timesheet checkbox
-  setSelectedTDTickets() {
-    let key;
-    key = 'selectedTDTickets';
-    localStorage.setItem(key, JSON.stringify(this.selectedTDTickets));
-  }
-
-  // get old fillter My timesheet checkbox
-  getSelectedSCTickets() {
-    let myItem: any;
-    let key;
-    key = 'selectedSCTickets';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.selectedSCTickets = myItem;
-    }
-  }
-  // set current fillter My timesheet checkbox
-  setSelectedSCTickets() {
-    let key;
-    key = 'selectedSCTickets';
-    localStorage.setItem(key, JSON.stringify(this.selectedSCTickets));
-  }
-
-  // get old fillter My timesheet checkbox
-  getSelectedToDosStatus() {
-    let myItem: any;
-    let key;
-    key = 'selectedToDosStatus';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.selectedToDosStatus = myItem;
-    }
-  }
-  // set current fillter My timesheet checkbox
-  setSelectedToDosStatus() {
-    let key;
-    key = 'selectedToDosStatus';
-    localStorage.setItem(key, JSON.stringify(this.selectedToDosStatus));
-  }
-
-  // get old fillter My timesheet checkbox
-  getSelectedTicketsStatus() {
-    let myItem: any;
-    let key;
-    key = 'selectedTicketsStatus';
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.selectedTicketsStatus = myItem;
-    }
-  }
-  // set current fillter My timesheet checkbox
-  setSelectedTicketsStatus() {
-    let key;
-    key = 'selectedTicketsStatus';
-    localStorage.setItem(key, JSON.stringify(this.selectedTicketsStatus));
-  }
-
-  // get old fillter My timesheet checkbox
+  // get SCs status
   getSelectedSCsStatus() {
     let myItem: any;
     let key;
@@ -1048,29 +499,119 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       this.selectedSCsStatus = myItem;
     }
   }
-  // set current fillter My timesheet checkbox
+  // set SCs status
   setSelectedSCsStatus() {
     let key;
     key = 'selectedSCsStatus';
     localStorage.setItem(key, JSON.stringify(this.selectedSCsStatus));
   }
 
-  // get old fillter My timesheet checkbox
-  getSelectedOutagesStatus() {
+  // get SCs status
+  getSelectedOutageCategories() {
     let myItem: any;
     let key;
-    key = 'selectedOutagesStatus';
+    key = 'selectedOutageCategories';
     myItem = localStorage.getItem(key);
     if (myItem !== 'undefined') {
       myItem = JSON.parse(myItem);
-      this.selectedOutagesStatus = myItem;
+      this.selectedOutageCategories = myItem;
     }
   }
-  // set current fillter My timesheet checkbox
-  setSelectedOutagesStatus() {
+  // set SCs status
+  setSelectedOutageCategories() {
     let key;
-    key = 'selectedOutagesStatus';
-    localStorage.setItem(key, JSON.stringify(this.selectedOutagesStatus));
+    key = 'selectedOutageCategories';
+    localStorage.setItem(key, JSON.stringify(this.selectedOutageCategories));
+  }
+
+  // get outage status
+  getSelectedOutageStatus() {
+    let myItem: any;
+    let key;
+    key = 'selectedOutageStatus';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedOutageStatus = myItem;
+    }
+  }
+  // set outage status
+  setSelectedOutageStatus() {
+    let key;
+    key = 'selectedOutageStatus';
+    localStorage.setItem(key, JSON.stringify(this.selectedOutageStatus));
+  }
+
+  // get plants
+  getSelectedPlant() {
+    let myItem: any;
+    let key;
+    key = 'selectedPlant';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedPlant = myItem;
+    }
+  }
+  // set plants
+  setSelectedPlant() {
+    let key;
+    key = 'selectedPlant';
+    localStorage.setItem(key, JSON.stringify(this.selectedPlant));
+  }
+
+  // get creator and editor
+  getSelectedCreatorEditor() {
+    let myItem: any;
+    let key;
+    key = 'selectedCreatorEditor';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.selectedCreatorEditor = myItem;
+    }
+  }
+  // set creator and editor
+  setSelectedCreatorEditor() {
+    let key;
+    key = 'selectedCreatorEditor';
+    localStorage.setItem(key, JSON.stringify(this.selectedCreatorEditor));
+  }
+
+  // get time start
+  getSelectedTimeStart() {
+    let myItem: any;
+    let key;
+    key = 'selectedTimeStart';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined' && myItem !== null ) {
+      myItem = JSON.parse(myItem);
+      this.timeStart = new Date(myItem);
+    }
+  }
+  // set time start
+  setSelectedTimeStart() {
+    let key;
+    key = 'selectedTimeStart';
+    localStorage.setItem(key, JSON.stringify(this.timeStart));
+  }
+
+  // get time end
+  getSelectedTimeEnd() {
+    let myItem: any;
+    let key;
+    key = 'selectedTimeEnd';
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined' && myItem !== null ) {
+      myItem = JSON.parse(myItem);
+      this.timeEnd = new Date(myItem);
+    }
+  }
+  // set time end
+  setSelectedTimeEnd() {
+    let key;
+    key = 'selectedTimeEnd';
+    localStorage.setItem(key, JSON.stringify(this.timeEnd));
   }
 }
 
