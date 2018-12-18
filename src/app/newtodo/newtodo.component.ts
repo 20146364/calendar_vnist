@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NewtodoComponent implements OnInit {
 
-  title: string = "New todo";
+  title = 'New todo';
 
   constructor() { }
 

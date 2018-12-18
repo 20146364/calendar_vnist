@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ComplianceComponent implements OnInit {
 
-  title: string = "Compliance View";
+  title = 'Compliance View';
 
   constructor() { }
 

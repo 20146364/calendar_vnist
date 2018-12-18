@@ -1,6 +1,6 @@
 import { Component, OnInit  } from '@angular/core';
-import { CalendarService } from "../services/calendar.service"
-import { Router } from '@angular/router'
+import { CalendarService } from '../services/calendar.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-event-detail',
@@ -16,7 +16,7 @@ export class EventDetailComponent implements OnInit {
 
   ngOnInit() {
     this.selectedEvent = this.calendarSrv.getSelectedEvent();
-    if (this.calendarSrv.getSelectedEvent() == 0) {
+    if (this.calendarSrv.getSelectedEvent() === 0) {
       this.router.navigate(['/']);
     } else {
       console.log(this.selectedEvent);

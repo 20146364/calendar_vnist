@@ -29,9 +29,12 @@ import { ToolbarModule } from 'primeng/components/toolbar/toolbar';
 import { SplitButtonModule } from 'primeng/components/splitbutton/splitbutton';
 import {ListboxModule} from 'primeng/components/listbox/listbox';
 import {ScrollPanelModule} from 'primeng/components/scrollpanel/scrollpanel';
+import {SelectButtonModule} from 'primeng/components/selectbutton/selectbutton';
+import {RadioButtonModule} from 'primeng/components/radiobutton/radiobutton';
 
 import { AuthenticationService } from './services/authentication.service';
 import { CalendarService } from './services/calendar.service';
+import { PlantsService } from './services/plants.service';
 
 @NgModule({
   declarations: [
@@ -63,10 +66,12 @@ import { CalendarService } from './services/calendar.service';
     AccordionModule,
     ListboxModule,
     ScrollPanelModule,
+    SelectButtonModule,
+    RadioButtonModule,
     NgSelect2Module,
     AppRoutingModule
   ],
-  providers: [AuthenticationService, CalendarService],
+  providers: [AuthenticationService, CalendarService, PlantsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

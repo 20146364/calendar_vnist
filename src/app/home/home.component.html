@@ -23,6 +23,7 @@
                 timezone="local"
                 [(options)] = "options"
                 id="calendar"
+                height="800px"
                 #gotoSelectedDate></p-schedule>
     <p-dialog header="Event Details" [(visible)]="dialogVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
               [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150">
@@ -111,66 +112,67 @@
   </div>
   <!-- Filter -->
   <div class="ui-g-3">
-    <div class="ui-g-12"><br /><br /></div>
-    <p-calendar [(ngModel)]="selectedDate" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [inline]="true" (onSelect)="gotoDate($event, gotoSelectedDate)"></p-calendar>
-    <p-accordion [multiple]="true">
-      <p-accordionTab header="Element" class="accordion-header">
+    <div class="ui-g-12"><br /></div>
+    <div class="ui-g-12">
+      <p-scrollPanel [style]="{width: '100%', height: '510px'}">
+        <p-calendar [(ngModel)]="selectedDate" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [inline]="true" (onSelect)="gotoDate($event, gotoSelectedDate)"></p-calendar>
         <p-accordion [multiple]="true">
-          <p-accordionTab header="Sevices" class="accordion-header">
-              <!-- select2.org -->
-            <label>Participating People</label>
-            <ng-select2 [(ngModel)]="selectedSCsPeople" [options]="multipleOptions">
-              <option *ngFor="let p of listParticipatingPeople " [ngValue]="p">{{p.firstname}}</option>
-            </ng-select2>
-            <label>Status</label>
-            <ng-select2 [(ngModel)]="selectedSCsStatus" [options]="singleOptions">
-              <option *ngFor="let s of ticketStatuses">{{s.name}}</option>
-            </ng-select2>
+          <p-accordionTab header="Element" class="accordion-header">
+            <p-accordion [multiple]="true">
+              <p-accordionTab header="Sevices" class="accordion-header">
+                  <!-- select2.org -->
+                <label>Participating People</label>
+                <ng-select2 [(ngModel)]="selectedSCsPeople" [options]="multipleOptions">
+                  <option *ngFor="let p of listParticipatingPeople " [ngValue]="p">{{p.firstname}}</option>
+                </ng-select2>
+                <label>Status</label>
+                <ng-select2 [(ngModel)]="selectedSCsStatus" [options]="singleOptions">
+                  <option *ngFor="let s of ticketStatuses">{{s.name}}</option>
+                </ng-select2>
+              </p-accordionTab>
+              <p-accordionTab header="Outages" class="accordion-header">
+                <label>Outages category</label>
+                <!-- <select class="element-outage-categories" multiple="multiple" style="width: 100%">
+                  <option *ngFor="let c of outageCategories">{{c.name}}</option>
+                </select> -->
+                <ng-select2 [(ngModel)]="selectedOutageCategories" [options]="multipleOptions">
+                  <option *ngFor="let c of outageCategories">{{c.name}}</option>
+                </ng-select2>
+                <label>Status</label>
+                <!-- <select class="element-outage-statuses" style="width: 100%">
+                  <option *ngFor="let s of ticketStatuses">{{s.name}}</option>
+                </select> -->
+                <ng-select2 [(ngModel)]="selectedOutageStatus" [options]="singleOptions">
+                  <option *ngFor="let s of ticketStatuses">{{s.name}}</option>
+                </ng-select2>
+              </p-accordionTab>
+              <p-accordionTab header="To-Dos" class="accordion-header">
+              </p-accordionTab>
+            </p-accordion>
           </p-accordionTab>
-          <p-accordionTab header="Outages" class="accordion-header">
-            <label>Outages category</label>
-            <!-- <select class="element-outage-categories" multiple="multiple" style="width: 100%">
-              <option *ngFor="let c of outageCategories">{{c.name}}</option>
-            </select> -->
-            <ng-select2 [(ngModel)]="selectedOutageCategories" [options]="multipleOptions">
-              <option *ngFor="let c of outageCategories">{{c.name}}</option>
+          <p-accordionTab header="General" class="accordion-header">
+            <label>Plants</label>
+            <ng-select2 [(ngModel)]="selectedPlant" [options]="multiplePlantsOptions">
+              <option *ngFor="let p of listPlants">{{p.name}}</option>
             </ng-select2>
-            <label>Status</label>
-            <!-- <select class="element-outage-statuses" style="width: 100%">
-              <option *ngFor="let s of ticketStatuses">{{s.name}}</option>
+            <label for="creator-editor">Creator / Editor</label>
+            <!-- <select  class="general-creator-editor" name="states[]" multiple="multiple" style="width: 100%">
+              <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
             </select> -->
-            <ng-select2 [(ngModel)]="selectedOutageStatus" [options]="singleOptions">
-              <option *ngFor="let s of ticketStatuses">{{s.name}}</option>
+            <ng-select2 id="creator-editor" [(ngModel)]="selectedCreatorEditor" [options]="multipleOptions">
+              <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
             </ng-select2>
-          </p-accordionTab>
-          <p-accordionTab header="To-Dos" class="accordion-header">
+            <label>Time Start</label>
+            <div>
+              <p-calendar [(ngModel)]="timeStart" [maxDate]="timeEnd" [showIcon]="true"></p-calendar>
+            </div>
+            <label>Time End</label>
+            <div>
+              <p-calendar [(ngModel)]="timeEnd" [minDate]="timeStart" [showIcon]="true"></p-calendar>
+            </div>
           </p-accordionTab>
         </p-accordion>
-      </p-accordionTab>
-      <p-accordionTab header="General" class="accordion-header">
-        <label>Plants</label>
-        <!-- <select  class="general-plant" name="states[]" multiple="multiple" style="width: 100%">
-          <option *ngFor="let p of listPlants">{{p.name}}</option>
-        </select> -->
-        <ng-select2 [(ngModel)]="selectedPlant" [options]="multipleOptions">
-          <option *ngFor="let p of listPlants">{{p.name}}</option>
-        </ng-select2>
-        <label for="creator-editor">Creator / Editor</label>
-        <!-- <select  class="general-creator-editor" name="states[]" multiple="multiple" style="width: 100%">
-          <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
-        </select> -->
-        <ng-select2 id="creator-editor" [(ngModel)]="selectedCreatorEditor" [options]="multipleOptions">
-          <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
-        </ng-select2>
-        <label>Time Start</label>
-        <div>
-          <p-calendar [(ngModel)]="timeStart" [maxDate]="timeEnd" [showIcon]="true"></p-calendar>
-        </div>
-        <label>Time End</label>
-        <div>
-          <p-calendar [(ngModel)]="timeEnd" [minDate]="timeStart" [showIcon]="true"></p-calendar>
-        </div>
-      </p-accordionTab>
-    </p-accordion>
+      </p-scrollPanel>
+    </div>
   </div>
 </div>

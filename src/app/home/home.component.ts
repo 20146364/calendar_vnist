@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, OnChanges, OnDestroy  } from '@angula
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { CalendarService} from '../services/calendar.service';
+import { PlantsService} from '../services/plants.service';
 import * as crypto from 'crypto-js';
 import { Config } from '../services/config';
 import { ViewEncapsulation } from '@angular/core';
@@ -14,7 +15,9 @@ import { forEach } from '@angular/router/src/utils/collection';
 
 const httpOptions = {
   headers: new HttpHeaders({
-    'Accept':  'application/json'
+    'accept': 'application/json',
+    'accept-language': 'en-US,en;q=0.9,vi;q=0.8,ja;q=0.7',
+    'x-requested-with': 'XMLHttpRequest'
   })
 };
 
@@ -34,6 +37,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // select2 option
   public multipleOptions: Options;
   public singleOptions: Options;
+  public multiplePlantsOptions: Options;
 
   // Participating People SCs
   listParticipatingPeople: any[];
@@ -98,10 +102,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     'showNonCurrentDates': false,
   };
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
-
-  // constructor(private calendarTicketsSrv: TicketsService, private calendarSrv: CalendarService, private router: Router) {
   constructor(private http: HttpClient,
               private calendarSrv: CalendarService,
+              private plantsSrv: PlantsService,
               private router: Router) {
     this.header = {
       left: 'prev,next today',
@@ -119,6 +122,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     //    }, error => {
     //      console.log('error');
     //    })
+
   }
 
   ngOnInit() {
@@ -132,7 +136,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       width: '100%',
       tags: true
     };
-
+    this.multiplePlantsOptions = {
+      width: '100%',
+      multiple: true,
+      tags: true
+    };
+    this.initPlantsList();
     this.getSelectedSCsPeople();
     this.getSelectedSCsStatus();
     this.getSelectedOutageStatus();
@@ -141,6 +150,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.getSelectedCreatorEditor();
     this.getSelectedTimeStart();
     this.getSelectedTimeEnd();
+
+    // this.http.get('/plants/fetch', httpOptions).subscribe(data => {
+    //   this.listPlants = [];
+    //   console.log(data);
+    //   // for (let i = 0; i < data['data'].length; i++) {
+    //   //   this.listPlants.push(data['data'][i]);
+    //   //   console.log(this.listPlants[i].name);
+    //   // }
+    //   // // this.listPlants.forEach(element => {
+    //   // //   console.log(element.name);
+    //   // // });
+    //   // console.log(this.listPlants);
+    // });
+
 
     // this.doGet();
 
@@ -418,34 +441,29 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     selectedDate.gotoDate(date);
   }
 
-    // $('.general-plant').select2({
-      // tags: true,
-      // ajax: {
-      //   url: '/plants/fetch',
-      //   headers: { 'Accept': 'application/json' },
-      //   dataType: 'json',
-      //   type: 'GET',
-      //   delay: 250,
-      //   data: function (term) {
-      //     return {
-      //       term: term
-      //     };
-      //   },
-      //   success: function(data) {
-      //     this.listPlants = [];
-      //     // console.log(data);
-      //     for (let i = 0; i < data.data.length; i++) {
-      //       this.listPlants.push(data.data[i]);
-      //       console.log(this.listPlants[i].name);
-      //     }
-      //     // this.listPlants.forEach(element => {
-      //     //   console.log(element.name);
-      //     // });
-      //     console.log(this.listPlants);
-      //   },
-      //   cache: true
-      // }
-    // });
+  async initPlantsList() {
+    let plantslist;
+    plantslist = [];
+    plantslist = await fetch(Config.api_endpoint + 'plants/fetch', {
+    'credentials': 'include',
+    'headers': {
+      'accept': 'application/json',
+      'accept-language': 'en-US,en;q=0.9,vi;q=0.8,ja;q=0.7',
+      'x-requested-with': 'XMLHttpRequest'
+    },
+    'referrer': Config.api_endpoint + 'angular-calendar/',
+    'referrerPolicy': 'no-referrer-when-downgrade',
+    'body': null,
+    'method': 'GET',
+    'mode': 'cors'
+    }).then(function(response) {
+      return response.json();
+    });
+    this.listPlants = plantslist.data;
+    console.log('this is plants list');
+    console.log(this.listPlants);
+  }
+
 
   doGet() {
     // $.ajax('/people/fetch?ids=48', { headers: { 'Accept': 'application/json' } }).done((data) =>{console.log(data)});
@@ -530,7 +548,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let key;
     key = 'selectedOutageStatus';
     myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
+    if (myItem !== 'undefined' && myItem !== null) {
       myItem = JSON.parse(myItem);
       this.selectedOutageStatus = myItem;
     }
@@ -547,17 +565,30 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedPlant';
+    console.log('init:');
+    console.log('localStorage:');
+    console.log(localStorage);
+
     myItem = localStorage.getItem(key);
+    console.log('my Item:');
+    console.log(myItem);
     if (myItem !== 'undefined') {
       myItem = JSON.parse(myItem);
       this.selectedPlant = myItem;
     }
+    console.log('selected Plant:');
+    console.log(this.selectedPlant);
   }
   // set plants
   setSelectedPlant() {
     let key;
+    console.log('destroy:');
+    console.log('selected Plant:');
+    console.log(this.selectedPlant);
     key = 'selectedPlant';
     localStorage.setItem(key, JSON.stringify(this.selectedPlant));
+    console.log('localStorage:');
+    console.log(localStorage);
   }
 
   // get creator and editor
@@ -570,10 +601,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       myItem = JSON.parse(myItem);
       this.selectedCreatorEditor = myItem;
     }
+    console.log('creator and editor:');
+    console.log(this.selectedCreatorEditor);
   }
   // set creator and editor
   setSelectedCreatorEditor() {
     let key;
+    console.log('creator and editor:');
+    console.log(this.selectedCreatorEditor);
     key = 'selectedCreatorEditor';
     localStorage.setItem(key, JSON.stringify(this.selectedCreatorEditor));
   }
