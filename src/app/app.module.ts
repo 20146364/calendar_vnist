@@ -35,6 +35,7 @@ import {RadioButtonModule} from 'primeng/components/radiobutton/radiobutton';
 import { AuthenticationService } from './services/authentication.service';
 import { CalendarService } from './services/calendar.service';
 import { PlantsService } from './services/plants.service';
+import { ParticipatingPeopleService } from './services/participating-people.service';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,7 @@ import { PlantsService } from './services/plants.service';
     NgSelect2Module,
     AppRoutingModule
   ],
-  providers: [AuthenticationService, CalendarService, PlantsService],
+  providers: [AuthenticationService, CalendarService, PlantsService, ParticipatingPeopleService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

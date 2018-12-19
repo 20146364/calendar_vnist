@@ -3,19 +3,19 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class PlantsService {
+export class ParticipatingPeopleService {
 
   constructor() { }
 
-  getListPlants() {
-    let listPlants = null;
+  getListParticipatingPeople() {
+    let listParticipatingPeople = null;
     let myItem: any;
     let key;
-    key = 'localPlant';
+    key = 'localParticipatingPeople';
     myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null) {
-      listPlants = JSON.parse(myItem);
+      listParticipatingPeople = JSON.parse(myItem);
     }
-    return listPlants;
+    return listParticipatingPeople;
   }
 }

@@ -123,7 +123,7 @@
                   <!-- select2.org -->
                 <label>Participating People</label>
                 <ng-select2 [(ngModel)]="selectedSCsPeople" [options]="multipleOptions">
-                  <option *ngFor="let p of listParticipatingPeople " [ngValue]="p">{{p.firstname}}</option>
+                  <option *ngFor="let p of listParticipatingPeople " [ngValue]="p">{{p.name}}</option>
                 </ng-select2>
                 <label>Status</label>
                 <ng-select2 [(ngModel)]="selectedSCsStatus" [options]="singleOptions">

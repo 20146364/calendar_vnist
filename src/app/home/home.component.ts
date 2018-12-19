@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { CalendarService} from '../services/calendar.service';
 import { PlantsService} from '../services/plants.service';
+import { ParticipatingPeopleService} from '../services/participating-people.service';
 import * as crypto from 'crypto-js';
 import { Config } from '../services/config';
 import { ViewEncapsulation } from '@angular/core';
@@ -107,6 +108,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   constructor(private http: HttpClient,
               private calendarSrv: CalendarService,
               private plantsSrv: PlantsService,
+              private participatingPeopleSrv: ParticipatingPeopleService,
               private router: Router) {
     this.header = {
       left: 'prev,next today',
@@ -125,9 +127,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     //      console.log('error');
     //    })
 
-    // this.initPlantsList();
-    // this.plantsSrv.getListPlants()
-    // .subscribe(data => this.listPlants = data);
   }
 
   ngOnInit() {
@@ -146,11 +145,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       multiple: true,
       tags: true
     };
-    // this.getPlants();
-    this.initPlantsList();
-    console.log('after init listPlants out:', this.listPlants);
-    // this.listPlants = this.listPlant;
-    // this.getLocalPlant();
+    this.initListPlants();
+    this.initListParticipatingPeople();
     this.getSelectedSCsPeople();
     this.getSelectedSCsStatus();
     this.getSelectedOutageStatus();
@@ -159,8 +155,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.getSelectedPlant();
     this.getSelectedTimeStart();
     this.getSelectedTimeEnd();
-    console.log('oninit selected Plant:', this.selectedPlant);
-    console.log('oninit creator and editor:', this.selectedCreatorEditor);
 
     this.ticketStatuses = [
       {
@@ -275,28 +269,28 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       },
     ];
 
-    this.listParticipatingPeople = [
-      {
-        'id': 1,
-        'firstname': 'Thuy',
-        'lastname': 'Dang Nhu'
-      },
-      {
-        'id': 2,
-        'firstname': 'Long',
-        'lastname': 'Trinh Thien'
-      },
-      {
-        'id': 3,
-        'firstname': 'Duong',
-        'lastname': 'Nguyen Van'
-      },
-      {
-        'id': 4,
-        'firstname': 'Hien',
-        'lastname': 'Pham Duc'
-      },
-    ];
+    // this.listParticipatingPeople = [
+    //   {
+    //     'id': 1,
+    //     'firstname': 'Thuy',
+    //     'lastname': 'Dang Nhu'
+    //   },
+    //   {
+    //     'id': 2,
+    //     'firstname': 'Long',
+    //     'lastname': 'Trinh Thien'
+    //   },
+    //   {
+    //     'id': 3,
+    //     'firstname': 'Duong',
+    //     'lastname': 'Nguyen Van'
+    //   },
+    //   {
+    //     'id': 4,
+    //     'firstname': 'Hien',
+    //     'lastname': 'Pham Duc'
+    //   },
+    // ];
 
   }
 
@@ -305,12 +299,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   ngAfterViewInit() {
-    console.log('onafterviewinit selected Plant:', this.selectedPlant);
-    console.log('onafterviewinit creator and editor:', this.selectedCreatorEditor);
   }
 
   ngOnDestroy() {
-    // this.setLocalPlant();
 
     this.setSelectedSCsPeople();
     this.setSelectedSCsStatus();
@@ -320,8 +311,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setSelectedCreatorEditor();
     this.setSelectedTimeStart();
     this.setSelectedTimeEnd();
-    console.log('destroy selected Plant:', this.selectedPlant);
-    console.log('destroy creator and editor:', this.selectedCreatorEditor);
   }
 
   handleDayClick(event) {
@@ -421,92 +410,31 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     selectedDate.gotoDate(date);
   }
 
-  // async initPlantsList() {
-  //   let plantslist;
-  //   plantslist = [];
-  //   plantslist = await fetch(Config.api_endpoint + 'plants/fetch', {
-  //   'credentials': 'include',
-  //   'headers': {
-  //     'accept': 'application/json',
-  //     'accept-language': 'en-US,en;q=0.9,vi;q=0.8,ja;q=0.7',
-  //     'x-requested-with': 'XMLHttpRequest'
-  //   },
-  //   'referrer': Config.api_endpoint + 'angular-calendar/',
-  //   'referrerPolicy': 'no-referrer-when-downgrade',
-  //   'body': null,
-  //   'method': 'GET',
-  //   'mode': 'cors'
-  //   }).then(function(response) {
-  //     return response.json();
-  //   });
-  //   this.listPlants = plantslist.data;
-  // }
-
-
-  // get plants
-  getLocalPlant() {
-    let myItem: any;
+  // init plant list
+  initListPlants() {
     let key;
     key = 'localPlant';
-    // console.log('init:');
-    // console.log('localStorage:', localStorage);
-
-    myItem = localStorage.getItem(key);
-    if (myItem !== 'undefined') {
-      myItem = JSON.parse(myItem);
-      this.listPlants = myItem;
-    }
-    // this.selectedPlant.push('item 1');
-    // console.log('selected Plant:', this.selectedPlant);
-  }
-  // set plants
-  setLocalPlant() {
-    // this.selectedPlant.push('item 3');
-    let key;
-    // console.log('destroy:');
-    // console.log('selected Plant:', this.selectedPlant);
-    key = 'localPlant';
-    localStorage.setItem(key, JSON.stringify(this.listPlants));
-    // console.log('localStorage:', localStorage);
-  }
-
-  initPlantsList() {
-    let myItem: any;
-    let key;
-    key = 'localPlant';
-    // console.log('init:');
-    // console.log('localStorage:', localStorage);
-    myItem = sessionStorage.getItem('localPlant');
-    if (myItem !== 'undefined' && myItem !== null) {
-      console.log('Sao ko vao dayyyyy');
-      this.listPlants = JSON.parse(myItem);
-      console.log('list plant from session:', this.listPlants);
-    } else {
-      let plantList;
-      plantList = this.http.get(Config.api_endpoint + 'plants/fetch', httpOptions);
-      console.log('this is plant list out:', plantList);
-      console.log('this is type of plant list out:', typeof plantList);
-
-      plantList.subscribe(data => {
+    if ((this.listPlants = this.plantsSrv.getListPlants()) == null) {
+      this.http.get(Config.api_endpoint + 'plants/fetch', httpOptions).subscribe(data => {
         this.listPlants = [];
         this.listPlants = data['data'];
-        // this.setLocalPlant();
-        sessionStorage.setItem('localPlant', JSON.stringify(this.listPlants));
-        console.log('init sessionStorage in:', sessionStorage);
-        console.log('service list plant data:', data['data']);
-        console.log('service list plant:', this.listPlants);
+        sessionStorage.setItem(key, JSON.stringify(this.listPlants));
       });
     }
-    console.log('init sessionStorage out:', sessionStorage); // ok, test nheok
-    // this.listPlants.push('item plant 1');
-    console.log('this isss listPlants out:', this.listPlants);
-    // this.listPlants = this.plantsSrv.getListPlants();
   }
-  // getPlants(): void {
-  //   this.plantsSrv.getListPlants().subscribe(listPlants => this.listPlants = listPlants);
-  //   console.log('this isss listPlants');
-  //   console.log(this.listPlants);
-  // }
+
+  // init participating people
+  initListParticipatingPeople() {
+    let key;
+    key = 'localParticipatingPeople';
+    if ((this.listParticipatingPeople = this.participatingPeopleSrv.getListParticipatingPeople()) == null) {
+      this.http.get(Config.api_endpoint + 'plants/fetch', httpOptions).subscribe(data => {
+        this.listParticipatingPeople = [];
+        this.listParticipatingPeople = data['data'];
+        sessionStorage.setItem(key, JSON.stringify(this.listParticipatingPeople));
+      });
+    }
+  }
 
   // get SCs people
   getSelectedSCsPeople() {
@@ -585,7 +513,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedPlant';
-    console.log('get selected localStorage:', localStorage);
 
     myItem = localStorage.getItem(key);
     if (myItem !== 'undefined') {
@@ -596,11 +523,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // set plants
   setSelectedPlant() {
     let key;
-    // console.log('destroy:');
-    // console.log('selected Plant:', this.selectedPlant);
     key = 'selectedPlant';
     localStorage.setItem(key, JSON.stringify(this.selectedPlant));
-    // console.log('localStorage:', localStorage);
   }
 
   // get creator and editor
@@ -613,12 +537,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       myItem = JSON.parse(myItem);
       this.selectedCreatorEditor = myItem;
     }
-    console.log('creator and editor:', this.selectedCreatorEditor);
   }
   // set creator and editor
   setSelectedCreatorEditor() {
     let key;
-    console.log('creator and editor:', this.selectedCreatorEditor);
     key = 'selectedCreatorEditor';
     localStorage.setItem(key, JSON.stringify(this.selectedCreatorEditor));
   }
