@@ -12,6 +12,8 @@ import 'select2';
 import { Options } from 'select2';
 
 import { forEach } from '@angular/router/src/utils/collection';
+import { HammerGestureConfig } from '@angular/platform-browser';
+import { checkAndUpdateBinding } from '@angular/core/src/view/util';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -123,6 +125,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     //      console.log('error');
     //    })
 
+    // this.initPlantsList();
+    // this.plantsSrv.getListPlants()
+    // .subscribe(data => this.listPlants = data);
   }
 
   ngOnInit() {
@@ -141,54 +146,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       multiple: true,
       tags: true
     };
+    // this.getPlants();
     this.initPlantsList();
+    console.log('after init listPlants out:', this.listPlants);
+    // this.listPlants = this.listPlant;
+    // this.getLocalPlant();
     this.getSelectedSCsPeople();
     this.getSelectedSCsStatus();
     this.getSelectedOutageStatus();
     this.getSelectedOutageCategories();
-    this.getSelectedPlant();
     this.getSelectedCreatorEditor();
+    this.getSelectedPlant();
     this.getSelectedTimeStart();
     this.getSelectedTimeEnd();
-
-    // this.http.get('/plants/fetch', httpOptions).subscribe(data => {
-    //   this.listPlants = [];
-    //   console.log(data);
-    //   // for (let i = 0; i < data['data'].length; i++) {
-    //   //   this.listPlants.push(data['data'][i]);
-    //   //   console.log(this.listPlants[i].name);
-    //   // }
-    //   // // this.listPlants.forEach(element => {
-    //   // //   console.log(element.name);
-    //   // // });
-    //   // console.log(this.listPlants);
-    // });
-
-
-    // this.doGet();
-
-    this.listParticipatingPeople = [
-      {
-        'id': 1,
-        'firstname': 'Thuy',
-        'lastname': 'Dang Nhu'
-      },
-      {
-        'id': 2,
-        'firstname': 'Long',
-        'lastname': 'Trinh Thien'
-      },
-      {
-        'id': 3,
-        'firstname': 'Duong',
-        'lastname': 'Nguyen Van'
-      },
-      {
-        'id': 4,
-        'firstname': 'Hien',
-        'lastname': 'Pham Duc'
-      },
-    ];
+    console.log('oninit selected Plant:', this.selectedPlant);
+    console.log('oninit creator and editor:', this.selectedCreatorEditor);
 
     this.ticketStatuses = [
       {
@@ -303,26 +275,29 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       },
     ];
 
-    this.listPlants = [
+    this.listParticipatingPeople = [
       {
         'id': 1,
-        'name': 'Ha Noi',
+        'firstname': 'Thuy',
+        'lastname': 'Dang Nhu'
       },
       {
         'id': 2,
-        'name': 'Hai Phong',
+        'firstname': 'Long',
+        'lastname': 'Trinh Thien'
       },
       {
         'id': 3,
-        'name': 'Da Nang',
+        'firstname': 'Duong',
+        'lastname': 'Nguyen Van'
       },
       {
         'id': 4,
-        'name': 'Ho Chi Minh',
+        'firstname': 'Hien',
+        'lastname': 'Pham Duc'
       },
     ];
 
-    //  this.calendarTicketsSrv.getMyCalendarTickets().then(files => this.calendarTicketsTree = files);
   }
 
   ngOnChanges() {
@@ -330,9 +305,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   ngAfterViewInit() {
+    console.log('onafterviewinit selected Plant:', this.selectedPlant);
+    console.log('onafterviewinit creator and editor:', this.selectedCreatorEditor);
   }
 
   ngOnDestroy() {
+    // this.setLocalPlant();
 
     this.setSelectedSCsPeople();
     this.setSelectedSCsStatus();
@@ -342,6 +320,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setSelectedCreatorEditor();
     this.setSelectedTimeStart();
     this.setSelectedTimeEnd();
+    console.log('destroy selected Plant:', this.selectedPlant);
+    console.log('destroy creator and editor:', this.selectedCreatorEditor);
   }
 
   handleDayClick(event) {
@@ -441,54 +421,94 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     selectedDate.gotoDate(date);
   }
 
-  async initPlantsList() {
-    let plantslist;
-    plantslist = [];
-    plantslist = await fetch(Config.api_endpoint + 'plants/fetch', {
-    'credentials': 'include',
-    'headers': {
-      'accept': 'application/json',
-      'accept-language': 'en-US,en;q=0.9,vi;q=0.8,ja;q=0.7',
-      'x-requested-with': 'XMLHttpRequest'
-    },
-    'referrer': Config.api_endpoint + 'angular-calendar/',
-    'referrerPolicy': 'no-referrer-when-downgrade',
-    'body': null,
-    'method': 'GET',
-    'mode': 'cors'
-    }).then(function(response) {
-      return response.json();
-    });
-    this.listPlants = plantslist.data;
-    console.log('this is plants list');
-    console.log(this.listPlants);
+  // async initPlantsList() {
+  //   let plantslist;
+  //   plantslist = [];
+  //   plantslist = await fetch(Config.api_endpoint + 'plants/fetch', {
+  //   'credentials': 'include',
+  //   'headers': {
+  //     'accept': 'application/json',
+  //     'accept-language': 'en-US,en;q=0.9,vi;q=0.8,ja;q=0.7',
+  //     'x-requested-with': 'XMLHttpRequest'
+  //   },
+  //   'referrer': Config.api_endpoint + 'angular-calendar/',
+  //   'referrerPolicy': 'no-referrer-when-downgrade',
+  //   'body': null,
+  //   'method': 'GET',
+  //   'mode': 'cors'
+  //   }).then(function(response) {
+  //     return response.json();
+  //   });
+  //   this.listPlants = plantslist.data;
+  // }
+
+
+  // get plants
+  getLocalPlant() {
+    let myItem: any;
+    let key;
+    key = 'localPlant';
+    // console.log('init:');
+    // console.log('localStorage:', localStorage);
+
+    myItem = localStorage.getItem(key);
+    if (myItem !== 'undefined') {
+      myItem = JSON.parse(myItem);
+      this.listPlants = myItem;
+    }
+    // this.selectedPlant.push('item 1');
+    // console.log('selected Plant:', this.selectedPlant);
+  }
+  // set plants
+  setLocalPlant() {
+    // this.selectedPlant.push('item 3');
+    let key;
+    // console.log('destroy:');
+    // console.log('selected Plant:', this.selectedPlant);
+    key = 'localPlant';
+    localStorage.setItem(key, JSON.stringify(this.listPlants));
+    // console.log('localStorage:', localStorage);
   }
 
+  initPlantsList() {
+    let myItem: any;
+    let key;
+    key = 'localPlant';
+    // console.log('init:');
+    // console.log('localStorage:', localStorage);
+    myItem = sessionStorage.getItem('localPlant');
+    if (myItem !== 'undefined' && myItem !== null) {
+      console.log('Sao ko vao dayyyyy');
+      this.listPlants = JSON.parse(myItem);
+      console.log('list plant from session:', this.listPlants);
+    } else {
+      let plantList;
+      plantList = this.http.get(Config.api_endpoint + 'plants/fetch', httpOptions);
+      console.log('this is plant list out:', plantList);
+      console.log('this is type of plant list out:', typeof plantList);
 
-  doGet() {
-    // $.ajax('/people/fetch?ids=48', { headers: { 'Accept': 'application/json' } }).done((data) =>{console.log(data)});
-    fetch('http://localhost/people/fetch?ids=48',
-    {
-      'credentials': 'include',
-      'headers': {
-        'accept': 'application/json',
-        'accept-language': 'en-US,en;q=0.9,vi;q=0.8,ja;q=0.7',
-        'x-requested-with': 'XMLHttpRequest'
-      },
-      'referrer': 'http://localhost/calendar',
-      'referrerPolicy': 'no-referrer-when-downgrade',
-      'body': null,
-      'method': 'GET',
-      'mode': 'cors'
-    }).then(function(response) {
-      return response.json();
-    }).then(function(myJson) {
-    console.log(myJson);
-    console.log(myJson.data[0].full_name);
-    });
+      plantList.subscribe(data => {
+        this.listPlants = [];
+        this.listPlants = data['data'];
+        // this.setLocalPlant();
+        sessionStorage.setItem('localPlant', JSON.stringify(this.listPlants));
+        console.log('init sessionStorage in:', sessionStorage);
+        console.log('service list plant data:', data['data']);
+        console.log('service list plant:', this.listPlants);
+      });
+    }
+    console.log('init sessionStorage out:', sessionStorage); // ok, test nheok
+    // this.listPlants.push('item plant 1');
+    console.log('this isss listPlants out:', this.listPlants);
+    // this.listPlants = this.plantsSrv.getListPlants();
   }
+  // getPlants(): void {
+  //   this.plantsSrv.getListPlants().subscribe(listPlants => this.listPlants = listPlants);
+  //   console.log('this isss listPlants');
+  //   console.log(this.listPlants);
+  // }
 
-// get SCs people
+  // get SCs people
   getSelectedSCsPeople() {
     let myItem: any;
     let key;
@@ -565,30 +585,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedPlant';
-    console.log('init:');
-    console.log('localStorage:');
-    console.log(localStorage);
+    console.log('get selected localStorage:', localStorage);
 
     myItem = localStorage.getItem(key);
-    console.log('my Item:');
-    console.log(myItem);
     if (myItem !== 'undefined') {
       myItem = JSON.parse(myItem);
       this.selectedPlant = myItem;
     }
-    console.log('selected Plant:');
-    console.log(this.selectedPlant);
   }
   // set plants
   setSelectedPlant() {
     let key;
-    console.log('destroy:');
-    console.log('selected Plant:');
-    console.log(this.selectedPlant);
+    // console.log('destroy:');
+    // console.log('selected Plant:', this.selectedPlant);
     key = 'selectedPlant';
     localStorage.setItem(key, JSON.stringify(this.selectedPlant));
-    console.log('localStorage:');
-    console.log(localStorage);
+    // console.log('localStorage:', localStorage);
   }
 
   // get creator and editor
@@ -601,14 +613,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       myItem = JSON.parse(myItem);
       this.selectedCreatorEditor = myItem;
     }
-    console.log('creator and editor:');
-    console.log(this.selectedCreatorEditor);
+    console.log('creator and editor:', this.selectedCreatorEditor);
   }
   // set creator and editor
   setSelectedCreatorEditor() {
     let key;
-    console.log('creator and editor:');
-    console.log(this.selectedCreatorEditor);
+    console.log('creator and editor:', this.selectedCreatorEditor);
     key = 'selectedCreatorEditor';
     localStorage.setItem(key, JSON.stringify(this.selectedCreatorEditor));
   }

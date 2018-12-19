@@ -155,6 +155,9 @@
             <ng-select2 [(ngModel)]="selectedPlant" [options]="multiplePlantsOptions">
               <option *ngFor="let p of listPlants">{{p.name}}</option>
             </ng-select2>
+            <!-- <ng-select2 [options]="multiplePlantsOptions">
+              <option *ngFor="let p of selectedPlant">{{p.name}}</option>
+            </ng-select2> -->
             <label for="creator-editor">Creator / Editor</label>
             <!-- <select  class="general-creator-editor" name="states[]" multiple="multiple" style="width: 100%">
               <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
