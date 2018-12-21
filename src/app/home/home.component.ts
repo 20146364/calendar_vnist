@@ -269,29 +269,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       },
     ];
 
-    // this.listParticipatingPeople = [
-    //   {
-    //     'id': 1,
-    //     'firstname': 'Thuy',
-    //     'lastname': 'Dang Nhu'
-    //   },
-    //   {
-    //     'id': 2,
-    //     'firstname': 'Long',
-    //     'lastname': 'Trinh Thien'
-    //   },
-    //   {
-    //     'id': 3,
-    //     'firstname': 'Duong',
-    //     'lastname': 'Nguyen Van'
-    //   },
-    //   {
-    //     'id': 4,
-    //     'firstname': 'Hien',
-    //     'lastname': 'Pham Duc'
-    //   },
-    // ];
-
   }
 
   ngOnChanges() {
@@ -415,24 +392,69 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let key;
     key = 'localPlant';
     if ((this.listPlants = this.plantsSrv.getListPlants()) == null) {
-      this.http.get(Config.api_endpoint + 'plants/fetch', httpOptions).subscribe(data => {
+      this.http.get(`${Config.api_endpoint}plants/fetch`, httpOptions).subscribe(data => {
         this.listPlants = [];
         this.listPlants = data['data'];
         sessionStorage.setItem(key, JSON.stringify(this.listPlants));
+        console.log('list plant hereee', this.listPlants);
       });
     }
   }
 
   // init participating people
-  initListParticipatingPeople() {
+  async initListParticipatingPeople() {
     let key;
     key = 'localParticipatingPeople';
+    let arrayPeople;
+    arrayPeople = new Array();
     if ((this.listParticipatingPeople = this.participatingPeopleSrv.getListParticipatingPeople()) == null) {
-      this.http.get(Config.api_endpoint + 'plants/fetch', httpOptions).subscribe(data => {
-        this.listParticipatingPeople = [];
-        this.listParticipatingPeople = data['data'];
-        sessionStorage.setItem(key, JSON.stringify(this.listParticipatingPeople));
-      });
+      let listPages: any;
+      listPages = [];
+      let totalPerson;
+      try {
+        totalPerson  = await new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
+            resolve(data['total']);
+          });
+        });
+        for (let page = 1; page <= Math.floor(totalPerson / 20); page++) {
+          let tmp;
+          tmp = new Promise((resolve, reject) => {
+            this.http.get(`${Config.api_endpoint}tsservices/fetch?page=${page}`, httpOptions).subscribe(data => {
+              resolve(data);
+            });
+          });
+          listPages.push(tmp);
+        }
+        Promise.all(listPages).then(rs => {
+          let peopleSet;
+          peopleSet = new Set();
+          rs.forEach(services => {
+            services['data'].forEach(sv => {
+              if (sv['people'].length !== 0) {
+                sv['people'].forEach(person => {
+                  peopleSet.add(person['id']);
+                });
+              }
+            });
+          });
+          // this.listParticipatingPeople = new Array();
+          // console.log(peopleSet);
+          let listId;
+          listId = [];
+          listId = Array.from(peopleSet);
+          listId = listId.join(',');
+          // console.log(listId);
+          this.http.get(`${Config.api_endpoint}people/fetch?ids=${listId}`, httpOptions).subscribe(data => {
+            this.listParticipatingPeople = [];
+            this.listParticipatingPeople = data['data'];
+            sessionStorage.setItem(key, JSON.stringify(this.listParticipatingPeople));
+            console.log('listParticipatingPeople hereee', this.listParticipatingPeople);
+          });
+        });
+      } catch (error) {
+        throw error;
+      }
     }
   }
 
