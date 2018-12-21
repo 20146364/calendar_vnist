@@ -31,6 +31,7 @@ import {ListboxModule} from 'primeng/components/listbox/listbox';
 import {ScrollPanelModule} from 'primeng/components/scrollpanel/scrollpanel';
 import {SelectButtonModule} from 'primeng/components/selectbutton/selectbutton';
 import {RadioButtonModule} from 'primeng/components/radiobutton/radiobutton';
+import {TableModule} from 'primeng/components/table/table';
 
 import { AuthenticationService } from './services/authentication.service';
 import { CalendarService } from './services/calendar.service';
@@ -69,6 +70,7 @@ import { ParticipatingPeopleService } from './services/participating-people.serv
     ScrollPanelModule,
     SelectButtonModule,
     RadioButtonModule,
+    TableModule,
     NgSelect2Module,
     AppRoutingModule
   ],

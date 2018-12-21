@@ -438,13 +438,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               }
             });
           });
-          // this.listParticipatingPeople = new Array();
-          // console.log(peopleSet);
           let listId;
           listId = [];
           listId = Array.from(peopleSet);
           listId = listId.join(',');
-          // console.log(listId);
+          console.log(listId);
           this.http.get(`${Config.api_endpoint}people/fetch?ids=${listId}`, httpOptions).subscribe(data => {
             this.listParticipatingPeople = [];
             this.listParticipatingPeople = data['data'];
