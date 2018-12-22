@@ -153,9 +153,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       multiple: true,
       tags: true
     };
-    this.initListSCs();
+    this.initListSCsOutage();
     this.initListPlants();
     this.initListParticipatingPeople();
+
     this.getSelectedSCsPeople();
     this.getSelectedSCsStatus();
     this.getSelectedOutageStatus();
@@ -185,27 +186,28 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
     ];
 
-    // console.log('list localSCs here', this.listSCs);
-    // this.events = this.listSCs;
     // this.events = [
     //   {
     //     'id': 1,
     //     'title': 'All Day Event',
     //     'start': '2018-12-11',
-    //     'end': '2018-12-12'
+    //     'end': '2018-12-12',
+    //     'plant_id': '226'
     //   },
     //   {
     //     'id': 2,
     //     'title': 'Long Event',
     //     'start': '2018-12-05',
-    //     'end': '2018-12-07'
+    //     'end': '2018-12-07',
+    //     'plant_id': '226'
     //   },
     //   {
     //     'id': 3,
     //     'title': 'Event 12',
     //     'start': '2018-12-08',
     //     'end': '2018-12-10',
-    //     'className': 'highPriority'
+    //     'className': 'highPriority',
+    //     'plant_id': '226'
     //   },
     //   {
     //     'id': 4,
@@ -213,33 +215,37 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     //     'start': '2018-12-16',
     //     'end': '2018-12-16',
     //     'color': 'red',
-    //     'className': 'filter-italic'
+    //     'className': 'filter-italic',
+    //     'plant_id': '226'
     //   },
     //   {
     //     'id': 5,
     //     'title': 'Conference 3',
     //     'start': '2018-12-11',
-    //     'end': '2018-12-13'
+    //     'end': '2018-12-13',
+    //     'plant_id': '226'
     //   },
     //   {
     //     'id': 6,
     //     'title': 'Conference 4',
     //     'start': '2018-12-25',
-    //     'end': '2018-12-25'
+    //     'end': '2018-12-25',
+    //     'plant_id': '226'
     //   },
     //   {
     //     'id': 7,
     //     'title': 'Conference 4',
     //     'start': '2018-12-24',
-    //     'end': '2018-12-24'
+    //     'end': '2018-12-24',
+    //     'plant_id': '226'
     //   },
     //   {
     //     'id': 8,
     //     'title': 'Conference 5',
     //     'start': '2018-12-23',
-    //     'end': '2018-12-23'
+    //     'end': '2018-12-23',
+    //     'plant_id': '226'
     //   }
-
     // ];
 
     this.outageCategories = [
@@ -279,17 +285,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         'lastname': 'Pham Duc'
       },
     ];
+    // console.log('onit: ', this.events);
 
   }
 
   ngOnChanges() {
+    // console.log('change: ', this.events);
+    console.log('change event call');
 
   }
 
   ngAfterViewInit() {
+    // console.log('after: ', this.events);
+    console.log('after event call');
   }
 
   ngOnDestroy() {
+    // console.log('destroy: ', this.events);
 
     this.setSelectedSCsPeople();
     this.setSelectedSCsStatus();
@@ -400,16 +412,43 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     selectedDate.gotoDate(date);
   }
 
-  // init SCs
-  async initListSCs() {
+  // init SCs and Outages
+  async initListSCsOutage() {
     let key;
     key = 'localServiceCallOutage';
-    let serviceCall;
+    let itemServiceCallOutage;
     if ((this.events = this.scotSrv.getListServiceCallOutage()) == null) {
       let listPages: any;
       listPages = [];
       let totalService;
+      let totalOutage;
       try {
+        // get total Outages
+        totalOutage  = await new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+            resolve(data['total']);
+          });
+        });
+        if ( totalOutage >= 20) {
+          for (let page = 1; page <= Math.floor(totalOutage / 20); page++) {
+            let tmp;
+            tmp = new Promise((resolve, reject) => {
+              this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
+                resolve(data);
+              });
+            });
+            listPages.push(tmp);
+          }
+        } else {
+          let tmp;
+          tmp = new Promise((resolve, reject) => {
+            this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+              resolve(data);
+            });
+          });
+          listPages.push(tmp);
+        }
+
         // get total Services
         totalService  = await new Promise((resolve, reject) => {
           this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
@@ -425,19 +464,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           });
           listPages.push(tmp);
         }
+
         Promise.all(listPages).then(rs => {
           let scSet;
           scSet = new Set();
           this.events = [];
-          rs.forEach(services => {
-            services['data'].forEach(sc => {
-              serviceCall = new ServiceCall('sc');
-              serviceCall.getInfo(sc);
-              this.events.push(serviceCall);
+          console.log(rs);
+          rs.forEach(items => {
+            items['data'].forEach(item => {
+              // console.log(item);
+              itemServiceCallOutage = new ServiceCall('sc'); // ???????????????
+              itemServiceCallOutage.getInfo(item);
+              this.events.push(itemServiceCallOutage);
             });
           });
           sessionStorage.setItem(key, JSON.stringify(this.events));
         });
+        // console.log('asyn function: ', this.events);
       } catch (error) {
         throw error;
       }

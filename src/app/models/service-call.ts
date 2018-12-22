@@ -8,6 +8,7 @@ export class ServiceCall implements IEvent {
     allDay = true;
     color: string;
     className: string;
+    plant_id: number;
     type: string;
 
     event: any;
@@ -24,6 +25,7 @@ export class ServiceCall implements IEvent {
         this.title = sc.kurzbeschreibung;
         this.start = sc.done_begin ? sc.done_begin : sc.sheduled_begin;
         this.end = sc.done_end ? sc.done_end : sc.sheduled_end;
+        this.plant_id = sc.plant_id;
     }
 
   }
