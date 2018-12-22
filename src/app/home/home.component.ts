@@ -1,9 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnChanges, OnDestroy  } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { CalendarService} from '../services/calendar.service';
-import { PlantsService} from '../services/plants.service';
-import { ParticipatingPeopleService} from '../services/participating-people.service';
 import * as crypto from 'crypto-js';
 import { Config } from '../services/config';
 import { ViewEncapsulation } from '@angular/core';
@@ -12,9 +9,19 @@ import * as $ from 'jquery';
 import 'select2';
 import { Options } from 'select2';
 
+import { CalendarService} from '../services/calendar.service';
+import { PlantsService} from '../services/plants.service';
+import { ParticipatingPeopleService} from '../services/participating-people.service';
+import { ServicecallOutageService} from '../services/servicecall-outage.service';
+
+import { IEvent } from '../models/event';
+import { ServiceCall } from '../models/service-call';
+import { Outage } from '../models/outage';
+
 import { forEach } from '@angular/router/src/utils/collection';
 import { HammerGestureConfig } from '@angular/platform-browser';
 import { checkAndUpdateBinding } from '@angular/core/src/view/util';
+import { from } from 'rxjs';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -82,7 +89,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   header: any;
 
-  event: MyEvent;
+  event: IEvent;
 
   dialogVisible = false;
   dialogNewVisible = false;
@@ -109,6 +116,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               private calendarSrv: CalendarService,
               private plantsSrv: PlantsService,
               private participatingPeopleSrv: ParticipatingPeopleService,
+              private scotSrv: ServicecallOutageService,
               private router: Router) {
     this.header = {
       left: 'prev,next today',
@@ -145,6 +153,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       multiple: true,
       tags: true
     };
+    this.initListSCs();
     this.initListPlants();
     this.initListParticipatingPeople();
     this.getSelectedSCsPeople();
@@ -176,60 +185,62 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
     ];
 
-    this.events = [
-      {
-        'id': 1,
-        'title': 'All Day Event',
-        'start': '2018-12-11',
-        'end': '2018-12-12'
-      },
-      {
-        'id': 2,
-        'title': 'Long Event',
-        'start': '2018-12-05',
-        'end': '2018-12-07'
-      },
-      {
-        'id': 3,
-        'title': 'Event 12',
-        'start': '2018-12-08',
-        'end': '2018-12-10',
-        'className': 'highPriority'
-      },
-      {
-        'id': 4,
-        'title': 'Event Red',
-        'start': '2018-12-16',
-        'end': '2018-12-16',
-        'color': 'red',
-        'className': 'filter-italic'
-      },
-      {
-        'id': 5,
-        'title': 'Conference 3',
-        'start': '2018-12-11',
-        'end': '2018-12-13'
-      },
-      {
-        'id': 6,
-        'title': 'Conference 4',
-        'start': '2018-12-25',
-        'end': '2018-12-25'
-      },
-      {
-        'id': 7,
-        'title': 'Conference 4',
-        'start': '2018-12-24',
-        'end': '2018-12-24'
-      },
-      {
-        'id': 8,
-        'title': 'Conference 5',
-        'start': '2018-12-23',
-        'end': '2018-12-23'
-      }
+    // console.log('list localSCs here', this.listSCs);
+    // this.events = this.listSCs;
+    // this.events = [
+    //   {
+    //     'id': 1,
+    //     'title': 'All Day Event',
+    //     'start': '2018-12-11',
+    //     'end': '2018-12-12'
+    //   },
+    //   {
+    //     'id': 2,
+    //     'title': 'Long Event',
+    //     'start': '2018-12-05',
+    //     'end': '2018-12-07'
+    //   },
+    //   {
+    //     'id': 3,
+    //     'title': 'Event 12',
+    //     'start': '2018-12-08',
+    //     'end': '2018-12-10',
+    //     'className': 'highPriority'
+    //   },
+    //   {
+    //     'id': 4,
+    //     'title': 'Event Red',
+    //     'start': '2018-12-16',
+    //     'end': '2018-12-16',
+    //     'color': 'red',
+    //     'className': 'filter-italic'
+    //   },
+    //   {
+    //     'id': 5,
+    //     'title': 'Conference 3',
+    //     'start': '2018-12-11',
+    //     'end': '2018-12-13'
+    //   },
+    //   {
+    //     'id': 6,
+    //     'title': 'Conference 4',
+    //     'start': '2018-12-25',
+    //     'end': '2018-12-25'
+    //   },
+    //   {
+    //     'id': 7,
+    //     'title': 'Conference 4',
+    //     'start': '2018-12-24',
+    //     'end': '2018-12-24'
+    //   },
+    //   {
+    //     'id': 8,
+    //     'title': 'Conference 5',
+    //     'start': '2018-12-23',
+    //     'end': '2018-12-23'
+    //   }
 
-    ];
+    // ];
 
     this.outageCategories = [
       {
@@ -295,32 +306,34 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // //  console.log(offset);
     // //  console.log(event.date.subtract(offset, 'minutes'));
     // //  this.event.start = event.date.add(offset, 'minutes').toDate();
-    this.event = new MyEvent();
-    this.event.start = event.date.toDate();
-    this.dialogNewVisible = true;
+
+
+    // this.event = new MyEvent();
+    // this.event.start = event.date.toDate();
+    // this.dialogNewVisible = true;
   }
 
   handleEventClick(e) {
-    this.calendarSrv.setSelectedEvent(e);
-    this.event = new MyEvent();
-    this.event.title = e.calEvent.title;
+    // this.calendarSrv.setSelectedEvent(e);
+    // this.event = new MyEvent();
+    // this.event.title = e.calEvent.title;
 
-    const start = e.calEvent.start;
-    const end = e.calEvent.end;
-    console.log(e.calEvent);
-    if (e.view.name === 'month') {
-      // start.stripTime();
-    }
+    // const start = e.calEvent.start;
+    // const end = e.calEvent.end;
+    // console.log(e.calEvent);
+    // if (e.view.name === 'month') {
+    //   // start.stripTime();
+    // }
 
-    if (end) {
-      // end.stripTime();
-      this.event.end = new Date(end);
-    }
+    // if (end) {
+    //   // end.stripTime();
+    //   this.event.end = new Date(end);
+    // }
 
-    this.event.id = e.calEvent.id;
-     this.event.start = new Date(start);
-    this.event.allDay = e.calEvent.allDay;
-    this.dialogVisible = true;
+    // this.event.id = e.calEvent.id;
+    //  this.event.start = new Date(start);
+    // this.event.allDay = e.calEvent.allDay;
+    // this.dialogVisible = true;
 
   }
 
@@ -387,6 +400,51 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     selectedDate.gotoDate(date);
   }
 
+  // init SCs
+  async initListSCs() {
+    let key;
+    key = 'localServiceCallOutage';
+    let serviceCall;
+    if ((this.events = this.scotSrv.getListServiceCallOutage()) == null) {
+      let listPages: any;
+      listPages = [];
+      let totalService;
+      try {
+        // get total Services
+        totalService  = await new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
+            resolve(data['total']);
+          });
+        });
+        for (let page = 1; page <= Math.floor(totalService / 20); page++) {
+          let tmp;
+          tmp = new Promise((resolve, reject) => {
+            this.http.get(`${Config.api_endpoint}tsservices/fetch?page=${page}`, httpOptions).subscribe(data => {
+              resolve(data);
+            });
+          });
+          listPages.push(tmp);
+        }
+        Promise.all(listPages).then(rs => {
+          let scSet;
+          scSet = new Set();
+          this.events = [];
+          rs.forEach(services => {
+            services['data'].forEach(sc => {
+              serviceCall = new ServiceCall('sc');
+              serviceCall.getInfo(sc);
+              this.events.push(serviceCall);
+            });
+          });
+          sessionStorage.setItem(key, JSON.stringify(this.events));
+        });
+      } catch (error) {
+        throw error;
+      }
+    }
+
+  }
+
   // init plant list
   initListPlants() {
     let key;
@@ -396,7 +454,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         this.listPlants = [];
         this.listPlants = data['data'];
         sessionStorage.setItem(key, JSON.stringify(this.listPlants));
-        console.log('list plant hereee', this.listPlants);
       });
     }
   }
@@ -442,12 +499,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           listId = [];
           listId = Array.from(peopleSet);
           listId = listId.join(',');
-          console.log(listId);
           this.http.get(`${Config.api_endpoint}people/fetch?ids=${listId}`, httpOptions).subscribe(data => {
             this.listParticipatingPeople = [];
             this.listParticipatingPeople = data['data'];
             sessionStorage.setItem(key, JSON.stringify(this.listParticipatingPeople));
-            console.log('listParticipatingPeople hereee', this.listParticipatingPeople);
           });
         });
       } catch (error) {
