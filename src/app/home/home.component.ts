@@ -13,6 +13,7 @@ import { CalendarService} from '../services/calendar.service';
 import { PlantsService} from '../services/plants.service';
 import { ParticipatingPeopleService} from '../services/participating-people.service';
 import { ServicecallOutageService} from '../services/servicecall-outage.service';
+import {OutageCategoryService} from '../services/outage-category.service';
 
 import { IEvent } from '../models/event';
 import { ServiceCall } from '../models/service-call';
@@ -117,6 +118,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               private plantsSrv: PlantsService,
               private participatingPeopleSrv: ParticipatingPeopleService,
               private scotSrv: ServicecallOutageService,
+              private otCategorySrv: OutageCategoryService,
               private router: Router) {
     this.header = {
       left: 'prev,next today',
@@ -156,6 +158,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.initListSCsOutage();
     this.initListPlants();
     this.initListParticipatingPeople();
+    this.initListOutageCategories();
 
     this.getSelectedSCsPeople();
     this.getSelectedSCsStatus();
@@ -248,20 +251,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     //   }
     // ];
 
-    this.outageCategories = [
-      {
-        'id': 1,
-        'name': 'Category 1',
-      },
-      {
-        'id': 2,
-        'name': 'Category 2',
-      },
-      {
-        'id': 3,
-        'name': 'Category 3',
-      },
-    ];
+    // this.outageCategories = [
+    //   {
+    //     'id': 1,
+    //     'name': 'Category 1',
+    //   },
+    //   {
+    //     'id': 2,
+    //     'name': 'Category 2',
+    //   },
+    //   {
+    //     'id': 3,
+    //     'name': 'Category 3',
+    //   },
+    // ];
 
     this.listCreatorEditor = [
       {
@@ -472,8 +475,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           console.log(rs);
           rs.forEach(items => {
             items['data'].forEach(item => {
-              // console.log(item);
-              itemServiceCallOutage = new ServiceCall('sc'); // ???????????????
+              itemServiceCallOutage = new Outage('sc'); // ???????????????
               itemServiceCallOutage.getInfo(item);
               this.events.push(itemServiceCallOutage);
             });
@@ -486,6 +488,74 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       }
     }
 
+  }
+
+  // get outage Category
+  async initListOutageCategories() {
+    let key;
+    key = 'localOutageCategory';
+    let arrayPeople;
+    arrayPeople = new Array();
+    if ((this.listParticipatingPeople = this.otCategorySrv.getListOutageCategory()) == null) {
+      let listPages: any;
+      listPages = [];
+      let totalOutage;
+      try {
+        // get total Outages
+        totalOutage  = await new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+            resolve(data['total']);
+          });
+        });
+        if ( totalOutage >= 20) {
+          for (let page = 1; page <= Math.floor(totalOutage / 20); page++) {
+            let tmp;
+            tmp = new Promise((resolve, reject) => {
+              this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
+                resolve(data);
+              });
+            });
+            listPages.push(tmp);
+          }
+        } else {
+          let tmp;
+          tmp = new Promise((resolve, reject) => {
+            this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+              resolve(data);
+            });
+          });
+          listPages.push(tmp);
+        }
+
+        Promise.all(listPages).then(rs => {
+          let otSet;
+          let addItem = true;
+          otSet = new Set();
+          rs.forEach(outages => {
+            outages['data'].forEach(ot => {
+              if (ot['tsoutagecategory'].length !== 0) {
+                // console.log(ot['tsoutagecategory']);
+                otSet.forEach(category => {
+                  if (category['id'] === ot['tsoutagecategory']['id']) {
+                    addItem = false;
+                  }
+                });
+                if (addItem) {
+                  otSet.add(ot['tsoutagecategory']);
+                }
+              }
+            });
+          });
+          this.outageCategories = [];
+          otSet.forEach(category => {
+            console.log(category);
+            this.outageCategories.push(category);
+          });
+        });
+      } catch (error) {
+        throw error;
+      }
+    }
   }
 
   // init plant list
