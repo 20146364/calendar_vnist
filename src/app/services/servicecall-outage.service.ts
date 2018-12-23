@@ -7,17 +7,26 @@ export class ServicecallOutageService {
 
   constructor() { }
 
-  getListServiceCallOutage(listEvents, listSCOT) {
+  getListServiceCallOutage() {
+    let listSCOT = null;
     let mySCOT: any;
-    let myEvents: any;
     let keySCOT = 'localServiceCallOutage';
-    let keyListEvents = 'localListEvents';
     mySCOT = sessionStorage.getItem(keySCOT);
-    myEvents = sessionStorage.getItem(keyListEvents);
-    if (mySCOT !== 'undefined' && mySCOT !== null
-    && myEvents !== 'undefined' && myEvents !== null) {
+    if (mySCOT !== 'undefined' && mySCOT !== null) {
       listSCOT = JSON.parse(mySCOT);
-      listEvents = JSON.parse(listEvents);
     }
+    return listSCOT;
+  }
+
+  getListEvents() {
+    let listEvents = null;
+    let myEvents: any;
+    let keyListEvents = 'localListEvents';
+    myEvents = sessionStorage.getItem(keyListEvents);
+    if (myEvents !== 'undefined' && myEvents !== null) {
+      listEvents = JSON.parse(myEvents);
+      console.log('vao dc tan day ma', listEvents)
+    }
+    return listEvents;
   }
 }

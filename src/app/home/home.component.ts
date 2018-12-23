@@ -398,6 +398,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setSelectedCreatorEditor();
     this.setSelectedTimeStart();
     this.setSelectedTimeEnd();
+    this.setEvents();
   }
 
   handleDayClick(event) {
@@ -505,7 +506,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   async initListSCsOutage() {
     let listPages: any;
     listPages = [];
-    if ((this.scotSrv.getListServiceCallOutage(this.listEvents, this.events)) == null) {
+    if ((this.events = this.scotSrv.getListServiceCallOutage()) == null) {
       let totalService;
       let totalOutage;
       try {
@@ -531,15 +532,26 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
         // fetch all OTs and SCs
         this.getOutageServiceCallFromAPI(listPages);
+
       } catch (error) {
         throw error;
       }
+    } else {
+      this.listEvents = this.scotSrv.getListEvents()
+      console.log('events: ', this.events);
+      console.log('list events: ', this.listEvents);
     }
 
     //get creator and editor from SCs and OTs
     if ((this.listCreatorEditor = this.creatorEditorSrv.getListCreatorEditor()) == null) {
       this.getCreatorEditor(listPages);
     }
+  }
+
+  private setEvents() {
+    let key;
+    key = 'localServiceCallOutage';
+    sessionStorage.setItem(key, JSON.stringify(this.events));
   }
 
   private getListPageOutages(listPages, totalOutage) {
@@ -788,7 +800,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedSCsPeople';
-    myItem = localStorage.getItem(key);
+    myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined') {
       myItem = JSON.parse(myItem);
       this.selectedSCsPeople = myItem;
@@ -798,7 +810,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   setSelectedSCsPeople() {
     let key;
     key = 'selectedSCsPeople';
-    localStorage.setItem(key, JSON.stringify(this.selectedSCsPeople));
+    sessionStorage.setItem(key, JSON.stringify(this.selectedSCsPeople));
   }
 
   // get SCs status
@@ -806,7 +818,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedSCsStatus';
-    myItem = localStorage.getItem(key);
+    myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined') {
       myItem = JSON.parse(myItem);
       this.selectedSCsStatus = myItem;
@@ -816,7 +828,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   setSelectedSCsStatus() {
     let key;
     key = 'selectedSCsStatus';
-    localStorage.setItem(key, JSON.stringify(this.selectedSCsStatus));
+    sessionStorage.setItem(key, JSON.stringify(this.selectedSCsStatus));
   }
 
   // get SCs status
@@ -824,7 +836,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedOutageCategories';
-    myItem = localStorage.getItem(key);
+    myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined') {
       myItem = JSON.parse(myItem);
       this.selectedOutageCategories = myItem;
@@ -834,7 +846,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   setSelectedOutageCategories() {
     let key;
     key = 'selectedOutageCategories';
-    localStorage.setItem(key, JSON.stringify(this.selectedOutageCategories));
+    sessionStorage.setItem(key, JSON.stringify(this.selectedOutageCategories));
   }
 
   // get outage status
@@ -842,7 +854,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedOutageStatus';
-    myItem = localStorage.getItem(key);
+    myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null) {
       myItem = JSON.parse(myItem);
       this.selectedOutageStatus = myItem;
@@ -852,7 +864,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   setSelectedOutageStatus() {
     let key;
     key = 'selectedOutageStatus';
-    localStorage.setItem(key, JSON.stringify(this.selectedOutageStatus));
+    sessionStorage.setItem(key, JSON.stringify(this.selectedOutageStatus));
   }
 
   // get plants
@@ -861,7 +873,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let key;
     key = 'selectedPlant';
 
-    myItem = localStorage.getItem(key);
+    myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined') {
       myItem = JSON.parse(myItem);
       this.selectedPlant = myItem;
@@ -871,7 +883,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   setSelectedPlant() {
     let key;
     key = 'selectedPlant';
-    localStorage.setItem(key, JSON.stringify(this.selectedPlant));
+    sessionStorage.setItem(key, JSON.stringify(this.selectedPlant));
   }
 
   // get creator and editor
@@ -879,7 +891,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedCreatorEditor';
-    myItem = localStorage.getItem(key);
+    myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined') {
       myItem = JSON.parse(myItem);
       this.selectedCreatorEditor = myItem;
@@ -889,7 +901,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   setSelectedCreatorEditor() {
     let key;
     key = 'selectedCreatorEditor';
-    localStorage.setItem(key, JSON.stringify(this.selectedCreatorEditor));
+    sessionStorage.setItem(key, JSON.stringify(this.selectedCreatorEditor));
   }
 
   // get time start
@@ -897,7 +909,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedTimeStart';
-    myItem = localStorage.getItem(key);
+    myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null ) {
       myItem = JSON.parse(myItem);
       this.timeStart = new Date(myItem);
@@ -907,7 +919,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   setSelectedTimeStart() {
     let key;
     key = 'selectedTimeStart';
-    localStorage.setItem(key, JSON.stringify(this.timeStart));
+    sessionStorage.setItem(key, JSON.stringify(this.timeStart));
   }
 
   // get time end
@@ -915,7 +927,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedTimeEnd';
-    myItem = localStorage.getItem(key);
+    myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null ) {
       myItem = JSON.parse(myItem);
       this.timeEnd = new Date(myItem);
@@ -925,7 +937,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   setSelectedTimeEnd() {
     let key;
     key = 'selectedTimeEnd';
-    localStorage.setItem(key, JSON.stringify(this.timeEnd));
+    sessionStorage.setItem(key, JSON.stringify(this.timeEnd));
   }
 
   filterPlants(eventSelected) {
