@@ -14,6 +14,7 @@ import { PlantsService} from '../services/plants.service';
 import { ParticipatingPeopleService} from '../services/participating-people.service';
 import { ServicecallOutageService} from '../services/servicecall-outage.service';
 import {OutageCategoryService} from '../services/outage-category.service';
+import {CreatorEditorService} from '../services/creator-editor.service';
 
 import { IEvent } from '../models/event';
 import { ServiceCall } from '../models/service-call';
@@ -119,6 +120,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               private participatingPeopleSrv: ParticipatingPeopleService,
               private scotSrv: ServicecallOutageService,
               private otCategorySrv: OutageCategoryService,
+              private creatorEditorSrv: CreatorEditorService,
               private router: Router) {
     this.header = {
       left: 'prev,next today',
@@ -266,41 +268,41 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     //   },
     // ];
 
-    this.listCreatorEditor = [
-      {
-        'id': 1,
-        'firstname': 'Kawasaki',
-        'lastname': 'Dang Nhu'
-      },
-      {
-        'id': 2,
-        'firstname': 'Kimura',
-        'lastname': 'Trinh Thien'
-      },
-      {
-        'id': 3,
-        'firstname': 'Yoshida',
-        'lastname': 'Nguyen Van'
-      },
-      {
-        'id': 4,
-        'firstname': 'Nakama',
-        'lastname': 'Pham Duc'
-      },
-    ];
+    // this.listCreatorEditor = [
+    //   {
+    //     'id': 1,
+    //     'firstname': 'Kawasaki',
+    //     'lastname': 'Dang Nhu'
+    //   },
+    //   {
+    //     'id': 2,
+    //     'firstname': 'Kimura',
+    //     'lastname': 'Trinh Thien'
+    //   },
+    //   {
+    //     'id': 3,
+    //     'firstname': 'Yoshida',
+    //     'lastname': 'Nguyen Van'
+    //   },
+    //   {
+    //     'id': 4,
+    //     'firstname': 'Nakama',
+    //     'lastname': 'Pham Duc'
+    //   },
+    // ];
     // console.log('onit: ', this.events);
 
   }
 
   ngOnChanges() {
     // console.log('change: ', this.events);
-    console.log('change event call');
+    // console.log('change event call');
 
   }
 
   ngAfterViewInit() {
     // console.log('after: ', this.events);
-    console.log('after event call');
+    // console.log('after event call');
   }
 
   ngOnDestroy() {
@@ -415,14 +417,99 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     selectedDate.gotoDate(date);
   }
 
+  // init Creator and Editor of SCs and OTs
+  // async initListCreatorEditor() {
+  //   let key;
+  //   key = 'localCreatorEditor';
+  //   let itemCreatorEditor;
+  //   if ((this.events = this.creatorEditorSrv.getListCreatorEditor()) == null) {
+  //     let listPages: any;
+  //     listPages = [];
+  //     let totalService;
+  //     let totalOutage;
+  //     try {
+  //       // get total Outages
+  //       totalOutage  = await new Promise((resolve, reject) => {
+  //         this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+  //           resolve(data['total']);
+  //         });
+  //       });
+
+  //       // get listPage of OTs
+  //       if ( totalOutage >= 20) {
+  //         for (let page = 1; page <= Math.floor(totalOutage / 20); page++) {
+  //           let tmp;
+  //           tmp = new Promise((resolve, reject) => {
+  //             this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
+  //               resolve(data);
+  //             });
+  //           });
+  //           listPages.push(tmp);
+  //         }
+  //       } else {
+  //         let tmp;
+  //         tmp = new Promise((resolve, reject) => {
+  //           this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+  //             resolve(data);
+  //           });
+  //         });
+  //         listPages.push(tmp);
+  //       }
+
+  //       // get total Services
+  //       totalService  = await new Promise((resolve, reject) => {
+  //         this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
+  //           resolve(data['total']);
+  //         });
+  //       });
+
+  //       // get listPage of Scs
+  //       if ( totalService >= 20) {
+  //         for (let page = 1; page <= Math.floor(totalService / 20); page++) {
+  //           let tmp;
+  //           tmp = new Promise((resolve, reject) => {
+  //             this.http.get(`${Config.api_endpoint}tsservices/fetch?page=${page}`, httpOptions).subscribe(data => {
+  //               resolve(data);
+  //             });
+  //           });
+  //           listPages.push(tmp);
+  //         }
+  //       } else {
+  //         let tmp;
+  //         tmp = new Promise((resolve, reject) => {
+  //           this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
+  //             resolve(data);
+  //           });
+  //         });
+  //         listPages.push(tmp);
+  //       }
+
+  //       // fetch all OTs and SCs
+  //       Promise.all(listPages).then(rs => {
+  //         let scSet;
+  //         scSet = new Set();
+  //         this.events = [];
+  //         rs.forEach(items => {
+  //           items['data'].forEach(item => {
+  //             itemCreatorEditor = new Outage('sc'); // ???????????????
+  //             itemCreatorEditor.getInfo(item);
+  //             this.events.push(itemCreatorEditor);
+  //           });
+  //         });
+  //         sessionStorage.setItem(key, JSON.stringify(this.events));
+  //       });
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   }
+  // }
+
+  //#region general SCs and OTs
   // init SCs and Outages
   async initListSCsOutage() {
-    let key;
-    key = 'localServiceCallOutage';
-    let itemServiceCallOutage;
+    let listPages: any;
+    listPages = [];
     if ((this.events = this.scotSrv.getListServiceCallOutage()) == null) {
-      let listPages: any;
-      listPages = [];
       let totalService;
       let totalOutage;
       try {
@@ -432,25 +519,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             resolve(data['total']);
           });
         });
-        if ( totalOutage >= 20) {
-          for (let page = 1; page <= Math.floor(totalOutage / 20); page++) {
-            let tmp;
-            tmp = new Promise((resolve, reject) => {
-              this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
-                resolve(data);
-              });
-            });
-            listPages.push(tmp);
-          }
-        } else {
-          let tmp;
-          tmp = new Promise((resolve, reject) => {
-            this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
-              resolve(data);
-            });
-          });
-          listPages.push(tmp);
-        }
+
+        // get listPage of OTs
+        this.getListPageOutages(listPages, totalOutage);
 
         // get total Services
         totalService  = await new Promise((resolve, reject) => {
@@ -458,45 +529,134 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             resolve(data['total']);
           });
         });
-        for (let page = 1; page <= Math.floor(totalService / 20); page++) {
-          let tmp;
-          tmp = new Promise((resolve, reject) => {
-            this.http.get(`${Config.api_endpoint}tsservices/fetch?page=${page}`, httpOptions).subscribe(data => {
-              resolve(data);
-            });
-          });
-          listPages.push(tmp);
-        }
 
-        Promise.all(listPages).then(rs => {
-          let scSet;
-          scSet = new Set();
-          this.events = [];
-          console.log(rs);
-          rs.forEach(items => {
-            items['data'].forEach(item => {
-              itemServiceCallOutage = new Outage('sc'); // ???????????????
-              itemServiceCallOutage.getInfo(item);
-              this.events.push(itemServiceCallOutage);
-            });
-          });
-          sessionStorage.setItem(key, JSON.stringify(this.events));
-        });
-        // console.log('asyn function: ', this.events);
+        // get listPage of Scs
+        this.getListPageServiceCalls(listPages, totalService);
+
+        // fetch all OTs and SCs
+        this.getOutageServiceCallFromAPI(listPages);
       } catch (error) {
         throw error;
       }
     }
 
+    //get creator and editor from SCs and OTs
+    if ((this.listCreatorEditor = this.creatorEditorSrv.getListCreatorEditor()) == null) {
+      this.getCreatorEditor(listPages);
+    }
   }
 
-  // get outage Category
+  private getListPageOutages(listPages, totalOutage) {
+    if ( totalOutage >= 20) {
+      for (let page = 1; page <= Math.floor(totalOutage / 20); page++) {
+        let tmp;
+        tmp = new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
+            resolve(data);
+          });
+        });
+        listPages.push(tmp);
+      }
+    } else {
+      let tmp;
+      tmp = new Promise((resolve, reject) => {
+        this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+          resolve(data);
+        });
+      });
+      listPages.push(tmp);
+    }
+  }
+
+  private getListPageServiceCalls(listPages, totalService) {
+    if ( totalService >= 20) {
+      for (let page = 1; page <= Math.floor(totalService / 20); page++) {
+        let tmp;
+        tmp = new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}tsservices/fetch?page=${page}`, httpOptions).subscribe(data => {
+            resolve(data);
+          });
+        });
+        listPages.push(tmp);
+      }
+    } else {
+      let tmp;
+      tmp = new Promise((resolve, reject) => {
+        this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
+          resolve(data);
+        });
+      });
+      listPages.push(tmp);
+    }
+  }
+
+  private getOutageServiceCallFromAPI(listPages) {
+    let itemServiceCallOutage;
+    let key;
+    key = 'localServiceCallOutage';
+    Promise.all(listPages).then(rs => {
+      let scSet;
+      scSet = new Set();
+      this.events = [];
+      rs.forEach(items => {
+        items['data'].forEach(item => {
+          if (item['begin'] !== undefined) {
+            itemServiceCallOutage = new Outage('sc');
+            itemServiceCallOutage.getInfo(item);
+          } else {
+            itemServiceCallOutage = new ServiceCall('sc');
+            itemServiceCallOutage.getInfo(item);
+          }
+          this.events.push(itemServiceCallOutage);
+        });
+      });
+      sessionStorage.setItem(key, JSON.stringify(this.events));
+    });
+  }
+
+  private getCreatorEditor(listPages) {
+    let itemCreatorEditor;
+    let key;
+    key = 'localCreatorEditor';
+    Promise.all(listPages).then(rs => {
+      let ceSet;
+      ceSet = new Set();
+      rs.forEach(items => {
+        items['data'].forEach(item => {
+          if (item['creator_id'] !== undefined && item['creator_id'] !== null) {
+            ceSet.add(item['creator_id']);
+          }
+          if (item['creator_person_id'] !== undefined && item['creator_person_id'] !== null) {
+            ceSet.add(item['creator_person_id']);
+          }
+          if (item['modifier_id'] !== null && item['modifier_id'] !== undefined) {
+            ceSet.add(item['modifier_id']);
+          }
+          if (item['modifier_person_id'] !== null && item['modifier_person_id'] !== undefined) {
+            ceSet.add(item['modifier_person_id']);
+          }
+        });
+      });
+      let listId;
+      listId = [];
+      listId = Array.from(ceSet);
+      listId = listId.join(',');
+      this.http.get(`${Config.api_endpoint}people/fetch?ids=${listId}`, httpOptions).subscribe(data => {
+        this.listCreatorEditor = [];
+        this.listCreatorEditor = data['data'];
+        sessionStorage.setItem(key, JSON.stringify(this.listCreatorEditor));
+      });
+    });
+  }
+  //#endregion
+
+  // init outage Category
   async initListOutageCategories() {
     let key;
     key = 'localOutageCategory';
     let arrayPeople;
     arrayPeople = new Array();
-    if ((this.listParticipatingPeople = this.otCategorySrv.getListOutageCategory()) == null) {
+    if ((this.outageCategories = this.otCategorySrv.getListOutageCategory()) == null) {
       let listPages: any;
       listPages = [];
       let totalOutage;
@@ -534,7 +694,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           rs.forEach(outages => {
             outages['data'].forEach(ot => {
               if (ot['tsoutagecategory'].length !== 0) {
-                // console.log(ot['tsoutagecategory']);
                 otSet.forEach(category => {
                   if (category['id'] === ot['tsoutagecategory']['id']) {
                     addItem = false;
@@ -548,9 +707,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           });
           this.outageCategories = [];
           otSet.forEach(category => {
-            console.log(category);
             this.outageCategories.push(category);
           });
+          sessionStorage.setItem(key, JSON.stringify(this.outageCategories));
         });
       } catch (error) {
         throw error;

@@ -163,7 +163,7 @@
               <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
             </select> -->
             <ng-select2 id="creator-editor" [(ngModel)]="selectedCreatorEditor" [options]="multipleOptions">
-              <option *ngFor="let ce of listCreatorEditor">{{ce.firstname}}</option>
+              <option *ngFor="let ce of listCreatorEditor">{{ce.nachname}}</option>
             </ng-select2>
             <label>Time Start</label>
             <div>
