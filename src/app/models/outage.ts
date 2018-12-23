@@ -9,14 +9,12 @@ export class Outage implements IEvent {
     color: string;
     className: string;
     plant_id: number;
-    type: string;
 
     event: any;
     /**
      *
      */
-    constructor(type: string) {
-        this.type = type;
+    constructor() {
     }
 
     getInfo(ot: any) {

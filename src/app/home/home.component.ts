@@ -601,10 +601,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       rs.forEach(items => {
         items['data'].forEach(item => {
           if (item['begin'] !== undefined) {
-            itemServiceCallOutage = new Outage('sc');
+            itemServiceCallOutage = new Outage();
             itemServiceCallOutage.getInfo(item);
           } else {
-            itemServiceCallOutage = new ServiceCall('sc');
+            itemServiceCallOutage = new ServiceCall();
             itemServiceCallOutage.getInfo(item);
           }
           this.events.push(itemServiceCallOutage);
