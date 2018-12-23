@@ -152,8 +152,8 @@
           </p-accordionTab>
           <p-accordionTab header="General" class="accordion-header">
             <label>Plants</label>
-            <ng-select2 [(ngModel)]="selectedPlant" [options]="multiplePlantsOptions">
-              <option *ngFor="let p of listPlants">{{p.name}}</option>
+            <ng-select2 [(ngModel)]="selectedPlant" (ngModelChange)="filterPlants($event)" [options]="multiplePlantsOptions">
+              <option *ngFor="let p of listPlants" [value]="p.id">{{p.name}}</option>
             </ng-select2>
             <!-- <ng-select2 [options]="multiplePlantsOptions">
               <option *ngFor="let p of selectedPlant">{{p.name}}</option>

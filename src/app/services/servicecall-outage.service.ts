@@ -7,15 +7,17 @@ export class ServicecallOutageService {
 
   constructor() { }
 
-  getListServiceCallOutage() {
-    let listSCOT = null;
-    let myItem: any;
-    let key;
-    key = 'localServiceCallOutage';
-    myItem = sessionStorage.getItem(key);
-    if (myItem !== 'undefined' && myItem !== null) {
-      listSCOT = JSON.parse(myItem);
+  getListServiceCallOutage(listEvents, listSCOT) {
+    let mySCOT: any;
+    let myEvents: any;
+    let keySCOT = 'localServiceCallOutage';
+    let keyListEvents = 'localListEvents';
+    mySCOT = sessionStorage.getItem(keySCOT);
+    myEvents = sessionStorage.getItem(keyListEvents);
+    if (mySCOT !== 'undefined' && mySCOT !== null
+    && myEvents !== 'undefined' && myEvents !== null) {
+      listSCOT = JSON.parse(mySCOT);
+      listEvents = JSON.parse(listEvents);
     }
-    return listSCOT;
   }
 }

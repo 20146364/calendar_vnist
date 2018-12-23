@@ -88,6 +88,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   // Event
   events: any[];
+  listEvents: any[];
 
   header: any;
 
@@ -194,63 +195,144 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // this.events = [
     //   {
     //     'id': 1,
-    //     'title': 'All Day Event',
+    //     'title': 'Ha Noi',
     //     'start': '2018-12-11',
     //     'end': '2018-12-12',
-    //     'plant_id': '226'
+    //     'plant_id': '12'
     //   },
     //   {
     //     'id': 2,
-    //     'title': 'Long Event',
+    //     'title': 'Ha Noi',
     //     'start': '2018-12-05',
     //     'end': '2018-12-07',
-    //     'plant_id': '226'
+    //     'plant_id': '12'
     //   },
     //   {
     //     'id': 3,
-    //     'title': 'Event 12',
+    //     'title': 'Ha Noi',
     //     'start': '2018-12-08',
     //     'end': '2018-12-10',
     //     'className': 'highPriority',
-    //     'plant_id': '226'
+    //     'plant_id': '12'
     //   },
     //   {
     //     'id': 4,
-    //     'title': 'Event Red',
+    //     'title': 'Da Nang',
     //     'start': '2018-12-16',
     //     'end': '2018-12-16',
     //     'color': 'red',
     //     'className': 'filter-italic',
-    //     'plant_id': '226'
+    //     'plant_id': '23'
     //   },
     //   {
     //     'id': 5,
-    //     'title': 'Conference 3',
+    //     'title': 'Da Nang',
     //     'start': '2018-12-11',
     //     'end': '2018-12-13',
-    //     'plant_id': '226'
+    //     'plant_id': '23'
     //   },
     //   {
     //     'id': 6,
-    //     'title': 'Conference 4',
+    //     'title': 'Da Nang',
     //     'start': '2018-12-25',
     //     'end': '2018-12-25',
-    //     'plant_id': '226'
+    //     'plant_id': '23'
     //   },
     //   {
     //     'id': 7,
-    //     'title': 'Conference 4',
+    //     'title': 'Hai Phong',
     //     'start': '2018-12-24',
     //     'end': '2018-12-24',
-    //     'plant_id': '226'
+    //     'plant_id': '34'
     //   },
     //   {
     //     'id': 8,
-    //     'title': 'Conference 5',
+    //     'title': 'hai Phong',
     //     'start': '2018-12-23',
     //     'end': '2018-12-23',
-    //     'plant_id': '226'
+    //     'plant_id': '34'
     //   }
+    // ];
+
+    // this.listEvents = [
+    //   {
+    //     'id': 1,
+    //     'title': 'Ha Noi',
+    //     'start': '2018-12-11',
+    //     'end': '2018-12-12',
+    //     'plant_id': '12'
+    //   },
+    //   {
+    //     'id': 2,
+    //     'title': 'Ha Noi',
+    //     'start': '2018-12-05',
+    //     'end': '2018-12-07',
+    //     'plant_id': '12'
+    //   },
+    //   {
+    //     'id': 3,
+    //     'title': 'Ha Noi',
+    //     'start': '2018-12-08',
+    //     'end': '2018-12-10',
+    //     'className': 'highPriority',
+    //     'plant_id': '12'
+    //   },
+    //   {
+    //     'id': 4,
+    //     'title': 'Da Nang',
+    //     'start': '2018-12-16',
+    //     'end': '2018-12-16',
+    //     'color': 'red',
+    //     'className': 'filter-italic',
+    //     'plant_id': '23'
+    //   },
+    //   {
+    //     'id': 5,
+    //     'title': 'Da Nang',
+    //     'start': '2018-12-11',
+    //     'end': '2018-12-13',
+    //     'plant_id': '23'
+    //   },
+    //   {
+    //     'id': 6,
+    //     'title': 'Da Nang',
+    //     'start': '2018-12-25',
+    //     'end': '2018-12-25',
+    //     'plant_id': '23'
+    //   },
+    //   {
+    //     'id': 7,
+    //     'title': 'Hai Phong',
+    //     'start': '2018-12-24',
+    //     'end': '2018-12-24',
+    //     'plant_id': '34'
+    //   },
+    //   {
+    //     'id': 8,
+    //     'title': 'hai Phong',
+    //     'start': '2018-12-23',
+    //     'end': '2018-12-23',
+    //     'plant_id': '34'
+    //   }
+    // ];
+
+    // this.listPlants = [
+    //   {
+    //     'id': 12,
+    //     'name': 'ha Noi',
+    //   },
+    //   {
+    //     'id': 23,
+    //     'name': 'Da Nag',
+    //   },
+    //   {
+    //     'id': 34,
+    //     'name': 'hai Phong',
+    //   },
+    //   {
+    //     'id': 42,
+    //     'name': 'ho chi minh',
+    //   },
     // ];
 
     // this.outageCategories = [
@@ -417,99 +499,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     selectedDate.gotoDate(date);
   }
 
-  // init Creator and Editor of SCs and OTs
-  // async initListCreatorEditor() {
-  //   let key;
-  //   key = 'localCreatorEditor';
-  //   let itemCreatorEditor;
-  //   if ((this.events = this.creatorEditorSrv.getListCreatorEditor()) == null) {
-  //     let listPages: any;
-  //     listPages = [];
-  //     let totalService;
-  //     let totalOutage;
-  //     try {
-  //       // get total Outages
-  //       totalOutage  = await new Promise((resolve, reject) => {
-  //         this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
-  //           resolve(data['total']);
-  //         });
-  //       });
-
-  //       // get listPage of OTs
-  //       if ( totalOutage >= 20) {
-  //         for (let page = 1; page <= Math.floor(totalOutage / 20); page++) {
-  //           let tmp;
-  //           tmp = new Promise((resolve, reject) => {
-  //             this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
-  //               resolve(data);
-  //             });
-  //           });
-  //           listPages.push(tmp);
-  //         }
-  //       } else {
-  //         let tmp;
-  //         tmp = new Promise((resolve, reject) => {
-  //           this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
-  //             resolve(data);
-  //           });
-  //         });
-  //         listPages.push(tmp);
-  //       }
-
-  //       // get total Services
-  //       totalService  = await new Promise((resolve, reject) => {
-  //         this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
-  //           resolve(data['total']);
-  //         });
-  //       });
-
-  //       // get listPage of Scs
-  //       if ( totalService >= 20) {
-  //         for (let page = 1; page <= Math.floor(totalService / 20); page++) {
-  //           let tmp;
-  //           tmp = new Promise((resolve, reject) => {
-  //             this.http.get(`${Config.api_endpoint}tsservices/fetch?page=${page}`, httpOptions).subscribe(data => {
-  //               resolve(data);
-  //             });
-  //           });
-  //           listPages.push(tmp);
-  //         }
-  //       } else {
-  //         let tmp;
-  //         tmp = new Promise((resolve, reject) => {
-  //           this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
-  //             resolve(data);
-  //           });
-  //         });
-  //         listPages.push(tmp);
-  //       }
-
-  //       // fetch all OTs and SCs
-  //       Promise.all(listPages).then(rs => {
-  //         let scSet;
-  //         scSet = new Set();
-  //         this.events = [];
-  //         rs.forEach(items => {
-  //           items['data'].forEach(item => {
-  //             itemCreatorEditor = new Outage('sc'); // ???????????????
-  //             itemCreatorEditor.getInfo(item);
-  //             this.events.push(itemCreatorEditor);
-  //           });
-  //         });
-  //         sessionStorage.setItem(key, JSON.stringify(this.events));
-  //       });
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   }
-  // }
 
   //#region general SCs and OTs
   // init SCs and Outages
   async initListSCsOutage() {
     let listPages: any;
     listPages = [];
-    if ((this.events = this.scotSrv.getListServiceCallOutage()) == null) {
+    if ((this.scotSrv.getListServiceCallOutage(this.listEvents, this.events)) == null) {
       let totalService;
       let totalOutage;
       try {
@@ -592,12 +588,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   private getOutageServiceCallFromAPI(listPages) {
     let itemServiceCallOutage;
-    let key;
-    key = 'localServiceCallOutage';
+    let keySCOT = 'localServiceCallOutage';
+    let keyListEvents = 'localListEvents';
     Promise.all(listPages).then(rs => {
       let scSet;
       scSet = new Set();
       this.events = [];
+      this.listEvents =[];
       rs.forEach(items => {
         items['data'].forEach(item => {
           if (item['begin'] !== undefined) {
@@ -608,9 +605,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             itemServiceCallOutage.getInfo(item);
           }
           this.events.push(itemServiceCallOutage);
+          this.listEvents.push(itemServiceCallOutage);
         });
       });
-      sessionStorage.setItem(key, JSON.stringify(this.events));
+      sessionStorage.setItem(keySCOT, JSON.stringify(this.events));
+      sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEvents));
     });
   }
 
@@ -725,6 +724,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.http.get(`${Config.api_endpoint}plants/fetch`, httpOptions).subscribe(data => {
         this.listPlants = [];
         this.listPlants = data['data'];
+
         sessionStorage.setItem(key, JSON.stringify(this.listPlants));
       });
     }
@@ -926,6 +926,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let key;
     key = 'selectedTimeEnd';
     localStorage.setItem(key, JSON.stringify(this.timeEnd));
+  }
+
+  filterPlants(eventSelected) {
+    var listID = [];
+    if (eventSelected.value === undefined) {
+      eventSelected.forEach(plantID => {
+        listID.push(parseInt(plantID));
+      });
+      this.events = this.events.filter(function(e){
+        return this.indexOf(e['plant_id']) >= 0;
+      }, listID);
+    }
+    if (listID.length === 0) {
+      this.events = this.listEvents;
+    }
   }
 }
 
