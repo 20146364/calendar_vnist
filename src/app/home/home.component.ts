@@ -940,6 +940,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     sessionStorage.setItem(key, JSON.stringify(this.timeEnd));
   }
 
+  // fillter by plants
   filterPlants(eventSelected) {
     var listID = [];
     if (eventSelected.value === undefined) {
@@ -952,6 +953,192 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     }
     if (listID.length === 0) {
       this.events = this.listEvents;
+    }
+  }
+  
+  // filter by creator and editor
+  filterCreatorEditor(eventSelected) {
+    var listID = [];
+    if (eventSelected.value === undefined) {
+      eventSelected.forEach(personID => {
+        listID.push(parseInt(personID));
+      });
+      this.events = this.events.filter(function(e){
+        if ((e.event.creator_id !== undefined
+          && e.event.creator_id !== null)
+          || (e.event.modifier_id !== undefined
+          && e.event.modifier_id !== null)) {
+          return (this.indexOf(e.event.creator_id) >= 0) || (this.indexOf(e.event.modifier_id) >= 0);
+        }
+        if (e.event.creator_person_id !== undefined
+          && e.event.creator_person_id !== null
+          && e.event.modifier_person_id !== undefined
+          && e.event.modifier_person_id !== null) {
+          return (this.indexOf(e.event.creator_person_id) >= 0) || (this.indexOf(e.event.modifier_person_id) >= 0);
+        }
+      }, listID);
+    }
+    if (listID.length === 0) {
+      this.events = this.listEvents;
+    }
+  }
+
+  // filter by start time and end time
+  filterTimeStartEnd() {
+    this.events = this.listEvents;
+    if ((this.timeStart === undefined || this.timeStart === null)
+        && (this.timeEnd === undefined || this.timeEnd === null)) {
+      this.events = this.listEvents;
+    } else {
+      if ((this.timeStart !== undefined || this.timeStart !== null)
+      && (this.timeEnd === undefined || this.timeEnd === null)) {
+        this.events = this.events.filter(e => {
+          let timeStart = new Date(e.start);
+          return this.timeStart <= timeStart;
+        });
+      } else {
+        if ((this.timeStart === undefined || this.timeStart === null)
+        && (this.timeEnd !== undefined || this.timeEnd !== null)) {
+          this.events = this.events.filter(e => {
+            let timeEnd = new Date(e.end);
+            return this.timeEnd >= timeEnd;
+          });
+        } else {
+          this.events = this.events.filter(e => {
+            let timeStart = new Date(e.start);
+            let timeEnd = new Date(e.end);
+            return (this.timeStart <= timeStart) && (this.timeEnd >= timeEnd);
+          });
+        }
+      }
+    }
+  }
+
+  // filter by outage category
+  filterOutagesCategory(eventSelected) {
+    var listID = [];
+    console.log(eventSelected);
+    if (eventSelected.value === undefined) {
+      eventSelected.forEach(categoryID => {
+        listID.push(parseInt(categoryID));
+      });
+      // console.log('listID', listID);
+      this.events = this.events.filter(function(e){
+        // console.log('event hehe', e.event.tsoutagecategory);
+        if (e.event.tsoutagecategory !== undefined
+          && e.event.tsoutagecategory !== null) {
+          return this.indexOf(e.event.tsoutagecategory.id) >= 0;
+        }
+      }, listID);
+      // console.log(this.events);
+    }
+    if (listID.length === 0) {
+      this.events = this.listEvents;
+    }
+  }
+
+  // filter by participating people
+  filterParticipatingPeople(eventSelected) {
+    var listID = [];
+    if (eventSelected.value === undefined) {
+      eventSelected.forEach(personID => {
+        listID.push(parseInt(personID));
+      });
+      this.events = this.events.filter(function(e){
+        if (e.event.people !== undefined
+          && e.event.people !== null) {
+          if (e.event.people.length > 0) {
+            return this.indexOf(e.event.people["0"].id) >= 0;
+          }
+        }
+      }, listID);
+    }
+    if (listID.length === 0) {
+      this.events = this.listEvents;
+    }
+  }
+
+  // filter by ServiceCall status
+  filterServiceCallStatus(eventSelected) {
+    this.events = this.listEvents; // Can xem xet bien nay vi khi loc se lay events ket hop vs cac dieu kien khac
+    let today = new Date();
+    if (eventSelected.value === undefined) {
+      switch (eventSelected) {
+        case '1':
+          // all chi hien thi SCs
+          this.events = this.listEvents;
+          break;
+        case '2':
+          // planted
+          this.events = this.events.filter(e => {
+            if (e.event.people !== undefined) {
+              let timeStart = new Date(e.start);
+              return timeStart > today;
+            }
+          });
+          break;
+        case '3':
+          // start
+          this.events = this.events.filter(e => {
+            if (e.event.people !== undefined) {
+              let timeStart = new Date(e.start);
+              let timeEnd = new Date(e.end);
+              return (timeStart <= today) && (timeEnd >= today);
+            }
+          });
+          break;
+        default:
+          // end
+          this.events = this.events.filter(e => {
+            if (e.event.people !== undefined) {
+              let timeEnd = new Date(e.end);
+              return timeEnd < today;
+            }
+          });
+          break;
+      }
+    }
+  }
+
+  // filter by OT status
+  filterOutageStatus(eventSelected) {
+    this.events = this.listEvents; // Can xem xet bien nay vi khi loc se lay events ket hop vs cac dieu kien khac
+    let today = new Date();
+    if (eventSelected.value === undefined) {
+      switch (eventSelected) {
+        case '1':
+          // all chi hien thi OT
+          this.events = this.listEvents;
+          break;
+        case '2':
+          // planted
+          this.events = this.events.filter(e => {
+            if (e.event.tsoutagecategory !== undefined) {
+              let timeStart = new Date(e.start);
+              return timeStart > today;
+            }
+          });
+          break;
+        case '3':
+          // start
+          this.events = this.events.filter(e => {
+            if (e.event.tsoutagecategory !== undefined) {
+              let timeStart = new Date(e.start);
+              let timeEnd = new Date(e.end);
+              return (timeStart <= today) && (timeEnd >= today);
+            }
+          });
+          break;
+        default:
+          // end
+          this.events = this.events.filter(e => {
+            if (e.event.tsoutagecategory !== undefined) {
+              let timeEnd = new Date(e.end);
+              return timeEnd < today;
+            }
+          });
+          break;
+      }
     }
   }
 }

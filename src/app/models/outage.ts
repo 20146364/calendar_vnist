@@ -5,7 +5,7 @@ export class Outage implements IEvent {
     title: string;
     start: Date;
     end: Date;
-    allDay = true;
+    allDay = false;
     color: string;
     className: string;
     plant_id: number;
