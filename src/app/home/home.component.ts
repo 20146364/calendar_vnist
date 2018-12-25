@@ -1014,26 +1014,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   // filter by outage category
   filterOutagesCategory() {
-    console.log('selected outage category', this.selectedOutageCategories);
-    // var listID = [];
-    // console.log(eventSelected);
-    // if (eventSelected.value === undefined) {
-    //   eventSelected.forEach(categoryID => {
-    //     listID.push(parseInt(categoryID));
-    //   });
-    //   // console.log('listID', listID);
-    //   this.events = this.events.filter(function(e){
-    //     // console.log('event hehe', e.event.tsoutagecategory);
-    //     if (e.event.tsoutagecategory !== undefined
-    //       && e.event.tsoutagecategory !== null) {
-    //       return this.indexOf(e.event.tsoutagecategory.id) >= 0;
-    //     }
-    //   }, listID);
-    //   // console.log(this.events);
-    // }
-    // if (listID.length === 0) {
-    //   this.events = this.listEvents;
-    // }
+    var listID = [];
+    if (this.selectedOutageCategories !== null) {
+      this.selectedOutageCategories.forEach(categoryID => {
+        listID.push(parseInt(categoryID));
+      });
+      if (listID.length !== 0) {
+        this.events = this.events.filter(function(e){
+          if (e.event.tsoutagecategory !== undefined
+            && e.event.tsoutagecategory !== null) {
+            return this.indexOf(e.event.tsoutagecategory.id) >= 0;
+          }
+          return true;
+        }, listID);
+      }
+    }
   }
 
   // filter by participating people
@@ -1052,6 +1047,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               return this.indexOf(e.event.people["0"].id) >= 0;
             }
           }
+          return true;
         }, listID);
       }
     }
@@ -1064,10 +1060,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     if (this.selectedSCsStatus !== null) {
       switch (this.selectedSCsStatus) {
         case '1':
-          // all chi hien thi SCs
-          this.events = this.listEvents.filter(e => {
-            return e.event.people !== undefined;
-          }); 
           break;
         case '2':
           // planted
@@ -1076,6 +1068,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               let timeStart = new Date(e.start);
               return timeStart > today;
             }
+            return true;
           });
           break;
         case '3':
@@ -1086,6 +1079,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               let timeEnd = new Date(e.end);
               return (timeStart <= today) && (timeEnd >= today);
             }
+            return true;
           });
           break;
         default:
@@ -1095,6 +1089,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               let timeEnd = new Date(e.end);
               return timeEnd < today;
             }
+            return true;
           });
           break;
       }
@@ -1108,10 +1103,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     if (this.selectedOutageStatus !== undefined) {
       switch (this.selectedOutageStatus) {
         case '1':
-          // all chi hien thi OT
-          this.events = this.listEvents.filter(e => {
-            return e.event.tsoutagecategory !== undefined;
-          }); 
           break;
         case '2':
           // planted
@@ -1120,6 +1111,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               let timeStart = new Date(e.start);
               return timeStart > today;
             }
+            return true;
           });
           break;
         case '3':
@@ -1130,6 +1122,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               let timeEnd = new Date(e.end);
               return (timeStart <= today) && (timeEnd >= today);
             }
+            return true;
           });
           break;
         default:
@@ -1139,6 +1132,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               let timeEnd = new Date(e.end);
               return timeEnd < today;
             }
+            return true;
           });
           break;
       }
