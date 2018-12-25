@@ -24,6 +24,7 @@ import { forEach } from '@angular/router/src/utils/collection';
 import { HammerGestureConfig } from '@angular/platform-browser';
 import { checkAndUpdateBinding } from '@angular/core/src/view/util';
 import { from } from 'rxjs';
+import { all } from 'q';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -940,133 +941,133 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     sessionStorage.setItem(key, JSON.stringify(this.timeEnd));
   }
 
+  // ======================
   // fillter by plants
-  filterPlants(eventSelected) {
+  filterPlants() {
     var listID = [];
-    if (eventSelected.value === undefined) {
-      eventSelected.forEach(plantID => {
+    if (this.selectedPlant !== null) {
+      this.selectedPlant.forEach(plantID => {
         listID.push(parseInt(plantID));
       });
-      this.events = this.events.filter(function(e){
-        return this.indexOf(e['plant_id']) >= 0;
-      }, listID);
-    }
-    if (listID.length === 0) {
-      this.events = this.listEvents;
+      if (listID.length !== 0) {
+        this.events = this.events.filter(function(e){
+          return this.indexOf(e['plant_id']) >= 0;
+        }, listID);
+      }
     }
   }
   
   // filter by creator and editor
-  filterCreatorEditor(eventSelected) {
+  filterCreatorEditor() {
     var listID = [];
-    if (eventSelected.value === undefined) {
-      eventSelected.forEach(personID => {
+    if (this.selectedCreatorEditor !== null) {
+      this.selectedCreatorEditor.forEach(personID => {
         listID.push(parseInt(personID));
       });
-      this.events = this.events.filter(function(e){
-        if ((e.event.creator_id !== undefined
-          && e.event.creator_id !== null)
-          || (e.event.modifier_id !== undefined
-          && e.event.modifier_id !== null)) {
-          return (this.indexOf(e.event.creator_id) >= 0) || (this.indexOf(e.event.modifier_id) >= 0);
-        }
-        if (e.event.creator_person_id !== undefined
-          && e.event.creator_person_id !== null
-          && e.event.modifier_person_id !== undefined
-          && e.event.modifier_person_id !== null) {
-          return (this.indexOf(e.event.creator_person_id) >= 0) || (this.indexOf(e.event.modifier_person_id) >= 0);
-        }
-      }, listID);
-    }
-    if (listID.length === 0) {
-      this.events = this.listEvents;
+      if (listID.length !== 0) {
+        this.events = this.events.filter(function(e){
+          if ((e.event.creator_id !== undefined
+            && e.event.creator_id !== null)
+            || (e.event.modifier_id !== undefined
+            && e.event.modifier_id !== null)) {
+            return (this.indexOf(e.event.creator_id) >= 0) || (this.indexOf(e.event.modifier_id) >= 0);
+          }
+          if (e.event.creator_person_id !== undefined
+            && e.event.creator_person_id !== null
+            && e.event.modifier_person_id !== undefined
+            && e.event.modifier_person_id !== null) {
+            return (this.indexOf(e.event.creator_person_id) >= 0) || (this.indexOf(e.event.modifier_person_id) >= 0);
+          }
+        }, listID);
+      }
     }
   }
 
   // filter by start time and end time
   filterTimeStartEnd() {
-    this.events = this.listEvents;
-    if ((this.timeStart === undefined || this.timeStart === null)
-        && (this.timeEnd === undefined || this.timeEnd === null)) {
-      this.events = this.listEvents;
-    } else {
-      if ((this.timeStart !== undefined || this.timeStart !== null)
+    if ((this.timeStart !== undefined && this.timeStart !== null)
       && (this.timeEnd === undefined || this.timeEnd === null)) {
+        console.log('time start', this.timeStart);
         this.events = this.events.filter(e => {
           let timeStart = new Date(e.start);
           return this.timeStart <= timeStart;
         });
-      } else {
-        if ((this.timeStart === undefined || this.timeStart === null)
-        && (this.timeEnd !== undefined || this.timeEnd !== null)) {
-          this.events = this.events.filter(e => {
-            let timeEnd = new Date(e.end);
-            return this.timeEnd >= timeEnd;
-          });
-        } else {
-          this.events = this.events.filter(e => {
-            let timeStart = new Date(e.start);
-            let timeEnd = new Date(e.end);
-            return (this.timeStart <= timeStart) && (this.timeEnd >= timeEnd);
-          });
-        }
       }
+    if ((this.timeStart === undefined || this.timeStart === null)
+      && (this.timeEnd !== undefined && this.timeEnd !== null)) {
+        console.log('time end', this.timeEnd);
+      this.events = this.events.filter(e => {
+        let timeEnd = new Date(e.end);
+        return this.timeEnd >= timeEnd;
+      });
+    } 
+    if ((this.timeStart !== undefined && this.timeStart !== null)
+    && (this.timeEnd !== undefined && this.timeEnd !== null)) {
+      console.log('time start-end', this.timeStart, this.timeEnd);
+      this.events = this.events.filter(e => {
+        let timeStart = new Date(e.start);
+        let timeEnd = new Date(e.end);
+        return (this.timeStart <= timeStart) && (this.timeEnd >= timeEnd);
+      });
     }
   }
 
   // filter by outage category
-  filterOutagesCategory(eventSelected) {
-    var listID = [];
-    console.log(eventSelected);
-    if (eventSelected.value === undefined) {
-      eventSelected.forEach(categoryID => {
-        listID.push(parseInt(categoryID));
-      });
-      // console.log('listID', listID);
-      this.events = this.events.filter(function(e){
-        // console.log('event hehe', e.event.tsoutagecategory);
-        if (e.event.tsoutagecategory !== undefined
-          && e.event.tsoutagecategory !== null) {
-          return this.indexOf(e.event.tsoutagecategory.id) >= 0;
-        }
-      }, listID);
-      // console.log(this.events);
-    }
-    if (listID.length === 0) {
-      this.events = this.listEvents;
-    }
+  filterOutagesCategory() {
+    console.log('selected outage category', this.selectedOutageCategories);
+    // var listID = [];
+    // console.log(eventSelected);
+    // if (eventSelected.value === undefined) {
+    //   eventSelected.forEach(categoryID => {
+    //     listID.push(parseInt(categoryID));
+    //   });
+    //   // console.log('listID', listID);
+    //   this.events = this.events.filter(function(e){
+    //     // console.log('event hehe', e.event.tsoutagecategory);
+    //     if (e.event.tsoutagecategory !== undefined
+    //       && e.event.tsoutagecategory !== null) {
+    //       return this.indexOf(e.event.tsoutagecategory.id) >= 0;
+    //     }
+    //   }, listID);
+    //   // console.log(this.events);
+    // }
+    // if (listID.length === 0) {
+    //   this.events = this.listEvents;
+    // }
   }
 
   // filter by participating people
-  filterParticipatingPeople(eventSelected) {
+  filterParticipatingPeople() {
+    // console.log('selected part people', this.selectedSCsPeople);
     var listID = [];
-    if (eventSelected.value === undefined) {
-      eventSelected.forEach(personID => {
+    if (this.selectedSCsPeople !== null) {
+      this.selectedSCsPeople.forEach(personID => {
         listID.push(parseInt(personID));
       });
-      this.events = this.events.filter(function(e){
-        if (e.event.people !== undefined
-          && e.event.people !== null) {
-          if (e.event.people.length > 0) {
-            return this.indexOf(e.event.people["0"].id) >= 0;
+      if (listID.length !== 0) {
+        this.events = this.events.filter(function(e){
+          if (e.event.people !== undefined
+            && e.event.people !== null) {
+            if (e.event.people.length > 0) {
+              return this.indexOf(e.event.people["0"].id) >= 0;
+            }
           }
-        }
-      }, listID);
-    }
-    if (listID.length === 0) {
-      this.events = this.listEvents;
+        }, listID);
+      }
     }
   }
 
   // filter by ServiceCall status
-  filterServiceCallStatus(eventSelected) {
-    this.events = this.listEvents; // Can xem xet bien nay vi khi loc se lay events ket hop vs cac dieu kien khac
+  filterServiceCallStatus() {
+    // console.log('selected selectedSCsStatus haha', this.selectedSCsStatus);
     let today = new Date();
-    if (eventSelected.value === undefined) {
-      switch (eventSelected) {
+    if (this.selectedSCsStatus !== null) {
+      switch (this.selectedSCsStatus) {
         case '1':
           // all chi hien thi SCs
-          this.events = this.listEvents;
+          this.events = this.listEvents.filter(e => {
+            return e.event.people !== undefined;
+          }); 
           break;
         case '2':
           // planted
@@ -1101,14 +1102,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   // filter by OT status
-  filterOutageStatus(eventSelected) {
-    this.events = this.listEvents; // Can xem xet bien nay vi khi loc se lay events ket hop vs cac dieu kien khac
+  filterOutageStatus() {
     let today = new Date();
-    if (eventSelected.value === undefined) {
-      switch (eventSelected) {
+    // console.log('selected OutageStatus heheh', this.selectedOutageStatus);
+    if (this.selectedOutageStatus !== undefined) {
+      switch (this.selectedOutageStatus) {
         case '1':
           // all chi hien thi OT
-          this.events = this.listEvents;
+          this.events = this.listEvents.filter(e => {
+            return e.event.tsoutagecategory !== undefined;
+          }); 
           break;
         case '2':
           // planted
@@ -1139,6 +1142,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           });
           break;
       }
+    }
+  }
+
+  // filter by All conditions
+  filterAll(eventSelected) {
+    this.events = this.listEvents;
+    if (eventSelected.value === undefined) {
+      this.filterParticipatingPeople();
+      this.filterServiceCallStatus();
+      this.filterOutagesCategory();
+      this.filterOutageStatus();
+      this.filterPlants();
+      this.filterCreatorEditor();
+      this.filterTimeStartEnd();
     }
   }
 }

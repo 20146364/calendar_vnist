@@ -114,7 +114,7 @@
   <div class="ui-g-3">
     <div class="ui-g-12"><br /></div>
     <div class="ui-g-12">
-      <p-scrollPanel [style]="{width: '100%', height: '480px'}">
+      <p-scrollPanel [style]="{width: '100%', height: '460px'}">
         <p-calendar [(ngModel)]="selectedDate" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [inline]="true" (onSelect)="gotoDate($event, gotoSelectedDate)"></p-calendar>
         <p-accordion [multiple]="true">
           <p-accordionTab header="Element" class="accordion-header">
@@ -122,21 +122,21 @@
               <p-accordionTab header="Services" class="accordion-header">
                   <!-- select2.org -->
                 <label>Participating People</label>
-                <ng-select2 [(ngModel)]="selectedSCsPeople" (ngModelChange)="filterParticipatingPeople($event)" [options]="multipleOptions">
+                <ng-select2 [(ngModel)]="selectedSCsPeople" (ngModelChange)="filterAll($event)" [options]="multipleOptions">
                   <option *ngFor="let p of listParticipatingPeople" [value]="p.id" >{{p.nachname}} </option>
                 </ng-select2>
                 <label>Status</label>
-                <ng-select2 [(ngModel)]="selectedSCsStatus" (ngModelChange)="filterServiceCallStatus($event)" [options]="singleOptions">
+                <ng-select2 [(ngModel)]="selectedSCsStatus" (ngModelChange)="filterAll($event)" [options]="singleOptions">
                   <option *ngFor="let s of ticketStatuses" [value]="s.id">{{s.name}}</option>
                 </ng-select2>
               </p-accordionTab>
               <p-accordionTab header="Outages" class="accordion-header">
                 <label>Outages category</label>
-                <ng-select2 [(ngModel)]="selectedOutageCategories" (ngModelChange)="filterOutagesCategory($event)" [options]="multipleOptions">
+                <ng-select2 [(ngModel)]="selectedOutageCategories" (ngModelChange)="filterAll($event)" [options]="multipleOptions">
                   <option *ngFor="let c of outageCategories" [value]="c.id">{{c.name}}</option>
                 </ng-select2>
                 <label>Status</label>
-                <ng-select2 [(ngModel)]="selectedOutageStatus" (ngModelChange)="filterOutageStatus($event)" [options]="singleOptions">
+                <ng-select2 [(ngModel)]="selectedOutageStatus" (ngModelChange)="filterAll($event)" [options]="singleOptions">
                   <option *ngFor="let s of ticketStatuses" [value]="s.id">{{s.name}}</option>
                 </ng-select2>
               </p-accordionTab>
@@ -146,20 +146,22 @@
           </p-accordionTab>
           <p-accordionTab header="General" class="accordion-header">
             <label>Plants</label>
-            <ng-select2 [(ngModel)]="selectedPlant" (ngModelChange)="filterPlants($event)" [options]="multiplePlantsOptions">
+            <ng-select2 [(ngModel)]="selectedPlant" (ngModelChange)="filterAll($event)" [options]="multiplePlantsOptions">
               <option *ngFor="let p of listPlants" [value]="p.id">{{p.name}}</option>
             </ng-select2>
             <label for="creator-editor">Creator / Editor</label>
-            <ng-select2 id="creator-editor" [(ngModel)]="selectedCreatorEditor" (ngModelChange)="filterCreatorEditor($event)" [options]="multipleOptions">
+            <ng-select2 id="creator-editor" [(ngModel)]="selectedCreatorEditor" (ngModelChange)="filterAll($event)" [options]="multipleOptions">
               <option *ngFor="let ce of listCreatorEditor" [value]="ce.id">{{ce.nachname}}</option>
             </ng-select2>
             <label>Time Start</label>
             <div>
-              <p-calendar [(ngModel)]="timeStart" (ngModelChange)="filterTimeStartEnd()" [maxDate]="timeEnd" [showIcon]="true"></p-calendar>
+              <p-calendar [(ngModel)]="timeStart" (ngModelChange)="filterAll($event)" [readonlyInput]="true"
+                          selectOtherMonths="true" [maxDate]="timeEnd" [showIcon]="true"></p-calendar>
             </div>
             <label>Time End</label>
             <div>
-              <p-calendar [(ngModel)]="timeEnd" (ngModelChange)="filterTimeStartEnd()" [minDate]="timeStart" [showIcon]="true"></p-calendar>
+              <p-calendar [(ngModel)]="timeEnd" (ngModelChange)="filterAll($event)" [readonlyInput]="true"
+                          selectOtherMonths="true" [minDate]="timeStart" [showIcon]="true"></p-calendar>
             </div>
           </p-accordionTab>
         </p-accordion>
