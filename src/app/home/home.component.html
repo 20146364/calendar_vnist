@@ -46,7 +46,11 @@
 - participating people + số lượng người tham gia , moi co people_id-->
 
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
-        <div>People <span>{{event.people}}</span></div>
+
+        <!-- <div>People <span>{{event.people}}</span></div> -->
+        <!-- <div *ngFor="let p of event.people" >{{p.nachname}}</div> -->
+
+
         <div>Number of People <span>{{event.numberOfPeople}}</span></div>
         <div>tsticket_id <span>{{event.tsticketID}}</span></div>
         <div>Plant <span>{{event.plantID}}</span></div>

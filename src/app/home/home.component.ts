@@ -162,9 +162,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       multiple: true,
       tags: true
     };
+    this.initListParticipatingPeople();
     this.initListSCsOutage();
     this.initListPlants();
-    this.initListParticipatingPeople();
     this.initListOutageCategories();
 
     this.getSelectedSCsPeople();
@@ -231,10 +231,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   handleEventClick(e) {
-    console.log('clicked event: ', e.calEvent.event);
     if (e.calEvent.event.people !== undefined) {
       this.event = new ServiceCall();
       this.event.getInfo(e.calEvent.event);
+      
+      console.log('clicked event: ', this.event);
       this.isServiceCall = true;
       this.dialogServiceCallVisible = true;
     } else {
@@ -490,8 +491,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   async initListOutageCategories() {
     let key;
     key = 'localOutageCategory';
-    let arrayPeople;
-    arrayPeople = new Array();
     if ((this.outageCategories = this.otCategorySrv.getListOutageCategory()) == null) {
       let listPages: any;
       listPages = [];
@@ -571,8 +570,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   async initListParticipatingPeople() {
     let key;
     key = 'localParticipatingPeople';
-    let arrayPeople;
-    arrayPeople = new Array();
     if ((this.listParticipatingPeople = this.participatingPeopleSrv.getListParticipatingPeople()) == null) {
       let listPages: any;
       listPages = [];

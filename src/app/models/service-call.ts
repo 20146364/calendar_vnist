@@ -14,7 +14,7 @@ export class ServiceCall implements IEvent {
     plannedEnd: string;
     comment: any;
     tsticketID: string;
-    _people: any;
+    listPeople: any[];
     numberOfPeople: number;
 
     event: any;
@@ -35,19 +35,40 @@ export class ServiceCall implements IEvent {
         this.plannedEnd = (new Date(sc.sheduled_end)).toLocaleString();
         this.comment = sc.sheduled_comment;
         this.tsticketID = sc.tsticket_id;
-        if (sc.people[0] !== undefined) {
-            // this.people = sc.people[0].id;
+        if (sc.people !== undefined && sc.people.length !== 0) {
+            console.log('sc.poeple', sc.people)
+            this.people = sc.people;
+            console.log('people from localParticipatingPeople: ', this.people)
         } else {
-            this._people = 'unknown';
+            this.people = ['unknown'];
         }
         this.numberOfPeople = sc.people.length;
     }
 
     get people() {
-        return this._people;
+        return this.listPeople;
     }
-    set people(people:any) {
-        this._people = people;
+    set people(listPeopleID: any[]) {
+        let myItem: any;
+        let key;
+        key = 'localParticipatingPeople';
+        myItem = sessionStorage.getItem(key);
+        if (myItem !== 'undefined') {
+            myItem = JSON.parse(myItem);
+            this.listPeople = myItem;
+        }
+        console.log('sesion storage', sessionStorage);
+        console.log('list people filter out', this.listPeople);
+        if (this.listPeople) {
+            console.log('people ID', listPeopleID);
+            this.listPeople = this.listPeople.filter(function(e){
+                console.log('person in list people', e);
+                return this.indexOf(e.id) >= 0;
+              }, listPeopleID);
+              console.log('list people filter in', this.listPeople);
+            // this._people = people;
+            // this.people = ;
+        }
     }
 
   }
