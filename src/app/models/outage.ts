@@ -8,7 +8,13 @@ export class Outage implements IEvent {
     allDay = false;
     color: string;
     className: string;
-    plant_id: number;
+    plantID: number;
+
+    expectedBegin: string;
+    expectedEnd: string;
+    comment: any;
+    tsticketID: string;
+    outageCategory: string;
 
     event: any;
     /**
@@ -21,9 +27,14 @@ export class Outage implements IEvent {
         this.event = ot;
         this.id = ot.id;
         this.title = ot.id;
-        this.start = ot.begin ? ot.begin : ot.expectedbegin;
-        this.end = ot.end ? ot.end : ot.expectedend;
-        this.plant_id = ot.plant_id;
+        this.start = new Date(ot.begin ? ot.begin : ot.expectedbegin);
+        this.end = new Date(ot.end ? ot.end : ot.expectedend);
+        this.plantID = ot.plant_id;
+        this.expectedBegin = (new Date(ot.expectedbegin)).toLocaleString();
+        this.expectedEnd = (new Date(ot.expectedend)).toLocaleString();
+        this.comment = ot.comment;
+        this.tsticketID = ot.tsticket_id;
+        this.outageCategory = ot.tsoutagecategory.name;
     }
 
   }

@@ -12,7 +12,7 @@
 <div class="ui-g">
   <!-- <div class="ui-g-1"></div> -->
   <!-- FullCalendar [defaultView]="selectedView" -->
-    <div class="ui-g-9 ui-g-nopad">
+  <div class="ui-g-9 ui-g-nopad">
     <p-schedule [events]="events" [header]="header" [eventLimit]="4" [editable]="true"
                 [weekNumbers]="true" [aspectRatio]="2" 
                 (onDayClick)="handleDayClick($event)" (onEventClick)="handleEventClick($event)"
@@ -25,42 +25,38 @@
                 id="calendar"
                 height="800px"
                 #gotoSelectedDate></p-schedule>
-    <p-dialog header="Event Details" [(visible)]="dialogVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
+
+    <!-- Click Service call -->
+    <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
               [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150">
+      <!-- header -->
+      <p-header>
+        <p-inplace >
+            <span pInplaceDisplay>
+                {{event.title}}
+            </span>
+            <span pInplaceContent>
+                <input pInputText id="title" [(ngModel)]="event.title" />
+            </span>
+          </p-inplace>
+      </p-header>
+      <!-- content -->
+      <!--
+- plant - ms co plant_id
+- participating people + số lượng người tham gia , moi co people_id-->
+
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
-        <p-inplace>
-          <span pInplaceDisplay>
-              {{event.title}}
-          </span>
-          <span pInplaceContent>
-              <input pInputText id="title" [(ngModel)]="event.title" />
-          </span>
-        </p-inplace>
-        <div>From <span>{{event.start}}</span></div>
-        <div>TO <span>{{event.end}}</span></div>
-        <!--<div class="ui-grid-row">-->
-          <!--<div class="ui-grid-col-4"><label for="start">Start</label></div>-->
-          <!--<div class="ui-grid-col-8"><p-calendar [(ngModel)]="event.start"-->
-                                                  <!--dateFormat="yy-mm-dd"-->
-                                                  <!--dataType="string"-->
-                                                  <!--[disabledDays]="[0,6]"-->
-                                                  <!--[showTime]="true"-->
-                                                  <!--&gt;</p-calendar></div>-->
-        <!--</div>-->
-        <!--<div class="ui-grid-row">-->
-          <!--<div class="ui-grid-col-4"><label for="end">End</label></div>-->
-          <!--<div class="ui-grid-col-8"><p-calendar [(ngModel)]="event.end"-->
-                                                  <!--(onSelect)="onSelectEnd(event.end)"-->
-                                                  <!--dateFormat="yy-mm-dd"-->
-                                                  <!--dataType="string"-->
-                                                  <!--[disabledDays]="[0,6]"-->
-                                                  <!--[showTime]="true"></p-calendar></div>-->
-        <!--</div>-->
-        <!--<div class="ui-grid-row">-->
-          <!--<div class="ui-grid-col-4"><label for="allday">All Day</label></div>-->
-          <!--<div class="ui-grid-col-8"><p-checkbox [(ngModel)]="event.allDay" binary="checkbox"></p-checkbox></div>-->
-        <!--</div>-->
+        <div>People <span>{{event.people}}</span></div>
+        <div>Number of People <span>{{event.numberOfPeople}}</span></div>
+        <div>tsticket_id <span>{{event.tsticketID}}</span></div>
+        <div>Plant <span>{{event.plantID}}</span></div>
+        <div>Planned begin <span>{{event.plannedBegin}}</span></div>
+        <div>Planned end <span>{{event.plannedEnd}}</span></div>
+        <div>Note <span>{{event.comment}}</span></div>
+        <div>From <span>{{event.start.toLocaleString()}}</span></div>
+        <div>TO <span>{{event.end.toLocaleString()}}</span></div>
       </div>
+      <!-- footer -->
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
           <button type="button" pButton icon="pi pi-times" (click)="deleteEvent()" label="Delete" [disabled]="!event?.id"></button>
@@ -69,6 +65,46 @@
         </div>
       </p-footer>
     </p-dialog>
+    <!-- End click service call -->
+
+    <!-- Click outage -->
+    <p-dialog *ngIf="isOutage" [(visible)]="dialogOutageVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
+              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150">
+      <!-- header -->
+      <p-header>
+        <p-inplace >
+            <span pInplaceDisplay>
+                {{event.title}}
+            </span>
+            <span pInplaceContent>
+                <input pInputText id="title" [(ngModel)]="event.title" />
+            </span>
+          </p-inplace>
+      </p-header>
+      <!-- content -->
+      <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
+        <div>tsticket_id <span>{{event.tsticketID}}</span></div>
+        <div>Plant <span>{{event.plantID}}</span></div>
+        <div>Outage category <span>{{event.outageCategory}}</span></div>
+        <div>Expected begin <span>{{event.expectedBegin}}</span></div>
+        <div>Expected end <span>{{event.expectedEnd}}</span></div>
+        <div>Note <span>{{event.comment}}</span></div>
+        <div>From <span>{{event.start.toLocaleString()}}</span></div>
+        <div>TO <span>{{event.end.toLocaleString()}}</span></div>
+      </div>
+      <!-- footer -->
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+          <button type="button" pButton icon="pi pi-times" (click)="deleteEvent()" label="Delete" [disabled]="!event?.id"></button>
+          <!--<button type="button" pButton icon="fa-check" (click)="saveEvent()" label="Save" [disabled]="!event?.start"></button>-->
+          <button type="button" pButton icon="pi pi-pencil" (click)="editEvent(event)" label="Edit" [disabled]="!event?.id"></button>
+        </div>
+      </p-footer>
+    </p-dialog>
+    <!-- End click outage -->
+
+    <!-- Click day -->
+    
     <p-dialog header="Event Details" [(visible)]="dialogNewVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
               [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150">
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">

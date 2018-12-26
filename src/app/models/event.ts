@@ -7,7 +7,7 @@ export interface IEvent {
     color: string;
     className: string;
     event: any;
-    plant_id: number;
+    plantID: number;
 
     getInfo(event: any);
   }

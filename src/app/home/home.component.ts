@@ -95,8 +95,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   event: IEvent;
 
-  dialogVisible = false;
   dialogNewVisible = false;
+  dialogServiceCallVisible = false;
+  isServiceCall = false;
+  dialogOutageVisible = false;
+  isOutage = false;
   idGen = 100;
 
   selectedEvent: any;
@@ -193,203 +196,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
     ];
 
-    // this.events = [
-    //   {
-    //     'id': 1,
-    //     'title': 'Ha Noi',
-    //     'start': '2018-12-11',
-    //     'end': '2018-12-12',
-    //     'plant_id': '12'
-    //   },
-    //   {
-    //     'id': 2,
-    //     'title': 'Ha Noi',
-    //     'start': '2018-12-05',
-    //     'end': '2018-12-07',
-    //     'plant_id': '12'
-    //   },
-    //   {
-    //     'id': 3,
-    //     'title': 'Ha Noi',
-    //     'start': '2018-12-08',
-    //     'end': '2018-12-10',
-    //     'className': 'highPriority',
-    //     'plant_id': '12'
-    //   },
-    //   {
-    //     'id': 4,
-    //     'title': 'Da Nang',
-    //     'start': '2018-12-16',
-    //     'end': '2018-12-16',
-    //     'color': 'red',
-    //     'className': 'filter-italic',
-    //     'plant_id': '23'
-    //   },
-    //   {
-    //     'id': 5,
-    //     'title': 'Da Nang',
-    //     'start': '2018-12-11',
-    //     'end': '2018-12-13',
-    //     'plant_id': '23'
-    //   },
-    //   {
-    //     'id': 6,
-    //     'title': 'Da Nang',
-    //     'start': '2018-12-25',
-    //     'end': '2018-12-25',
-    //     'plant_id': '23'
-    //   },
-    //   {
-    //     'id': 7,
-    //     'title': 'Hai Phong',
-    //     'start': '2018-12-24',
-    //     'end': '2018-12-24',
-    //     'plant_id': '34'
-    //   },
-    //   {
-    //     'id': 8,
-    //     'title': 'hai Phong',
-    //     'start': '2018-12-23',
-    //     'end': '2018-12-23',
-    //     'plant_id': '34'
-    //   }
-    // ];
-
-    // this.listEvents = [
-    //   {
-    //     'id': 1,
-    //     'title': 'Ha Noi',
-    //     'start': '2018-12-11',
-    //     'end': '2018-12-12',
-    //     'plant_id': '12'
-    //   },
-    //   {
-    //     'id': 2,
-    //     'title': 'Ha Noi',
-    //     'start': '2018-12-05',
-    //     'end': '2018-12-07',
-    //     'plant_id': '12'
-    //   },
-    //   {
-    //     'id': 3,
-    //     'title': 'Ha Noi',
-    //     'start': '2018-12-08',
-    //     'end': '2018-12-10',
-    //     'className': 'highPriority',
-    //     'plant_id': '12'
-    //   },
-    //   {
-    //     'id': 4,
-    //     'title': 'Da Nang',
-    //     'start': '2018-12-16',
-    //     'end': '2018-12-16',
-    //     'color': 'red',
-    //     'className': 'filter-italic',
-    //     'plant_id': '23'
-    //   },
-    //   {
-    //     'id': 5,
-    //     'title': 'Da Nang',
-    //     'start': '2018-12-11',
-    //     'end': '2018-12-13',
-    //     'plant_id': '23'
-    //   },
-    //   {
-    //     'id': 6,
-    //     'title': 'Da Nang',
-    //     'start': '2018-12-25',
-    //     'end': '2018-12-25',
-    //     'plant_id': '23'
-    //   },
-    //   {
-    //     'id': 7,
-    //     'title': 'Hai Phong',
-    //     'start': '2018-12-24',
-    //     'end': '2018-12-24',
-    //     'plant_id': '34'
-    //   },
-    //   {
-    //     'id': 8,
-    //     'title': 'hai Phong',
-    //     'start': '2018-12-23',
-    //     'end': '2018-12-23',
-    //     'plant_id': '34'
-    //   }
-    // ];
-
-    // this.listPlants = [
-    //   {
-    //     'id': 12,
-    //     'name': 'ha Noi',
-    //   },
-    //   {
-    //     'id': 23,
-    //     'name': 'Da Nag',
-    //   },
-    //   {
-    //     'id': 34,
-    //     'name': 'hai Phong',
-    //   },
-    //   {
-    //     'id': 42,
-    //     'name': 'ho chi minh',
-    //   },
-    // ];
-
-    // this.outageCategories = [
-    //   {
-    //     'id': 1,
-    //     'name': 'Category 1',
-    //   },
-    //   {
-    //     'id': 2,
-    //     'name': 'Category 2',
-    //   },
-    //   {
-    //     'id': 3,
-    //     'name': 'Category 3',
-    //   },
-    // ];
-
-    // this.listCreatorEditor = [
-    //   {
-    //     'id': 1,
-    //     'firstname': 'Kawasaki',
-    //     'lastname': 'Dang Nhu'
-    //   },
-    //   {
-    //     'id': 2,
-    //     'firstname': 'Kimura',
-    //     'lastname': 'Trinh Thien'
-    //   },
-    //   {
-    //     'id': 3,
-    //     'firstname': 'Yoshida',
-    //     'lastname': 'Nguyen Van'
-    //   },
-    //   {
-    //     'id': 4,
-    //     'firstname': 'Nakama',
-    //     'lastname': 'Pham Duc'
-    //   },
-    // ];
-    // console.log('onit: ', this.events);
-
   }
 
   ngOnChanges() {
-    // console.log('change: ', this.events);
-    // console.log('change event call');
 
   }
 
   ngAfterViewInit() {
-    // console.log('after: ', this.events);
-    // console.log('after event call');
   }
 
   ngOnDestroy() {
-    // console.log('destroy: ', this.events);
 
     this.setSelectedSCsPeople();
     this.setSelectedSCsStatus();
@@ -415,13 +231,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   handleEventClick(e) {
+    console.log('clicked event: ', e.calEvent.event);
+    if (e.calEvent.event.people !== undefined) {
+      this.event = new ServiceCall();
+      this.event.getInfo(e.calEvent.event);
+      this.isServiceCall = true;
+      this.dialogServiceCallVisible = true;
+    } else {
+      this.event = new Outage();
+      this.event.getInfo(e.calEvent.event);
+      this.isOutage = true;
+      this.dialogOutageVisible = true;
+    }
     // this.calendarSrv.setSelectedEvent(e);
-    // this.event = new MyEvent();
-    // this.event.title = e.calEvent.title;
 
     // const start = e.calEvent.start;
     // const end = e.calEvent.end;
-    // console.log(e.calEvent);
     // if (e.view.name === 'month') {
     //   // start.stripTime();
     // }
@@ -434,7 +259,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // this.event.id = e.calEvent.id;
     //  this.event.start = new Date(start);
     // this.event.allDay = e.calEvent.allDay;
-    // this.dialogVisible = true;
 
   }
 
@@ -469,7 +293,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     if (index >= 0) {
       this.events.splice(index, 1);
     }
-    this.dialogVisible = false;
+    this.dialogServiceCallVisible = false;
   }
 
   findEventIndexById(id: number) {
@@ -941,7 +765,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     sessionStorage.setItem(key, JSON.stringify(this.timeEnd));
   }
 
-  // ======================
   // fillter by plants
   filterPlants() {
     var listID = [];
@@ -951,7 +774,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       });
       if (listID.length !== 0) {
         this.events = this.events.filter(function(e){
-          return this.indexOf(e['plant_id']) >= 0;
+          return this.indexOf(e.plantID) >= 0;
         }, listID);
       }
     }
@@ -1033,7 +856,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   // filter by participating people
   filterParticipatingPeople() {
-    // console.log('selected part people', this.selectedSCsPeople);
     var listID = [];
     if (this.selectedSCsPeople !== null) {
       this.selectedSCsPeople.forEach(personID => {
@@ -1055,7 +877,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   // filter by ServiceCall status
   filterServiceCallStatus() {
-    // console.log('selected selectedSCsStatus haha', this.selectedSCsStatus);
     let today = new Date();
     if (this.selectedSCsStatus !== null) {
       switch (this.selectedSCsStatus) {
@@ -1099,7 +920,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // filter by OT status
   filterOutageStatus() {
     let today = new Date();
-    // console.log('selected OutageStatus heheh', this.selectedOutageStatus);
     if (this.selectedOutageStatus !== undefined) {
       switch (this.selectedOutageStatus) {
         case '1':
