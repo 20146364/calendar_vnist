@@ -120,6 +120,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   //   'showNonCurrentDates': false,
   // };
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
+
+  display = false;
+  showDialog() {
+    this.display = true;
+  }
+
+
   constructor(private http: HttpClient,
               private calendarSrv: CalendarService,
               private plantsSrv: PlantsService,
@@ -142,6 +149,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       weekNumbers: true,
       editable: true,
       eventClick: this.handleEventClick,
+      dateClick: this.handleDayClick,
       timezone: "local",
       eventLimit: true,
       id: "calendar"
@@ -226,33 +234,37 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setEvents();
   }
 
-  handleDayClick(event) {
-    // // let offset = new Date().getTimezoneOffset();
-    // //  console.log(offset);
-    // //  console.log(event.date.subtract(offset, 'minutes'));
-    // //  this.event.start = event.date.add(offset, 'minutes').toDate();
-
-
-    // this.event = new MyEvent();
-    // this.event.start = event.date.toDate();
-    // this.dialogNewVisible = true;
+  handleDayClick = (event) => {
+    this.showDialog();
   }
+  // handleDayClick(event) {
+  //   return this.showDialog();
+  //   // // let offset = new Date().getTimezoneOffset();
+  //   // //  console.log(offset);
+  //   // //  console.log(event.date.subtract(offset, 'minutes'));
+  //   // //  this.event.start = event.date.add(offset, 'minutes').toDate();
+  //
+  //
+  //   // this.event = new MyEvent();
+  //   // this.event.start = event.date.toDate();
+  //   // this.dialogNewVisible = true;
+  // }
 
   handleEventClick(e) {
-    // console.log('clicked event', e.event);
-    if (e.event.people !== undefined) {
+    console.log('clicked event');
+    // if (e.event.people !== undefined) {
       // this.event = new ServiceCall();
       // this.event.getInfo(e.event);
-      
+
       // // console.log('clicked event: ', this.event);
       // this.isServiceCall = true;
-      this.dialogServiceCallVisible = true;
-    } else {
+      // this.dialogServiceCallVisible = true;
+    // } else {
       // this.event = new Outage();
       // this.event.getInfo(e.event);
       // this.isOutage = true;
       // this.dialogOutageVisible = true;
-    }
+    // }
 
     // this.calendarSrv.setSelectedEvent(e);
 
