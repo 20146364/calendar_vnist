@@ -19,6 +19,92 @@
       #gotoSelectedDate>
     </p-fullCalendar >
 
+    <p-dialog header="Tile Event" [(visible)]="display" [modal]="true" [responsive]="true"
+              [style]="{width: '900px', minWidth: '200px'}" [minY]="70"
+              [maximizable]="true" [baseZIndex]="10000">
+
+      <div style="width: 100%; height: auto; background-color: #0a0a0a">
+        <div class="ui-g">
+          <div class="ui-g-6">
+            <i class="fa fa-wrench" style="color: white; margin-right: 5px" aria-hidden="true"></i>
+            <i class="fa fa-calendar" style="color: white" aria-hidden="true"></i>
+            <span style="color: white"> TS_06_11_2018 2 (<i class="fa fa-hospital-o" aria-hidden="true"></i> Demo Instance)</span>
+            <i class="fa fa-long-arrow-right" style="margin-right: 5px; color: white" aria-hidden="true"></i>
+            <i class="fa fa-map-marker" style="color: white" aria-hidden="true"></i>
+          </div>
+          <div class="ui-g-6">
+            <i class="fa fa-user" style="color: white" aria-hidden="true"></i>
+            <span style="color: white">1- <i class="fa fa-ticket" aria-hidden="true"></i> #4443 TT_06_11_1018 2</span>
+          </div>
+        </div>
+
+        <div class="ui-g">
+          <div class="ui-g-12" style="color: white">Demo 2</div>
+        </div>
+      </div>
+
+      <div style="background-color:#2E6E9E">
+        <div class="ui-g">
+          <div class="ui-g-4" style="border: 1px dotted black; text-align: center">
+            <a>
+              <i class="fa fa-eye" aria-hidden="true"></i> <span> Display</span>
+            </a>
+          </div>
+          <div class="ui-g-4" style="border: 1px dotted black; text-align: center">
+            <i class="fa fa-pencil" aria-hidden="true"></i><span> Edit</span>
+          </div>
+          <div class="ui-g-4" style="border: 1px dotted black; text-align: center">
+            <i class="fa fa-play" aria-hidden="true"></i><span> Start</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="border: 1px dotted black">
+
+        <div class="ui-g">
+          <div class="ui-g-1">
+            <i class="fa fa-cogs fa-4x"></i>
+          </div>
+          <div class="ui-g-11">
+            <div style="margin-bottom: 10px">
+              <span style="font-size: larger; margin-left: 5px">Service</span>
+              <span style="font-size: larger; font-weight: bold; color: #2E6E9E"> TS_06__2018 2</span>
+              <span style="font-size: larger; margin-left: 5px">on plant</span>
+              <span style="font-size: larger; font-weight: bold; color: #2E6E9E"> Demo 2</span>
+            </div>
+            <span style="font-size: medium; margin-left: 5px">Service</span>
+            <span style="font-size: medium; font-weight: bold; color: #2E6E9E"> #TS_06__2018 2</span>
+            <br/>
+            <span style="font-size: medium; margin-left: 5px">This service is not based on an action request</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; margin-bottom: 20px">
+          <span>Planned Employees: </span>
+          <button><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></button>
+        </div>
+
+        <div>
+          <ol>&#9679; <span style="background: #0e3b61; color: white; padding: 5px"><i class="fa fa-user" aria-hidden="true"></i> Demo Acount <i
+            class="fa fa-times" aria-hidden="true"></i> </span></ol>
+        </div>
+
+
+        <div style="margin-top: 50px; color: #0e3b61">
+          <span>Planned begin: 06/11/2018</span>, <span>10:30</span>
+          <br/>
+          <span>Planned end: 06/11/2018</span>, <span>10:30</span>
+        </div>
+
+        <div style="margin-top: 50px; margin-bottom: 20px; color: #0e3b61">
+          <span>Notes:</span>
+          <br/>
+          <span>TS_26_11_2018 2</span>
+        </div>
+
+      </div>
+
+    </p-dialog>
     <!-- Click Service call -->
     <!-- <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
               [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150"> -->
