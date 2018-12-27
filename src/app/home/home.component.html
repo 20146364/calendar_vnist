@@ -20,8 +20,8 @@
     </p-fullCalendar >
 
     <!-- Click Service call -->
-    <!-- <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150"> -->
+    <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
+              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150">
       <!-- header -->
       <!-- <p-header>
         <p-inplace >
@@ -37,7 +37,7 @@
       <!--
 - plant - ms co plant_id
 - participating people + số lượng người tham gia , moi co people_id-->
-<p-dialog header="Title" [(visible)]="dialogServiceCallVisible">
+
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
 
         <div>People <span>{{event._people}}</span></div>

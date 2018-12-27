@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   event: IEvent;
 
   dialogNewVisible = false;
-  dialogServiceCallVisible = false;
+  dialogServiceCallVisible: boolean = false;
   isServiceCall = false;
   dialogOutageVisible = false;
   isOutage = false;
@@ -129,6 +129,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               private creatorEditorSrv: CreatorEditorService,
               private router: Router) {
 
+    
+    // if (this.calendarSrv.getSelectedEvent() !== 0) {
+    //   this.selectedEvent = this.calendarSrv.getSelectedEvent();
+    //   this.selectedView = this.selectedEvent.view.name;
+    //   this.selectedDate = this.selectedEvent.calEvent.start.format();
+    // }
+
+  }
+
+  ngOnInit() {
     this.options = {
       header: {
         left: 'prev,next today',
@@ -142,20 +152,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       weekNumbers: true,
       editable: true,
       eventClick: this.handleEventClick,
+      dateClick: this.handleDayClick,
       timezone: "local",
       eventLimit: true,
       id: "calendar"
     };
-    // if (this.calendarSrv.getSelectedEvent() !== 0) {
-    //   this.selectedEvent = this.calendarSrv.getSelectedEvent();
-    //   this.selectedView = this.selectedEvent.view.name;
-    //   this.selectedDate = this.selectedEvent.calEvent.start.format();
-    // }
-
-  }
-
-  ngOnInit() {
-
     this.multipleOptions = {
       width: '100%',
       multiple: true,
@@ -171,7 +172,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       tags: true
     };
     this.initListParticipatingPeople();
-    console.log('1');
     this.initListSCsOutage();
     this.initListPlants();
     this.initListOutageCategories();
@@ -226,7 +226,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setEvents();
   }
 
-  handleDayClick(event) {
+  handleDayClick = (event) => {
+    console.log(event);
+    this.dialogServiceCallVisible = true;
     // // let offset = new Date().getTimezoneOffset();
     // //  console.log(offset);
     // //  console.log(event.date.subtract(offset, 'minutes'));
@@ -238,20 +240,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // this.dialogNewVisible = true;
   }
 
-  handleEventClick(e) {
-    // console.log('clicked event', e.event);
+  handleEventClick = (e) => {
     if (e.event.people !== undefined) {
-      // this.event = new ServiceCall();
-      // this.event.getInfo(e.event);
+      this.event = new ServiceCall();
+      this.event.getInfo(e.event);
       
       // // console.log('clicked event: ', this.event);
-      // this.isServiceCall = true;
+      this.isServiceCall = true;
       this.dialogServiceCallVisible = true;
     } else {
-      // this.event = new Outage();
-      // this.event.getInfo(e.event);
-      // this.isOutage = true;
-      // this.dialogOutageVisible = true;
+      this.event = new Outage();
+      this.event.getInfo(e.event);
+      this.isOutage = true;
+      this.dialogOutageVisible = true;
     }
 
     // this.calendarSrv.setSelectedEvent(e);
