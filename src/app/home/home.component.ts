@@ -177,10 +177,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       tags: true
     };
     this.initListParticipatingPeople();
+    console.log('1');
     this.initListSCsOutage();
     this.initListPlants();
     this.initListOutageCategories();
-
     this.getSelectedSCsPeople();
     this.getSelectedSCsStatus();
     this.getSelectedOutageStatus();
@@ -337,9 +337,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   gotoDate(event, selectedDate) {
     let date;
     date = new Date(event);
-    console.log('click day is', date);
-    console.log('click day', selectedDate);
-    selectedDate.gotoDate(date);
+    selectedDate.calendar.gotoDate(date);
   }
 
 
