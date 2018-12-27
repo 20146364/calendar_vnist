@@ -6,7 +6,7 @@
   <div class="ui-toolbar-group-right">
     <button pButton type="button" class="ui-button-primary" label="List View" routerLink="/mytodo" routerLinkActive="active menu"></button>
     <button pButton type="button" class="ui-button-primary" label="Compliance View" routerLink="/compliance" routerLinkActive="active menu"></button>
-    <button pButton type="button" class="ui-button-primary" label="Create new Todo" routerLink="/newtodo" routerLinkActive="active menu"></button>
+    <button pButton type="button" class="ui-button-primary" label="Create new To-do" routerLink="/newtodo" routerLinkActive="active menu"></button>
   </div>
 </p-toolbar>
 <div class="ui-g">
@@ -29,7 +29,7 @@
                 {{event.title}}
             </span>
             <span pInplaceContent>
-                <input pInputText id="title" [(ngModel)]="event.title" />
+                <input pInputText id="title1" [(ngModel)]="event.title" />
             </span>
           </p-inplace>
       </p-header>
@@ -74,7 +74,7 @@
                 {{event.title}}
             </span>
             <span pInplaceContent>
-                <input pInputText id="title" [(ngModel)]="event.title" />
+                <input pInputText id="title2" [(ngModel)]="event.title" />
             </span>
           </p-inplace>
       </p-header>
