@@ -114,10 +114,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // days of week. an array of zero-based day of week integers (0=Sunday)
     // (Monday-Thursday in this example)
   };
-  options = {
-    'firstDay' : 1,
-    'showNonCurrentDates': false,
-  };
+  options: any;
+  // options = {
+  //   'firstDay' : 1,
+  //   'showNonCurrentDates': false,
+  // };
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
   constructor(private http: HttpClient,
               private calendarSrv: CalendarService,
@@ -127,10 +128,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               private otCategorySrv: OutageCategoryService,
               private creatorEditorSrv: CreatorEditorService,
               private router: Router) {
-    this.header = {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'month,agendaWeek,agendaDay'
+
+    this.options = {
+      defaultDate: this.selectedDate,
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
+      },
+      height: 550,
+      businessHours: this.businessHours,
+      editable: true,
+      weekNumbers: true,
+      eventLimit: 4,
+      defaultView: this.selectedView,
+      eventClick: this.handleEventClick(Event),
+      timezone: "local",
+      id: "calendar"
     };
     if (this.calendarSrv.getSelectedEvent() !== 0) {
       this.selectedEvent = this.calendarSrv.getSelectedEvent();
@@ -231,19 +245,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   handleEventClick(e) {
-    if (e.calEvent.event.people !== undefined) {
-      this.event = new ServiceCall();
-      this.event.getInfo(e.calEvent.event);
+    // if (e.calEvent.event.people !== undefined) {
+    //   this.event = new ServiceCall();
+    //   this.event.getInfo(e.calEvent.event);
       
-      console.log('clicked event: ', this.event);
-      this.isServiceCall = true;
-      this.dialogServiceCallVisible = true;
-    } else {
-      this.event = new Outage();
-      this.event.getInfo(e.calEvent.event);
-      this.isOutage = true;
-      this.dialogOutageVisible = true;
-    }
+    //   console.log('clicked event: ', this.event);
+    //   this.isServiceCall = true;
+    //   this.dialogServiceCallVisible = true;
+    // } else {
+    //   this.event = new Outage();
+    //   this.event.getInfo(e.calEvent.event);
+    //   this.isOutage = true;
+    //   this.dialogOutageVisible = true;
+    // }
     // this.calendarSrv.setSelectedEvent(e);
 
     // const start = e.calEvent.start;
@@ -264,65 +278,67 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   saveEvent() {
-    let offset;
-    offset = new Date().getTimezoneOffset();
-    //  update or new
-    if (this.event.id) {
-      let index: number;
-      index = this.findEventIndexById(this.event.id);
-      if (index >= 0) {
-        this.events[index] = this.event;
-      }
-    } else {
-      this.event.id = this.idGen++;
-      console.log(this.event.start);
-      console.log(this.event.end);
-      this.events.push(this.event);
-      this.event = null;
-    }
+    // let offset;
+    // offset = new Date().getTimezoneOffset();
+    // //  update or new
+    // if (this.event.id) {
+    //   let index: number;
+    //   index = this.findEventIndexById(this.event.id);
+    //   if (index >= 0) {
+    //     this.events[index] = this.event;
+    //   }
+    // } else {
+    //   this.event.id = this.idGen++;
+    //   console.log(this.event.start);
+    //   console.log(this.event.end);
+    //   this.events.push(this.event);
+    //   this.event = null;
+    // }
 
-    this.dialogNewVisible = false;
+    // this.dialogNewVisible = false;
   }
 
   editEvent(event) {
-    this.router.navigate(['/detail', event.id]);
+    // this.router.navigate(['/detail', event.id]);
   }
 
   deleteEvent() {
-    let index: number;
-    index = this.findEventIndexById(this.event.id);
-    if (index >= 0) {
-      this.events.splice(index, 1);
-    }
-    this.dialogServiceCallVisible = false;
+    // let index: number;
+    // index = this.findEventIndexById(this.event.id);
+    // if (index >= 0) {
+    //   this.events.splice(index, 1);
+    // }
+    // this.dialogServiceCallVisible = false;
   }
 
   findEventIndexById(id: number) {
-    let index = -1;
-    for (let i = 0; i < this.events.length; i++) {
-      if (id === this.events[i].id) {
-        index = i;
-        break;
-      }
-    }
+    // let index = -1;
+    // for (let i = 0; i < this.events.length; i++) {
+    //   if (id === this.events[i].id) {
+    //     index = i;
+    //     break;
+    //   }
+    // }
 
-    return index;
+    // return index;
   }
 
   fetchEvents(eventData) {
-    console.log(eventData);
-    Config.defaultView = eventData.view.name;
+    // console.log(eventData);
+    // Config.defaultView = eventData.view.name;
   }
 
   onSelectEnd(eventData) {
-    let offset;
-    offset = new Date().getTimezoneOffset();
-    console.log(eventData);
+    // let offset;
+    // offset = new Date().getTimezoneOffset();
+    // console.log(eventData);
   }
 
   gotoDate(event, selectedDate) {
     let date;
     date = new Date(event);
+    console.log('click day is', date);
+    console.log('click day', selectedDate);
     selectedDate.gotoDate(date);
   }
 
@@ -488,6 +504,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   //#endregion
 
   // init outage Category
+  // initListOutageCategories() {
+  //   let key;
+  //   key = 'localOutageCategory';
+  //   if ((this.outageCategories = this.otCategorySrv.getListOutageCategory()) == null) {
+  //     this.http.get(`${Config.api_endpoint}tsoutagecategories/fetch`, httpOptions).subscribe(data => {
+  //       // console.log()
+  //       // this.outageCategories = [];
+  //       // this.outageCategories = data['data'];
+  //       // sessionStorage.setItem(key, JSON.stringify(this.outageCategories));
+  //     });
+  //   }
+  // }
   async initListOutageCategories() {
     let key;
     key = 'localOutageCategory';

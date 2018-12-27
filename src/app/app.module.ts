@@ -24,6 +24,7 @@ import { CodeHighlighterModule } from 'primeng/primeng';
 import { InplaceModule } from 'primeng/primeng';
 import { NgSelect2Module } from 'ng-select2';
 
+import {FullCalendarModule} from 'primeng/components/fullcalendar/fullcalendar';
 import { AccordionModule } from 'primeng/components/accordion/accordion';
 import { ToolbarModule } from 'primeng/components/toolbar/toolbar';
 import { SplitButtonModule } from 'primeng/components/splitbutton/splitbutton';
@@ -71,6 +72,7 @@ import { ParticipatingPeopleService } from './services/participating-people.serv
     SelectButtonModule,
     RadioButtonModule,
     TableModule,
+    FullCalendarModule,
     NgSelect2Module,
     AppRoutingModule
   ],
