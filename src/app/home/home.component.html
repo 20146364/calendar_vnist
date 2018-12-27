@@ -11,23 +11,13 @@
 </p-toolbar>
 <div class="ui-g">
   <!-- <div class="ui-g-1"></div> -->
-  <!-- FullCalendar
-  [header]="header" [eventLimit]="4" [editable]="true"
-                [weekNumbers]="true" [aspectRatio]="2" 
-                (onDayClick)="handleDayClick($event)" (onEventClick)="handleEventClick($event)"
-                (onViewRender)="fetchEvents($event)"
-                [defaultDate]="selectedDate"
-                [defaultView]="selectedView"
-                [businessHours]="businessHours"
-                timezone="local"
-                [(options)] = "options"
-                id="calendar"
-                height="800px" -->
+  <!-- FullCalendar -->
   <div class="ui-g-9 ui-g-nopad">
     <p-fullCalendar
-                [events]="events"
-                [options]="options"
-                #gotoSelectedDate></p-fullCalendar >
+      [events]="events"
+      [options]="options"
+      #gotoSelectedDate>
+    </p-fullCalendar >
 
     <!-- Click Service call -->
     <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
