@@ -15,9 +15,10 @@ export class ServiceCall implements IEvent {
     comment: any;
     tsticketID: string;
     listPeople: any[];
+    _people: any;
     numberOfPeople: number;
 
-    event: any;
+    // event: any;
     /**
      *
      */
@@ -25,7 +26,9 @@ export class ServiceCall implements IEvent {
     }
 
     getInfo(sc: any) {
-        this.event = sc;
+        // this.event = sc;
+      
+      console.log('clicked se: ', sc);
         this.id = sc.id;
         this.title = sc.kurzbeschreibung;
         this.start = new Date(sc.done_begin ? sc.done_begin : sc.sheduled_begin);
@@ -36,9 +39,10 @@ export class ServiceCall implements IEvent {
         this.comment = sc.sheduled_comment;
         this.tsticketID = sc.tsticket_id;
         if (sc.people !== undefined && sc.people.length !== 0) {
-            console.log('sc.poeple', sc.people)
-            this.people = sc.people;
-            console.log('people from localParticipatingPeople: ', this.people)
+            this._people = sc.people[0];
+            // console.log('sc.poeple', sc.people)
+            // this.people = sc.people;
+            // console.log('people from localParticipatingPeople: ', this.people)
         } else {
             this.people = ['unknown'];
         }

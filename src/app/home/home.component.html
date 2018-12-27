@@ -20,27 +20,27 @@
     </p-fullCalendar >
 
     <!-- Click Service call -->
-    <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150">
+    <!-- <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
+              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150"> -->
       <!-- header -->
-      <p-header>
+      <!-- <p-header>
         <p-inplace >
             <span pInplaceDisplay>
                 {{event.title}}
             </span>
             <span pInplaceContent>
-                <input pInputText id="title" [(ngModel)]="event.title" />
+                <input pInputText id="title1" [(ngModel)]="event.title" />
             </span>
           </p-inplace>
-      </p-header>
+      </p-header> -->
       <!-- content -->
       <!--
 - plant - ms co plant_id
 - participating people + số lượng người tham gia , moi co people_id-->
-
+<p-dialog header="Title" [(visible)]="dialogServiceCallVisible">
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
 
-        <!-- <div>People <span>{{event.people}}</span></div> -->
+        <div>People <span>{{event._people}}</span></div>
         <!-- <div *ngFor="let p of event.people" >{{p.nachname}}</div> -->
 
 
@@ -74,7 +74,7 @@
                 {{event.title}}
             </span>
             <span pInplaceContent>
-                <input pInputText id="title" [(ngModel)]="event.title" />
+                <input pInputText id="title2" [(ngModel)]="event.title" />
             </span>
           </p-inplace>
       </p-header>

@@ -130,33 +130,27 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               private router: Router) {
 
     this.options = {
-      defaultDate: this.selectedDate,
       header: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,agendaWeek,agendaDay'
       },
       height: 550,
+      defaultDate: this.selectedDate,
       businessHours: this.businessHours,
-      editable: true,
-      weekNumbers: true,
-      eventLimit: 4,
       defaultView: this.selectedView,
-      eventClick: this.handleEventClick(Event),
+      weekNumbers: true,
+      editable: true,
+      eventClick: this.handleEventClick,
       timezone: "local",
+      eventLimit: true,
       id: "calendar"
     };
-    if (this.calendarSrv.getSelectedEvent() !== 0) {
-      this.selectedEvent = this.calendarSrv.getSelectedEvent();
-      this.selectedView = this.selectedEvent.view.name;
-      this.selectedDate = this.selectedEvent.calEvent.start.format();
-    }
-    //  console.log(crypto.HmacSHA512('localhost:15','88960fc4c89939f3653ecae729c94138731d00c0b3ef96b187026080123062d2'));
-    //  this.calendarSrv.getExampleData('POST').subscribe(data => {
-    //      console.log('data');
-    //    }, error => {
-    //      console.log('error');
-    //    })
+    // if (this.calendarSrv.getSelectedEvent() !== 0) {
+    //   this.selectedEvent = this.calendarSrv.getSelectedEvent();
+    //   this.selectedView = this.selectedEvent.view.name;
+    //   this.selectedDate = this.selectedEvent.calEvent.start.format();
+    // }
 
   }
 
@@ -245,23 +239,25 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   handleEventClick(e) {
-    // if (e.calEvent.event.people !== undefined) {
-    //   this.event = new ServiceCall();
-    //   this.event.getInfo(e.calEvent.event);
+    // console.log('clicked event', e.event);
+    if (e.event.people !== undefined) {
+      // this.event = new ServiceCall();
+      // this.event.getInfo(e.event);
       
-    //   console.log('clicked event: ', this.event);
-    //   this.isServiceCall = true;
-    //   this.dialogServiceCallVisible = true;
-    // } else {
-    //   this.event = new Outage();
-    //   this.event.getInfo(e.calEvent.event);
-    //   this.isOutage = true;
-    //   this.dialogOutageVisible = true;
-    // }
+      // // console.log('clicked event: ', this.event);
+      // this.isServiceCall = true;
+      this.dialogServiceCallVisible = true;
+    } else {
+      // this.event = new Outage();
+      // this.event.getInfo(e.event);
+      // this.isOutage = true;
+      // this.dialogOutageVisible = true;
+    }
+
     // this.calendarSrv.setSelectedEvent(e);
 
-    // const start = e.calEvent.start;
-    // const end = e.calEvent.end;
+    // const start = e.start;
+    // const end = e.end;
     // if (e.view.name === 'month') {
     //   // start.stripTime();
     // }
@@ -271,9 +267,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     //   this.event.end = new Date(end);
     // }
 
-    // this.event.id = e.calEvent.id;
+    // this.event.id = e.id;
     //  this.event.start = new Date(start);
-    // this.event.allDay = e.calEvent.allDay;
+    // this.event.allDay = e.allDay;
 
   }
 
