@@ -1,15 +1,33 @@
 <p-toolbar>
-    <label class="ui-toolbar-group-left">
-      {{title}}
-    </label>
-    
-    <div class="ui-toolbar-group-right">
-      <button pButton type="button" class="ui-button-primary" label="Calendar View" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"></button>
-      <button pButton type="button" class="ui-button-primary" label="List View" routerLink="/mytodo" routerLinkActive="active menu"></button>
-      <button pButton type="button" class="ui-button-primary" label="Compliance View" routerLink="/compliance" routerLinkActive="active menu"></button>
+  <label class="ui-toolbar-group-left">
+    {{title}}
+  </label>
+
+  <div class="ui-toolbar-group-right">
+    <button pButton type="button" class="ui-button-primary" label="Calendar View" routerLink=""
+            routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"></button>
+    <button pButton type="button" class="ui-button-primary" label="List View" routerLink="/mytodo"
+            routerLinkActive="active menu"></button>
+    <button pButton type="button" class="ui-button-primary" label="Compliance View" routerLink="/compliance"
+            routerLinkActive="active menu"></button>
+  </div>
+</p-toolbar>
+
+<div class="ui-g">
+  <div class="ui-g-8">
+
+  </div>
+
+  <div class="ui-g-4">
+    <p style="font-weight: bold; font-size: x-large">Custom recurrence</p>
+    <div class="row">
+      <div class="block">Repeat every:</div>
+      <p-spinner class="block" size="2" [(ngModel)]="val" [min]="1" [max]="80"></p-spinner>
+      <p-dropdown class="block" [options]="time" [(ngModel)]="selectedTime" optionLabel="name"
+                  autoWidth="false" [style]="{'width':'90%'}"></p-dropdown>
     </div>
-  </p-toolbar>
-  <p>
-    newtodo works!
-  </p>
-  
+
+    <p>Repeat on</p>
+  </div>
+
+</div>
