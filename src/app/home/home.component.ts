@@ -120,6 +120,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   //   'showNonCurrentDates': false,
   // };
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
+
+  display = false;
+  showDialog() {
+    this.display = true;
+  }
+
+
   constructor(private http: HttpClient,
               private calendarSrv: CalendarService,
               private plantsSrv: PlantsService,
@@ -241,38 +248,33 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   handleEventClick = (e) => {
-    if (e.event.people !== undefined) {
-      this.event = new ServiceCall();
-      this.event.getInfo(e.event);
+    // if (e.event.people !== undefined) {
+    //   this.event = new ServiceCall();
+    //   this.event.getInfo(e.event);
       
-      // // console.log('clicked event: ', this.event);
-      this.isServiceCall = true;
-      this.dialogServiceCallVisible = true;
-    } else {
-      this.event = new Outage();
-      this.event.getInfo(e.event);
-      this.isOutage = true;
-      this.dialogOutageVisible = true;
-    }
-
-    // this.calendarSrv.setSelectedEvent(e);
-
-    // const start = e.start;
-    // const end = e.end;
-    // if (e.view.name === 'month') {
-    //   // start.stripTime();
+    //   // // console.log('clicked event: ', this.event);
+    //   this.isServiceCall = true;
+    //   this.dialogServiceCallVisible = true;
+    // } else {
+    //   this.event = new Outage();
+    //   this.event.getInfo(e.event);
+    //   this.isOutage = true;
+    //   this.dialogOutageVisible = true;
     // }
-
-    // if (end) {
-    //   // end.stripTime();
-    //   this.event.end = new Date(end);
-    // }
-
-    // this.event.id = e.id;
-    //  this.event.start = new Date(start);
-    // this.event.allDay = e.allDay;
-
+    this.showDialog();
   }
+  // handleDayClick(event) {
+  //   return this.showDialog();
+  //   // // let offset = new Date().getTimezoneOffset();
+  //   // //  console.log(offset);
+  //   // //  console.log(event.date.subtract(offset, 'minutes'));
+  //   // //  this.event.start = event.date.add(offset, 'minutes').toDate();
+  //
+  //
+  //   // this.event = new MyEvent();
+  //   // this.event.start = event.date.toDate();
+  //   // this.dialogNewVisible = true;
+  // }
 
   saveEvent() {
     // let offset;
