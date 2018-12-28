@@ -1,34 +1,33 @@
 import { IEvent } from './event';
 
 export class ServiceCall implements IEvent {
-    id: number;
-    title: string;
+    id: any;
+    title: any;
     start: Date;
     end: Date;
     allDay = false;
     color: string;
     className: string;
-    plantID: number;
+    plantID: any;
+    typeOfEvent = "ServiceCall";
 
-    plannedBegin: string;
-    plannedEnd: string;
+    plannedBegin: any;
+    plannedEnd: any;
     comment: any;
-    tsticketID: string;
+    tsticketID: any;
     listPeople: any[];
     _people: any;
-    numberOfPeople: number;
+    numberOfPeople: any;
 
-    // event: any;
+    eventServiceCall: any;
     /**
      *
      */
     constructor() {
     }
 
-    getInfo(sc: any) {
-        // this.event = sc;
-      
-      console.log('clicked se: ', sc);
+    initInfo(sc: any) {
+        this.eventServiceCall = sc;
         this.id = sc.id;
         this.title = sc.kurzbeschreibung;
         this.start = new Date(sc.done_begin ? sc.done_begin : sc.sheduled_begin);
@@ -38,15 +37,28 @@ export class ServiceCall implements IEvent {
         this.plannedEnd = (new Date(sc.sheduled_end)).toLocaleString();
         this.comment = sc.sheduled_comment;
         this.tsticketID = sc.tsticket_id;
-        if (sc.people !== undefined && sc.people.length !== 0) {
-            this._people = sc.people[0];
-            // console.log('sc.poeple', sc.people)
-            // this.people = sc.people;
-            // console.log('people from localParticipatingPeople: ', this.people)
-        } else {
-            this.people = ['unknown'];
-        }
-        this.numberOfPeople = sc.people.length;
+        // if (sc.people !== undefined && sc.people.length !== 0) {
+        //     this._people = sc.people[0];
+        //     // console.log('sc.poeple', sc.people)
+        //     // this.people = sc.people;
+        //     // console.log('people from localParticipatingPeople: ', this.people)
+        // } else {
+        //     this.people = ['unknown'];
+        // }
+        // this.numberOfPeople = sc.people.length;
+    }
+    
+    getInfo(sc: any){
+        console.log('get info scs', sc);
+        this.id = sc.id;
+        this.title = sc.title;
+        this.start = sc.start;
+        this.end = sc.end;
+        this.plantID = sc.extendedProps.plantID;
+        this.plannedBegin = sc.extendedProps.plannedBegin;
+        this.plannedEnd = sc.extendedProps.plannedEnd;
+        this.comment = sc.extendedProps.comment;
+        this.tsticketID = sc.extendedProps.tsticketID;
     }
 
     get people() {

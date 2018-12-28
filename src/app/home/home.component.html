@@ -26,9 +26,7 @@
     <p-dialog header="Tile Red Event" [(visible)]="displayRedEvent" [modal]="true" [responsive]="true"
               [style]="{width: '58%', minWidth: '200px'}" [minY]="70"
               [maximizable]="true" [baseZIndex]="10000"
-              showEffect="fade"[contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false"
-              [dismissableMask]="true" [positionLeft]="150">
+              [dismissableMask]="true">
       <div style="width: 100%; height: auto; background-color: #dc5e14">
         <div class="ui-g">
           <div class="ui-g-6">
@@ -108,9 +106,7 @@
     <p-dialog header="Tile Blue Event" [(visible)]="displayBlueEvent" [modal]="true" [responsive]="true"
               [style]="{width: '58%', minWidth: '200px'}" [minY]="70"
               [maximizable]="true" [baseZIndex]="10000"
-              showEffect="fade"[contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false"
-              [dismissableMask]="true" [positionLeft]="150">
+              [dismissableMask]="true">
       <div style="width: 100%; height: auto; background-color: #58585a">
         <div class="ui-g">
           <div class="ui-g-11">
@@ -216,29 +212,29 @@
     <!-- <p-dialog *ngIf="isOutage" [(visible)]="dialogOutageVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
               [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150"> -->
     
-    <!-- <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150">
-      <p-header>
+    <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
+              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="true" [positionLeft]="150">
+      <!-- <p-header>
         <p-inplace >
             <span pInplaceDisplay>
-                {{event.title}}
+                {{eventServiceCall.title}}
             </span>
             <span pInplaceContent>
                 <input pInputText id="title1" [(ngModel)]="event.title" />
             </span>
           </p-inplace>
-      </p-header>
+      </p-header> -->
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
-        <div>People <span>{{event._people}}</span></div>
-        <div *ngFor="let p of event.people" >{{p.nachname}}</div>
-        <div>Number of People <span>{{event.numberOfPeople}}</span></div>
-        <div>tsticket_id <span>{{event.tsticketID}}</span></div>
-        <div>Plant <span>{{event.plantID}}</span></div>
-        <div>Planned begin <span>{{event.plannedBegin}}</span></div>
-        <div>Planned end <span>{{event.plannedEnd}}</span></div>
-        <div>Note <span>{{event.comment}}</span></div>
-        <div>From <span>{{event.start.toLocaleString()}}</span></div>
-        <div>TO <span>{{event.end.toLocaleString()}}</span></div>
+        <!-- <div>People <span>{{event._people}}</span></div>
+        <div *ngFor="let p of event.people" >{{p.nachname}}</div> -->
+        <!-- <div>Number of People <span>{{event.numberOfPeople}}</span></div> -->
+        <div>tsticket_id <span>{{eventServiceCall.tsticketID}}</span></div>
+        <div>Plant <span>{{eventServiceCall.plantID}}</span></div>
+        <div>Planned begin <span>{{eventServiceCall.plannedBegin}}</span></div>
+        <div>Planned end <span>{{eventServiceCall.plannedEnd}}</span></div>
+        <div>Note <span>{{eventServiceCall.comment}}</span></div>
+        <div>From <span>{{eventServiceCall.start.toLocaleString()}}</span></div>
+        <div>TO <span>{{eventServiceCall.end.toLocaleString()}}</span></div>
       </div>
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
@@ -248,7 +244,7 @@
                   [disabled]="!event?.id"></button>
         </div>
       </p-footer>
-    </p-dialog> -->
+    </p-dialog>
     <!-- End click service call -->
 
     <!-- Click outage -->

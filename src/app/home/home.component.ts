@@ -20,12 +20,6 @@ import { IEvent } from '../models/event';
 import { ServiceCall } from '../models/service-call';
 import { Outage } from '../models/outage';
 
-import { forEach } from '@angular/router/src/utils/collection';
-import { HammerGestureConfig } from '@angular/platform-browser';
-import { checkAndUpdateBinding } from '@angular/core/src/view/util';
-import { from } from 'rxjs';
-import { all } from 'q';
-
 const httpOptions = {
   headers: new HttpHeaders({
     'accept': 'application/json',
@@ -94,6 +88,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   header: any;
 
   event: IEvent;
+  eventServiceCall: ServiceCall;
+  eventOutage;
 
   dialogNewVisible = false;
   dialogServiceCallVisible: boolean = false;
@@ -125,6 +121,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   showBlueDialog() {
     this.displayBlueEvent = true;
   }
+  displayRedEvent = false;
+  showRedDialog() {
+    this.displayRedEvent = true;
+  }
 
 
   constructor(private http: HttpClient,
@@ -146,6 +146,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   ngOnInit() {
+    // fullcalendar's options
     this.options = {
       header: {
         left: 'prev,next today',
@@ -235,7 +236,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   handleDayClick = (event) => {
     console.log(event);
-    this.dialogServiceCallVisible = true;
+    this.showBlueDialog();
+    // this.dialogServiceCallVisible = true;
     // // let offset = new Date().getTimezoneOffset();
     // //  console.log(offset);
     // //  console.log(event.date.subtract(offset, 'minutes'));
@@ -248,22 +250,29 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   handleEventClick = (e) => {
-    // if (e.event.people !== undefined) {
-    //   this.event = new ServiceCall();
-    //   this.event.getInfo(e.event);
+    console.log(e.event);
+    // console.log('e event people out', typeof e.event.people);
+    if (e.event.extendedProps.typeOfEvent === "ServiceCall") {
+      // console.log('e event people in', e.event.people)
+      // this.eventServiceCall = new ServiceCall();
+      // this.eventServiceCall.getInfo(e.event);
       
-    //   // // console.log('clicked event: ', this.event);
-    //   this.isServiceCall = true;
-    //   this.dialogServiceCallVisible = true;
-    // } else {
-    //   this.event = new Outage();
-    //   this.event.getInfo(e.event);
-    //   this.isOutage = true;
-    //   this.dialogOutageVisible = true;
-    // }
+      // console.log('eventServiceCall: ', this.eventServiceCall);
+      // this.isServiceCall = true;
+      // this.dialogServiceCallVisible = true;
+      this.showBlueDialog();
+    } else {
+      // this.event = new Outage();
+      // this.event.getInfo(e.event);
+      // this.isOutage = true;
+      // this.dialogOutageVisible = true;
+      this.showRedDialog();
+    }
     // this.showDialog();
-    this.showBlueDialog();
+    // this.showBlueDialog();
+    // this.showRedDialog();
   }
+  
   // handleDayClick(event) {
   //   return this.showDialog();
   //   // // let offset = new Date().getTimezoneOffset();
@@ -439,7 +448,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   private getOutageServiceCallFromAPI(listPages) {
-    let itemServiceCallOutage;
+    let itemServiceCallOutage: IEvent;
     let keySCOT = 'localServiceCallOutage';
     let keyListEvents = 'localListEvents';
     Promise.all(listPages).then(rs => {
@@ -451,10 +460,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         items['data'].forEach(item => {
           if (item['begin'] !== undefined) {
             itemServiceCallOutage = new Outage();
-            itemServiceCallOutage.getInfo(item);
+            itemServiceCallOutage.initInfo(item);
           } else {
             itemServiceCallOutage = new ServiceCall();
-            itemServiceCallOutage.getInfo(item);
+            itemServiceCallOutage.initInfo(item);
           }
           this.events.push(itemServiceCallOutage);
           this.listEvents.push(itemServiceCallOutage);
@@ -507,13 +516,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   //   key = 'localOutageCategory';
   //   if ((this.outageCategories = this.otCategorySrv.getListOutageCategory()) == null) {
   //     this.http.get(`${Config.api_endpoint}tsoutagecategories/fetch`, httpOptions).subscribe(data => {
-  //       // console.log()
+  //       console.log('outage category', data);
   //       // this.outageCategories = [];
   //       // this.outageCategories = data['data'];
   //       // sessionStorage.setItem(key, JSON.stringify(this.outageCategories));
   //     });
   //   }
   // }
+
   async initListOutageCategories() {
     let key;
     key = 'localOutageCategory';
@@ -579,6 +589,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   // init plant list
+  
   initListPlants() {
     let key;
     key = 'localPlant';
@@ -811,18 +822,27 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         listID.push(parseInt(personID));
       });
       if (listID.length !== 0) {
+        this.events.forEach( e => {
+          console.log('this is event', e);
+        })
         this.events = this.events.filter(function(e){
-          if ((e.event.creator_id !== undefined
-            && e.event.creator_id !== null)
-            || (e.event.modifier_id !== undefined
-            && e.event.modifier_id !== null)) {
-            return (this.indexOf(e.event.creator_id) >= 0) || (this.indexOf(e.event.modifier_id) >= 0);
+          if (e.typeOfEvent === "Outage") {
+            if ((e.eventOutage.creator_id !== undefined
+              && e.eventOutage.creator_id !== null)
+              || (e.eventOutage.modifier_id !== undefined
+              && e.eventOutage.modifier_id !== null)) {
+                return (this.indexOf(e.eventOutage.creator_id) >= 0)
+                        || (this.indexOf(e.eventOutage.modifier_id) >= 0);
+            }
           }
-          if (e.event.creator_person_id !== undefined
-            && e.event.creator_person_id !== null
-            && e.event.modifier_person_id !== undefined
-            && e.event.modifier_person_id !== null) {
-            return (this.indexOf(e.event.creator_person_id) >= 0) || (this.indexOf(e.event.modifier_person_id) >= 0);
+          if (e.typeOfEvent === "ServiceCall") {
+            if ((e.eventServiceCall.creator_person_id !== undefined
+              && e.eventServiceCall.creator_person_id !== null)
+              || (e.eventServiceCall.modifier_person_id !== undefined
+              && e.eventServiceCall.modifier_person_id !== null)) {
+                return (this.indexOf(e.eventServiceCall.creator_person_id) >= 0)
+                        || (this.indexOf(e.eventServiceCall.modifier_person_id) >= 0);
+            }
           }
         }, listID);
       }
@@ -867,9 +887,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       });
       if (listID.length !== 0) {
         this.events = this.events.filter(function(e){
-          if (e.event.tsoutagecategory !== undefined
-            && e.event.tsoutagecategory !== null) {
-            return this.indexOf(e.event.tsoutagecategory.id) >= 0;
+          if (e.typeOfEvent === "Outage") {
+            return this.indexOf(e.eventOutage.tsoutagecategory.id) >= 0;
           }
           return true;
         }, listID);
@@ -886,10 +905,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       });
       if (listID.length !== 0) {
         this.events = this.events.filter(function(e){
-          if (e.event.people !== undefined
-            && e.event.people !== null) {
-            if (e.event.people.length > 0) {
-              return this.indexOf(e.event.people["0"].id) >= 0;
+          if (e.typeOfEvent === "ServiceCall") {
+            if (e.eventServiceCall !== undefined
+              && e.eventServiceCall.people.length > 0) {
+              return this.indexOf(e.eventServiceCall.people["0"].id) >= 0;
             }
           }
           return true;
@@ -908,7 +927,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         case '2':
           // planted
           this.events = this.events.filter(e => {
-            if (e.event.people !== undefined) {
+            if (e.typeOfEvent === "ServiceCall") {
               let timeStart = new Date(e.start);
               return timeStart > today;
             }
@@ -918,7 +937,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         case '3':
           // start
           this.events = this.events.filter(e => {
-            if (e.event.people !== undefined) {
+            if (e.typeOfEvent === "ServiceCall") {
               let timeStart = new Date(e.start);
               let timeEnd = new Date(e.end);
               return (timeStart <= today) && (timeEnd >= today);
@@ -929,7 +948,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         default:
           // end
           this.events = this.events.filter(e => {
-            if (e.event.people !== undefined) {
+            if (e.typeOfEvent === "ServiceCall") {
               let timeEnd = new Date(e.end);
               return timeEnd < today;
             }
@@ -950,7 +969,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         case '2':
           // planted
           this.events = this.events.filter(e => {
-            if (e.event.tsoutagecategory !== undefined) {
+            if (e.typeOfEvent === "Outage") {
               let timeStart = new Date(e.start);
               return timeStart > today;
             }
@@ -960,7 +979,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         case '3':
           // start
           this.events = this.events.filter(e => {
-            if (e.event.tsoutagecategory !== undefined) {
+            if (e.typeOfEvent === "Outage") {
               let timeStart = new Date(e.start);
               let timeEnd = new Date(e.end);
               return (timeStart <= today) && (timeEnd >= today);
@@ -971,7 +990,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         default:
           // end
           this.events = this.events.filter(e => {
-            if (e.event.tsoutagecategory !== undefined) {
+            if (e.typeOfEvent === "Outage") {
               let timeEnd = new Date(e.end);
               return timeEnd < today;
             }
