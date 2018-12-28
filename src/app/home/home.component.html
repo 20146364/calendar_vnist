@@ -2,11 +2,14 @@
   <label class="ui-toolbar-group-left">
     {{title}}
   </label>
-  
+
   <div class="ui-toolbar-group-right">
-    <button pButton type="button" class="ui-button-primary" label="List View" routerLink="/mytodo" routerLinkActive="active menu"></button>
-    <button pButton type="button" class="ui-button-primary" label="Compliance View" routerLink="/compliance" routerLinkActive="active menu"></button>
-    <button pButton type="button" class="ui-button-primary" label="Create new Todo" routerLink="/newtodo" routerLinkActive="active menu"></button>
+    <button pButton type="button" class="ui-button-primary" label="List View" routerLink="/mytodo"
+            routerLinkActive="active menu"></button>
+    <button pButton type="button" class="ui-button-primary" label="Compliance View" routerLink="/compliance"
+            routerLinkActive="active menu"></button>
+    <button pButton type="button" class="ui-button-primary" label="Create new Todo" routerLink="/newtodo"
+            routerLinkActive="active menu"></button>
   </div>
 </p-toolbar>
 <div class="ui-g">
@@ -17,33 +20,120 @@
       [events]="events"
       [options]="options"
       #gotoSelectedDate>
-    </p-fullCalendar >
-
-    <p-dialog header="Tile Event" [(visible)]="display" [modal]="true" [responsive]="true"
-              [style]="{width: '900px', minWidth: '200px'}" [minY]="70"
+    </p-fullCalendar>
+    <!-- Start dialog red event -->
+    <p-dialog header="Tile Red Event" [(visible)]="displayRedEvent" [modal]="true" [responsive]="true"
+              [style]="{width: '58%', minWidth: '200px'}" [minY]="70"
               [maximizable]="true" [baseZIndex]="10000">
-
-      <div style="width: 100%; height: auto; background-color: #0a0a0a">
+      <div style="width: 100%; height: auto; background-color: #dc5e14">
         <div class="ui-g">
           <div class="ui-g-6">
-            <i class="fa fa-wrench" style="color: white; margin-right: 5px" aria-hidden="true"></i>
+            <i class="fa fa-bolt" style="color: white; margin-right: 5px" aria-hidden="true"></i>
             <i class="fa fa-calendar" style="color: white" aria-hidden="true"></i>
-            <span style="color: white"> TS_06_11_2018 2 (<i class="fa fa-hospital-o" aria-hidden="true"></i> Demo Instance)</span>
-            <i class="fa fa-long-arrow-right" style="margin-right: 5px; color: white" aria-hidden="true"></i>
+            <span style="color: white"> Yield loss on plant </span>
             <i class="fa fa-map-marker" style="color: white" aria-hidden="true"></i>
+            <span style="color: white"> Demo2 </span>
           </div>
           <div class="ui-g-6">
-            <i class="fa fa-user" style="color: white" aria-hidden="true"></i>
-            <span style="color: white">1- <i class="fa fa-ticket" aria-hidden="true"></i> #4443 TT_06_11_1018 2</span>
+            <span style="color: white; float: right"> <i class="fa fa-ticket" aria-hidden="true"></i>  #2001 Testticket with outage1 <i
+              class="fa fa-caret-square-o-down" aria-hidden="true"></i></span>
           </div>
-        </div>
-
-        <div class="ui-g">
-          <div class="ui-g-12" style="color: white">Demo 2</div>
         </div>
       </div>
 
-      <div style="background-color:#2E6E9E">
+      <div style="background-color:#ef894e">
+        <div class="ui-g">
+          <div class="ui-g-4" style="border: 1px dotted black; text-align: center">
+            <i class="fa fa-play" aria-hidden="true"></i><span> Begin outage</span>
+          </div>
+
+          <div class="ui-g-4" style="border: 1px dotted black; text-align: center">
+            <i class="fa fa-square" aria-hidden="true"></i> <span> End outage</span>
+          </div>
+
+          <div class="ui-g-4" style="border: 1px dotted black; text-align: center">
+            <i class="fa fa-pencil" aria-hidden="true"></i><span> Edit outage</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="border: 1px dotted black">
+
+        <div class="ui-g">
+          <div class="ui-g-1" style="margin: auto">
+            <i class="fa fa-usd fa-4x"></i>
+          </div>
+          <div class="ui-g-11">
+            <p>
+              <span style="font-size: medium; margin-left: 5px">Ticket:</span>
+              <span style="font-size: medium; color: #4887ca"> #2001 Testticket with outage1</span>
+            </p>
+            <p>
+              <span style="font-size: medium; margin-left: 5px">Kind of the outage</span>
+            </p>
+            <span>
+              <span style="font-size: medium; font-weight: bold; margin-left: 5px">Yield loss on plant <i
+                class="fa fa-map-marker" aria-hidden="true"></i> Demo 2</span>
+            </span>
+
+          </div>
+        </div>
+
+        <hr style="opacity: 0.3; margin-top: 25px"/>
+
+        <div style="margin-top: 25px; color: #0e3b61">
+          <span>Planned begin: 06/11/2018</span>, <span>10:30</span>
+          <br/>
+          <span>Planned end: 06/11/2018</span>, <span>10:30</span>
+        </div>
+
+        <hr style="opacity: 0.3; margin-top: 25px"/>
+
+        <div style="margin-top: 25px; margin-bottom: 20px; color: #0e3b61">
+          <p>Notes obout outages:</p>
+          <span>TS_26_11_2018 2</span>
+        </div>
+
+      </div>
+
+    </p-dialog>
+
+    <!-- End dialog red event -->
+
+    <!-- Start dialog blue event -->
+    <p-dialog header="Tile Blue Event" [(visible)]="displayBlueEvent" [modal]="true" [responsive]="true"
+              [style]="{width: '58%', minWidth: '200px'}" [minY]="70"
+              [maximizable]="true" [baseZIndex]="10000">
+      <div style="width: 100%; height: auto; background-color: #58585a">
+        <div class="ui-g">
+          <div class="ui-g-11">
+            <div class="ui-g-7">
+              <i class="fa fa-wrench" style="color: white; margin-right: 5px" aria-hidden="true"></i>
+              <i class="fa fa-calendar" style="color: white" aria-hidden="true"></i>
+              <span style="color: white"> TS_06_11_2018 2 (<i class="fa fa-hospital-o" aria-hidden="true"></i> Demo Instance)</span>
+              <i class="fa fa-long-arrow-right" style="margin-right: 5px; color: white" aria-hidden="true"></i>
+              <i class="fa fa-map-marker" style="color: white" aria-hidden="true"></i>
+            </div>
+
+            <div class="ui-g-5">
+              <span style="color: white; float: right"> <i class="fa fa-user" aria-hidden="true"></i> 1- <i
+                class="fa fa-ticket" aria-hidden="true"></i> #4443 TT_06_11_1018 2</span>
+            </div>
+
+            <div class="ui-g-12" style="color: white">Demo 2</div>
+
+          </div>
+
+          <div class="ui-g-1" style="color: white; margin: auto; text-align: center">
+            <i class="fa fa-caret-square-o-down" aria-hidden="true"></i>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div style="background-color:#7e7e81">
         <div class="ui-g">
           <div class="ui-g-4" style="border: 1px dotted black; text-align: center">
             <a>
@@ -65,38 +155,44 @@
           <div class="ui-g-1">
             <i class="fa fa-cogs fa-4x"></i>
           </div>
-          <div class="ui-g-11">
-            <div style="margin-bottom: 10px">
-              <span style="font-size: larger; margin-left: 5px">Service</span>
+
+          <div class="ui-g-10" style="margin-left: 10px">
+            <div style="margin-bottom: 5px">
+              <span style="font-size: larger;">Service</span>
               <span style="font-size: larger; font-weight: bold; color: #2E6E9E"> TS_06__2018 2</span>
               <span style="font-size: larger; margin-left: 5px">on plant</span>
               <span style="font-size: larger; font-weight: bold; color: #2E6E9E"> Demo 2</span>
             </div>
-            <span style="font-size: medium; margin-left: 5px">Service</span>
+            <span style="font-size: medium">Service</span>
             <span style="font-size: medium; font-weight: bold; color: #2E6E9E"> #TS_06__2018 2</span>
             <br/>
-            <span style="font-size: medium; margin-left: 5px">This service is not based on an action request</span>
+            <span style="font-size: medium">This service is not based on an action request</span>
           </div>
         </div>
 
-        <div style="margin-top: 20px; margin-bottom: 20px">
+        <hr style="opacity: 0.3; margin-top: 10px"/>
+
+        <div style="margin-top: 10px; margin-bottom: 20px">
           <span>Planned Employees: </span>
           <button><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></button>
         </div>
 
         <div>
-          <ol>&#9679; <span style="background: #0e3b61; color: white; padding: 5px"><i class="fa fa-user" aria-hidden="true"></i> Demo Acount <i
-            class="fa fa-times" aria-hidden="true"></i> </span></ol>
+          <ol>&#9679; <span style="background: #0e3b61; color: white; padding: 5px"><i class="fa fa-user" aria-hidden="true"></i> Demo Acount <i class="fa fa-times" aria-hidden="true"></i> </span></ol>
         </div>
 
+        <hr style="opacity: 0.5; margin-top: 25px"/>
 
-        <div style="margin-top: 50px; color: #0e3b61">
+
+        <div style="margin-top: 25px; color: #0e3b61">
           <span>Planned begin: 06/11/2018</span>, <span>10:30</span>
           <br/>
           <span>Planned end: 06/11/2018</span>, <span>10:30</span>
         </div>
 
-        <div style="margin-top: 50px; margin-bottom: 20px; color: #0e3b61">
+        <hr style="opacity: 0.3; margin-top: 25px"/>
+
+        <div style="margin-top: 25px; margin-bottom: 20px; color: #0e3b61">
           <span>Notes:</span>
           <br/>
           <span>TS_26_11_2018 2</span>
@@ -105,30 +201,32 @@
       </div>
 
     </p-dialog>
+
+    <!-- End dialog blue event -->
+
     <!-- Click Service call -->
     <!-- <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
               [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150"> -->
-      <!-- header -->
-      <!-- <p-header>
-        <p-inplace >
-            <span pInplaceDisplay>
-                {{event.title}}
-            </span>
-            <span pInplaceContent>
-                <input pInputText id="title1" [(ngModel)]="event.title" />
-            </span>
-          </p-inplace>
-      </p-header> -->
-      <!-- content -->
-      <!--
+    <!-- header -->
+    <!-- <p-header>
+      <p-inplace >
+          <span pInplaceDisplay>
+              {{event.title}}
+          </span>
+          <span pInplaceContent>
+              <input pInputText id="title1" [(ngModel)]="event.title" />
+          </span>
+        </p-inplace>
+    </p-header> -->
+    <!-- content -->
+    <!--
 - plant - ms co plant_id
 - participating people + số lượng người tham gia , moi co people_id-->
-<p-dialog header="Title" [(visible)]="dialogServiceCallVisible">
+    <p-dialog header="Title" [(visible)]="dialogServiceCallVisible">
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
 
         <div>People <span>{{event._people}}</span></div>
         <!-- <div *ngFor="let p of event.people" >{{p.nachname}}</div> -->
-
 
         <div>Number of People <span>{{event.numberOfPeople}}</span></div>
         <div>tsticket_id <span>{{event.tsticketID}}</span></div>
@@ -142,27 +240,31 @@
       <!-- footer -->
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
-          <button type="button" pButton icon="pi pi-times" (click)="deleteEvent()" label="Delete" [disabled]="!event?.id"></button>
+          <button type="button" pButton icon="pi pi-times" (click)="deleteEvent()" label="Delete"
+                  [disabled]="!event?.id"></button>
           <!--<button type="button" pButton icon="fa-check" (click)="saveEvent()" label="Save" [disabled]="!event?.start"></button>-->
-          <button type="button" pButton icon="pi pi-pencil" (click)="editEvent(event)" label="Edit" [disabled]="!event?.id"></button>
+          <button type="button" pButton icon="pi pi-pencil" (click)="editEvent(event)" label="Edit"
+                  [disabled]="!event?.id"></button>
         </div>
       </p-footer>
     </p-dialog>
     <!-- End click service call -->
 
     <!-- Click outage -->
-    <p-dialog *ngIf="isOutage" [(visible)]="dialogOutageVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150">
+    <p-dialog *ngIf="isOutage" [(visible)]="dialogOutageVisible" [responsive]="true" showEffect="fade" [modal]="true"
+              [contentStyle]="{'overflow':'visible'}"
+              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false"
+              [positionLeft]="150">
       <!-- header -->
       <p-header>
-        <p-inplace >
+        <p-inplace>
             <span pInplaceDisplay>
                 {{event.title}}
             </span>
-            <span pInplaceContent>
-                <input pInputText id="title2" [(ngModel)]="event.title" />
+          <span pInplaceContent>
+                <input pInputText id="title2" [(ngModel)]="event.title"/>
             </span>
-          </p-inplace>
+        </p-inplace>
       </p-header>
       <!-- content -->
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
@@ -178,84 +280,97 @@
       <!-- footer -->
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
-          <button type="button" pButton icon="pi pi-times" (click)="deleteEvent()" label="Delete" [disabled]="!event?.id"></button>
+          <button type="button" pButton icon="pi pi-times" (click)="deleteEvent()" label="Delete"
+                  [disabled]="!event?.id"></button>
           <!--<button type="button" pButton icon="fa-check" (click)="saveEvent()" label="Save" [disabled]="!event?.start"></button>-->
-          <button type="button" pButton icon="pi pi-pencil" (click)="editEvent(event)" label="Edit" [disabled]="!event?.id"></button>
+          <button type="button" pButton icon="pi pi-pencil" (click)="editEvent(event)" label="Edit"
+                  [disabled]="!event?.id"></button>
         </div>
       </p-footer>
     </p-dialog>
     <!-- End click outage -->
 
     <!-- Click day -->
-    
-    <p-dialog header="Event Details" [(visible)]="dialogNewVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150">
+
+    <p-dialog header="Event Details" [(visible)]="dialogNewVisible" [responsive]="true" showEffect="fade" [modal]="true"
+              [contentStyle]="{'overflow':'visible'}"
+              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false"
+              [positionLeft]="150">
       <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
         <div class="ui-grid-row">
           <div class="ui-grid-col-4"><label for="vin">Title</label></div>
-          <div class="ui-grid-col-8"><input pInputText id="" [(ngModel)]="event.title" /></div>
+          <div class="ui-grid-col-8"><input pInputText id="" [(ngModel)]="event.title"/></div>
         </div>
         <div class="ui-grid-row">
-        <div class="ui-grid-col-4"><label for="start">Start</label></div>
-        <div class="ui-grid-col-8">
-          <p-calendar [(ngModel)]="event.start"
-            dateFormat="yy-mm-dd"
-            dataType="string"
-            [disabledDays]="[0,6]"
-            [showTime]="true">
-          </p-calendar></div>
+          <div class="ui-grid-col-4"><label for="start">Start</label></div>
+          <div class="ui-grid-col-8">
+            <p-calendar [(ngModel)]="event.start"
+                        dateFormat="yy-mm-dd"
+                        dataType="string"
+                        [disabledDays]="[0,6]"
+                        [showTime]="true">
+            </p-calendar>
+          </div>
         </div>
         <div class="ui-grid-row">
-        <div class="ui-grid-col-4"><label for="end">End</label></div>
-        <div class="ui-grid-col-8">
-          <p-calendar [(ngModel)]="event.end"
-            (onSelect)="onSelectEnd(event.end)"
-            dateFormat="yy-mm-dd"
-            dataType="string"
-            [disabledDays]="[0,6]"
-            [showTime]="true">
-          </p-calendar>
-        </div>
+          <div class="ui-grid-col-4"><label for="end">End</label></div>
+          <div class="ui-grid-col-8">
+            <p-calendar [(ngModel)]="event.end"
+                        (onSelect)="onSelectEnd(event.end)"
+                        dateFormat="yy-mm-dd"
+                        dataType="string"
+                        [disabledDays]="[0,6]"
+                        [showTime]="true">
+            </p-calendar>
+          </div>
         </div>
         <div class="ui-grid-row">
           <div class="ui-grid-col-4"><label for="allday">All Day</label></div>
-          <div class="ui-grid-col-8"><p-checkbox [(ngModel)]="event.allDay" binary="checkbox"></p-checkbox></div>
+          <div class="ui-grid-col-8">
+            <p-checkbox [(ngModel)]="event.allDay" binary="checkbox"></p-checkbox>
+          </div>
         </div>
       </div>
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
-          <button type="button" pButton icon="pi pi-save" (click)="saveEvent()" label="Save" [disabled]="!event?.start"></button>
+          <button type="button" pButton icon="pi pi-save" (click)="saveEvent()" label="Save"
+                  [disabled]="!event?.start"></button>
         </div>
       </p-footer>
     </p-dialog>
   </div>
   <!-- Filter -->
   <div class="ui-g-3">
-    <div class="ui-g-12"><br /></div>
+    <div class="ui-g-12"><br/></div>
     <div class="ui-g-12">
       <p-scrollPanel [style]="{width: '100%', height: '460px'}">
-        <p-calendar [(ngModel)]="selectedDate" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [inline]="true" (onSelect)="gotoDate($event, gotoSelectedDate)"></p-calendar>
+        <p-calendar [(ngModel)]="selectedDate" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                    [inline]="true" (onSelect)="gotoDate($event, gotoSelectedDate)"></p-calendar>
         <p-accordion [multiple]="true">
           <p-accordionTab header="Element" class="accordion-header">
             <p-accordion [multiple]="true">
               <p-accordionTab header="Services" class="accordion-header">
-                  <!-- select2.org -->
+                <!-- select2.org -->
                 <label>Participating People</label>
-                <ng-select2 [(ngModel)]="selectedSCsPeople" (ngModelChange)="filterAll($event)" [options]="multipleOptions">
-                  <option *ngFor="let p of listParticipatingPeople" [value]="p.id" >{{p.nachname}} </option>
+                <ng-select2 [(ngModel)]="selectedSCsPeople" (ngModelChange)="filterAll($event)"
+                            [options]="multipleOptions">
+                  <option *ngFor="let p of listParticipatingPeople" [value]="p.id">{{p.nachname}} </option>
                 </ng-select2>
                 <label>Status</label>
-                <ng-select2 [(ngModel)]="selectedSCsStatus" (ngModelChange)="filterAll($event)" [options]="singleOptions">
+                <ng-select2 [(ngModel)]="selectedSCsStatus" (ngModelChange)="filterAll($event)"
+                            [options]="singleOptions">
                   <option *ngFor="let s of ticketStatuses" [value]="s.id">{{s.name}}</option>
                 </ng-select2>
               </p-accordionTab>
               <p-accordionTab header="Outages" class="accordion-header">
                 <label>Outages category</label>
-                <ng-select2 [(ngModel)]="selectedOutageCategories" (ngModelChange)="filterAll($event)" [options]="multipleOptions">
+                <ng-select2 [(ngModel)]="selectedOutageCategories" (ngModelChange)="filterAll($event)"
+                            [options]="multipleOptions">
                   <option *ngFor="let c of outageCategories" [value]="c.id">{{c.name}}</option>
                 </ng-select2>
                 <label>Status</label>
-                <ng-select2 [(ngModel)]="selectedOutageStatus" (ngModelChange)="filterAll($event)" [options]="singleOptions">
+                <ng-select2 [(ngModel)]="selectedOutageStatus" (ngModelChange)="filterAll($event)"
+                            [options]="singleOptions">
                   <option *ngFor="let s of ticketStatuses" [value]="s.id">{{s.name}}</option>
                 </ng-select2>
               </p-accordionTab>
@@ -265,11 +380,13 @@
           </p-accordionTab>
           <p-accordionTab header="General" class="accordion-header">
             <label>Plants</label>
-            <ng-select2 [(ngModel)]="selectedPlant" (ngModelChange)="filterAll($event)" [options]="multiplePlantsOptions">
+            <ng-select2 [(ngModel)]="selectedPlant" (ngModelChange)="filterAll($event)"
+                        [options]="multiplePlantsOptions">
               <option *ngFor="let p of listPlants" [value]="p.id">{{p.name}}</option>
             </ng-select2>
             <label for="creator-editor">Creator / Editor</label>
-            <ng-select2 id="creator-editor" [(ngModel)]="selectedCreatorEditor" (ngModelChange)="filterAll($event)" [options]="multipleOptions">
+            <ng-select2 id="creator-editor" [(ngModel)]="selectedCreatorEditor" (ngModelChange)="filterAll($event)"
+                        [options]="multipleOptions">
               <option *ngFor="let ce of listCreatorEditor" [value]="ce.id">{{ce.nachname}}</option>
             </ng-select2>
             <label>Time Start</label>
