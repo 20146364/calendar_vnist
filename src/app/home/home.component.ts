@@ -121,9 +121,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // };
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
 
-  display = false;
-  showDialog() {
-    this.display = true;
+  displayBlueEvent = false;
+  showBlueDialog() {
+    this.displayBlueEvent = true;
   }
 
 
@@ -261,7 +261,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     //   this.isOutage = true;
     //   this.dialogOutageVisible = true;
     // }
-    this.showDialog();
+    // this.showDialog();
+    this.showBlueDialog();
   }
   // handleDayClick(event) {
   //   return this.showDialog();
