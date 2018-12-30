@@ -5,7 +5,7 @@ export class Outage implements IEvent {
     title: string;
     start: Date;
     end: Date;
-    // allDay = false;
+    allDay = false;
     color: string;
     className: string;
     plantID: number;
@@ -37,6 +37,9 @@ export class Outage implements IEvent {
         this.comment = ot.comment;
         this.tsticketID = ot.tsticket_id;
         this.outageCategory = ot.tsoutagecategory.name;
+        if (this.end.getTime() - this.start.getTime() >= 86400000) {
+            this.allDay = true;
+        }
     }
 
     getInfo(ot: any){

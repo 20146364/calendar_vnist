@@ -400,13 +400,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     selectedDate.calendar.gotoDate(date);
   }
 
-
   //#region general SCs and OTs
   // init SCs and Outages
   async initListSCsOutage() {
     let listPages: any;
     listPages = [];
-    if ((this.events = this.scotSrv.getListServiceCallOutage()) == null) {
+    this.events = this.scotSrv.getListServiceCallOutage();
+    if (this.events === null) {
       let totalService;
       let totalOutage;
       try {
@@ -438,8 +438,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       }
     } else {
       this.listEvents = this.scotSrv.getListEvents()
-      console.log('events: ', this.events);
-      console.log('list events: ', this.listEvents);
     }
 
     //get creator and editor from SCs and OTs
@@ -509,6 +507,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.listEvents =[];
       rs.forEach(items => {
         items['data'].forEach(item => {
+          console.log('item day:', item);
           if (item['begin'] !== undefined) {
             itemServiceCallOutage = new Outage();
             itemServiceCallOutage.initInfo(item);

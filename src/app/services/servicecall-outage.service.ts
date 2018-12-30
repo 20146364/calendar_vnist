@@ -25,7 +25,6 @@ export class ServicecallOutageService {
     myEvents = sessionStorage.getItem(keyListEvents);
     if (myEvents !== 'undefined' && myEvents !== null) {
       listEvents = JSON.parse(myEvents);
-      console.log('vao dc tan day ma', listEvents)
     }
     return listEvents;
   }

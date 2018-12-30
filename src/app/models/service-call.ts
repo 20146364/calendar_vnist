@@ -5,7 +5,7 @@ export class ServiceCall implements IEvent {
     title: any;
     start: Date;
     end: Date;
-    // allDay = false;
+    allDay = false;
     color: string;
     className: string;
     plantID: any;
@@ -38,6 +38,9 @@ export class ServiceCall implements IEvent {
         this.plannedEnd = (new Date(sc.sheduled_end)).toLocaleString();
         this.comment = sc.sheduled_comment;
         this.tsticketID = sc.tsticket_id;
+        if (this.end.getTime() - this.start.getTime() >= 86400000) {
+            this.allDay = true;
+        }
         // if (sc.people !== undefined && sc.people.length !== 0) {
         //     this._people = sc.people[0];
         //     // console.log('sc.poeple', sc.people)
