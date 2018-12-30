@@ -5,7 +5,7 @@ export class Outage implements IEvent {
     title: string;
     start: Date;
     end: Date;
-    allDay = false;
+    // allDay = false;
     color: string;
     className: string;
     plantID: number;
@@ -25,6 +25,7 @@ export class Outage implements IEvent {
     }
 
     initInfo(ot: any) {
+        this.color = "#dc5e14";
         this.eventOutage = ot;
         this.id = ot.id;
         this.title = ot.id;

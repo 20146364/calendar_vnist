@@ -105,16 +105,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   businessHours = {
     start: '6:00', //  a start time (10am in this example)
     end: '20:00', //  an end time (6pm in this example)
-
     dow: [ 1, 2, 3, 4, 5]
     // days of week. an array of zero-based day of week integers (0=Sunday)
     // (Monday-Thursday in this example)
   };
   options: any;
-  // options = {
-  //   'firstDay' : 1,
-  //   'showNonCurrentDates': false,
-  // };
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
 
   displayBlueEvent = false;
@@ -153,6 +148,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         center: 'title',
         right: 'month,agendaWeek,agendaDay'
       },
+      // allDayDefault: true,
+      firstDay: 1,
+      showNonCurrentDates: false,
       height: 550,
       defaultDate: this.selectedDate,
       businessHours: this.businessHours,
@@ -211,6 +209,59 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       },
 
     ];
+
+  //   this.events = [
+  //     {
+  //       'id': 1,
+  //       'title': '1',
+  //       'start': '2018-12-01'
+  //     },
+  //     {
+  //       'id': 2,
+  //       'title': '2',
+  //       'start': '2018-12-01',
+  //       'end': '2018-12-02'
+  //     },
+  //     {
+  //       'id': 3,
+  //       'title': '3',
+  //       'start': '2018-12-08',
+  //       'className': 'highPriority'
+  //     },
+  //     {
+  //       'id': 4,
+  //       'title': '4',
+  //       'start': '2018-12-16T16:00:00',
+  //       'end': '2018-12-16T17:00:00',
+  //       'color': 'red',
+  //       'className': 'filter-italic'
+  //     },
+  //     {
+  //       'id': 5,
+  //       'title': '5',
+  //       'start': '2018-12-11',
+  //       'end': '2018-12-13',
+  //     },
+  //     {
+  //       'id': 6,
+  //       'title': '6',
+  //       'start': '2018-12-24T09:00:00',
+  //       'end': '2018-12-26T16:00:00',
+  //       'allDayDefault': 'true',
+  //     },
+  //     {
+  //       'id': 7,
+  //       'title': '7',
+  //       'start': '2018-12-24T8:00:00',
+  //       'end': '2018-12-24T16:00:00',
+  //     },
+  //     {
+  //       'id': 8,
+  //       'title': '8',
+  //       'start': '2018-12-23T10:00:00',
+  //       'end': '2018-12-23T17:00:00',
+  //     }
+  // ]
 
   }
 

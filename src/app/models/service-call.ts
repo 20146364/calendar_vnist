@@ -5,7 +5,7 @@ export class ServiceCall implements IEvent {
     title: any;
     start: Date;
     end: Date;
-    allDay = false;
+    // allDay = false;
     color: string;
     className: string;
     plantID: any;
@@ -27,6 +27,7 @@ export class ServiceCall implements IEvent {
     }
 
     initInfo(sc: any) {
+        this.color = "#58585a";
         this.eventServiceCall = sc;
         this.id = sc.id;
         this.title = sc.kurzbeschreibung;

@@ -3,7 +3,7 @@ export interface IEvent {
     title: string;
     start: Date;
     end: Date;
-    allDay;
+    // allDay;
     color: string;
     className: string;
     // event: any;
