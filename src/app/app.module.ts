@@ -33,6 +33,8 @@ import {SelectButtonModule} from 'primeng/components/selectbutton/selectbutton';
 import {RadioButtonModule} from 'primeng/components/radiobutton/radiobutton';
 import {TableModule} from 'primeng/components/table/table';
 import { DialogModule } from 'primeng/components/dialog/dialog';
+import {SpinnerModule} from 'primeng/components/spinner/spinner';
+import {DropdownModule} from 'primeng/components/dropdown/dropdown';
 
 import { AuthenticationService } from './services/authentication.service';
 import { CalendarService } from './services/calendar.service';
@@ -72,6 +74,8 @@ import { ParticipatingPeopleService } from './services/participating-people.serv
     SelectButtonModule,
     RadioButtonModule,
     TableModule,
+    SpinnerModule,
+    DropdownModule,
     FullCalendarModule,
     NgSelect2Module,
     AppRoutingModule
