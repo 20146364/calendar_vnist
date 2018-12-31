@@ -88,7 +88,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   header: any;
 
   event: IEvent;
-  eventServiceCall: ServiceCall;
+  eventSC: ServiceCall;
   eventOutage;
 
   dialogNewVisible = false;
@@ -305,10 +305,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // console.log('e event people out', typeof e.event.people);
     if (e.event.extendedProps.typeOfEvent === "ServiceCall") {
       // console.log('e event people in', e.event.people)
-      // this.eventServiceCall = new ServiceCall();
-      // this.eventServiceCall.getInfo(e.event);
+      this.eventSC = new ServiceCall();
+      this.eventSC.getInfo(e.event);
       
-      // console.log('eventServiceCall: ', this.eventServiceCall);
+      console.log('eventSC: ', this.eventSC);
       // this.isServiceCall = true;
       // this.dialogServiceCallVisible = true;
       this.showBlueDialog();

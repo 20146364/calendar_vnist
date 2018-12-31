@@ -9,6 +9,7 @@ export class Outage implements IEvent {
     color: string;
     className: string;
     plantID: number;
+    _plantName: string;
     typeOfEvent = "Outage";
 
     expectedBegin: string;

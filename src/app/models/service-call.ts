@@ -9,6 +9,7 @@ export class ServiceCall implements IEvent {
     color: string;
     className: string;
     plantID: any;
+    _plantName: any;
     typeOfEvent = "ServiceCall";
 
     plannedBegin: any;
@@ -34,6 +35,7 @@ export class ServiceCall implements IEvent {
         this.start = new Date(sc.done_begin ? sc.done_begin : sc.sheduled_begin);
         this.end = new Date(sc.done_end ? sc.done_end : sc.sheduled_end);
         this.plantID = sc.plant_id;
+        this.plantName = sc.plant_id;
         this.plannedBegin = (new Date(sc.sheduled_begin)).toLocaleString();
         this.plannedEnd = (new Date(sc.sheduled_end)).toLocaleString();
         this.comment = sc.sheduled_comment;
@@ -59,6 +61,7 @@ export class ServiceCall implements IEvent {
         this.start = sc.start;
         this.end = sc.end;
         this.plantID = sc.extendedProps.plantID;
+        this._plantName = sc.extendedProps.plantName;
         this.plannedBegin = sc.extendedProps.plannedBegin;
         this.plannedEnd = sc.extendedProps.plannedEnd;
         this.comment = sc.extendedProps.comment;
@@ -91,4 +94,22 @@ export class ServiceCall implements IEvent {
         }
     }
 
+    get plantName() {
+        return this._plantName;
+    }
+    set plantName(plantID: any) {
+        let myItem: any;
+        let key;
+        let listPlant: any[];
+        key = 'localPlant';
+        myItem = sessionStorage.getItem(key);
+        if (myItem !== 'undefined') {
+            myItem = JSON.parse(myItem);
+            listPlant = myItem;
+        }
+        if (listPlant) {
+            this._plantName = listPlant.find( e => e.id == plantID);
+            this._plantName = this._plantName.name;
+        }
+    }
   }

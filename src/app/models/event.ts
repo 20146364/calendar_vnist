@@ -8,6 +8,7 @@ export interface IEvent {
     className: string;
     // event: any;
     plantID: number;
+    _plantName: string;
     typeOfEvent: string;
 
     getInfo(event: any);

@@ -23,7 +23,7 @@
     </p-fullCalendar>
 
     <!-- Start dialog red event -->
-    <p-dialog header="Tile Red Event" [(visible)]="displayRedEvent" [modal]="true" [responsive]="true"
+    <p-dialog [showHeader]="false" [(visible)]="displayRedEvent" [modal]="true" [responsive]="true"
               [style]="{width: '58%', minWidth: '200px'}" [minY]="70"
               [maximizable]="true" [baseZIndex]="10000"
               [dismissableMask]="true">
@@ -107,7 +107,7 @@
     <!-- End dialog red event -->
 
     <!-- Start dialog blue event -->
-    <p-dialog header="Tile Blue Event" [(visible)]="displayBlueEvent" [modal]="true" [responsive]="true"
+    <p-dialog *ngIf="eventSC" [showHeader]="false" [(visible)]="displayBlueEvent" [modal]="true" [responsive]="true"
               [style]="{width: '58%', minWidth: '200px'}" [minY]="70"
               [maximizable]="true" [baseZIndex]="10000"
               [dismissableMask]="true">
@@ -117,17 +117,17 @@
             <div class="ui-g-7">
               <i class="fa fa-wrench" style="color: white; margin-right: 5px" aria-hidden="true"></i>
               <i class="fa fa-calendar" style="color: white" aria-hidden="true"></i>
-              <span style="color: white"> TS_06_11_2018 2 (<i class="fa fa-hospital-o" aria-hidden="true"></i> Demo Instance)</span>
+              <span style="color: white"> {{eventSC.title || 'unknown'}} (<i class="fa fa-hospital-o" aria-hidden="true"></i> Demo Instance)</span>
               <i class="fa fa-long-arrow-right" style="margin-right: 5px; color: white" aria-hidden="true"></i>
               <i class="fa fa-map-marker" style="color: white" aria-hidden="true"></i>
             </div>
 
             <div class="ui-g-5">
               <span style="color: white; float: right"> <i class="fa fa-user" aria-hidden="true"></i> 1- <i
-                class="fa fa-ticket" aria-hidden="true"></i> #4443 TT_06_11_1018 2</span>
+                class="fa fa-ticket" aria-hidden="true"></i> #{{eventSC.tsticketID || 'unknown'}} TT_06_11_1018 2</span>
             </div>
 
-            <div class="ui-g-12" style="color: white">Demo 2</div>
+            <div class="ui-g-12" style="color: white">{{eventSC.plantName || 'unknown'}}</div>
 
           </div>
 
@@ -166,12 +166,12 @@
           <div class="block">
             <div style="font-size: medium">
               <span>Service</span>
-              <span style="font-weight: bold; color: #2E6E9E"> TS_06__2018 2</span>
+              <span style="font-weight: bold; color: #2E6E9E"> {{eventSC.title || 'unknown'}}</span>
               <span style="margin-left: 5px">on plant</span>
-              <span style="font-weight: bold; color: #2E6E9E"> Demo 2</span>
+              <span style="font-weight: bold; color: #2E6E9E"> {{eventSC.plantName || 'unknown'}}</span>
             </div>
-            <span style="font-size: small">Service</span>
-            <span style="font-size: medium; font-weight: bold; color: #2E6E9E"> #TS_06__2018 2</span>
+            <span style="font-size: small">Ticket:</span>
+            <span style="font-size: medium; font-weight: bold; color: #2E6E9E"> #{{eventSC.tsticketID}} TT_06_11_1018 2</span>
             <br/>
             <span style="font-size: small">This service is not based on an action request</span>
           </div>
@@ -192,11 +192,10 @@
 
         <hr style="opacity: 0.5; margin-top: 25px"/>
 
-
         <div style="margin-top: 25px; color: #0e3b61; font-size: small">
-          <span>Planned begin: 06/11/2018</span>, <span>10:30</span>
+          <span>Planned begin: {{eventSC.plannedBegin || 'unknown'}}</span>
           <br/>
-          <span>Planned end: 06/11/2018</span>, <span>10:30</span>
+          <span>Planned end: {{eventSC.plannedEnd || 'unknown'}}</span>
         </div>
 
         <hr style="opacity: 0.3; margin-top: 25px"/>
@@ -204,91 +203,13 @@
         <div style="margin-top: 25px; margin-bottom: 20px; color: #0e3b61; font-size: small">
           <span>Notes:</span>
           <br/>
-          <span>TS_26_11_2018 2</span>
+          <span>{{eventSC.comment || 'unknown'}}</span>
         </div>
 
       </div>
 
     </p-dialog>
     <!-- End dialog blue event -->
-
-    <!-- Click Service call -->
-    <!--
-- plant - ms co plant_id
-- participating people + số lượng người tham gia , moi co people_id -->
-    <!-- <p-dialog *ngIf="isOutage" [(visible)]="dialogOutageVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false" [positionLeft]="150"> -->
-    
-    <p-dialog *ngIf="isServiceCall" [(visible)]="dialogServiceCallVisible" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="true" [positionLeft]="150">
-      <!-- <p-header>
-        <p-inplace >
-            <span pInplaceDisplay>
-                {{eventServiceCall.title}}
-            </span>
-            <span pInplaceContent>
-                <input pInputText id="title1" [(ngModel)]="event.title" />
-            </span>
-          </p-inplace>
-      </p-header> -->
-      <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
-        <!-- <div>People <span>{{event._people}}</span></div>
-        <div *ngFor="let p of event.people" >{{p.nachname}}</div> -->
-        <!-- <div>Number of People <span>{{event.numberOfPeople}}</span></div> -->
-        <div>tsticket_id <span>{{eventServiceCall.tsticketID}}</span></div>
-        <div>Plant <span>{{eventServiceCall.plantID}}</span></div>
-        <div>Planned begin <span>{{eventServiceCall.plannedBegin}}</span></div>
-        <div>Planned end <span>{{eventServiceCall.plannedEnd}}</span></div>
-        <div>Note <span>{{eventServiceCall.comment}}</span></div>
-        <div>From <span>{{eventServiceCall.start.toLocaleString()}}</span></div>
-        <div>TO <span>{{eventServiceCall.end.toLocaleString()}}</span></div>
-      </div>
-      <p-footer>
-        <div class="ui-dialog-buttonpane ui-helper-clearfix">
-          <button type="button" pButton icon="pi pi-times" (click)="deleteEvent()" label="Delete"
-                  [disabled]="!event?.id"></button>
-          <button type="button" pButton icon="pi pi-pencil" (click)="editEvent(event)" label="Edit"
-                  [disabled]="!event?.id"></button>
-        </div>
-      </p-footer>
-    </p-dialog>
-    <!-- End click service call -->
-
-    <!-- Click outage -->
-    <!-- <p-dialog *ngIf="isOutage" [(visible)]="dialogOutageVisible" [responsive]="true" showEffect="fade" [modal]="true"
-              [contentStyle]="{'overflow':'visible'}"
-              [style]="{'overflow':'visible'}" [resizable]="false" [dismissableMask]="true" [showHeader]="false"
-              [positionLeft]="150">
-      <p-header>
-        <p-inplace>
-            <span pInplaceDisplay>
-                {{event.title}}
-            </span>
-          <span pInplaceContent>
-                <input pInputText id="title2" [(ngModel)]="event.title"/>
-            </span>
-        </p-inplace>
-      </p-header>
-      <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
-        <div>tsticket_id <span>{{event.tsticketID}}</span></div>
-        <div>Plant <span>{{event.plantID}}</span></div>
-        <div>Outage category <span>{{event.outageCategory}}</span></div>
-        <div>Expected begin <span>{{event.expectedBegin}}</span></div>
-        <div>Expected end <span>{{event.expectedEnd}}</span></div>
-        <div>Note <span>{{event.comment}}</span></div>
-        <div>From <span>{{event.start.toLocaleString()}}</span></div>
-        <div>TO <span>{{event.end.toLocaleString()}}</span></div>
-      </div>
-      <p-footer>
-        <div class="ui-dialog-buttonpane ui-helper-clearfix">
-          <button type="button" pButton icon="pi pi-times" (click)="deleteEvent()" label="Delete"
-                  [disabled]="!event?.id"></button>
-          <button type="button" pButton icon="pi pi-pencil" (click)="editEvent(event)" label="Edit"
-                  [disabled]="!event?.id"></button>
-        </div>
-      </p-footer>
-    </p-dialog> -->
-    <!-- End click outage -->
 
     <!-- Click day -->
 
@@ -339,6 +260,7 @@
       </p-footer>
     </p-dialog>
   </div>
+
   <!-- Filter -->
   <div class="ui-g-3">
     <div class="ui-g-12"><br/></div>
