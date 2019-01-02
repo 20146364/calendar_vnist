@@ -121,9 +121,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // };
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
 
-  displayRedEvent = false;
+  displayBlueEvent = false;
   showBlueDialog() {
-    this.displayRedEvent = true;
+    this.displayBlueEvent = true;
   }
 
 

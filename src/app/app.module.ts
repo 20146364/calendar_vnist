@@ -16,7 +16,7 @@ import { ComplianceComponent } from './compliance/compliance.component';
 import { ScheduleModule } from 'primeng/primeng';
 import { DialogModule } from 'primeng/primeng';
 import { InputTextModule } from 'primeng/primeng';
-import { CalendarModule } from 'primeng/primeng';
+import { CalendarModule } from 'primeng/components/calendar/calendar';
 import { CheckboxModule } from 'primeng/primeng';
 import { ButtonModule } from 'primeng/primeng';
 import { TabViewModule } from 'primeng/primeng';
@@ -35,6 +35,8 @@ import {RadioButtonModule} from 'primeng/components/radiobutton/radiobutton';
 import {TableModule} from 'primeng/components/table/table';
 import {SpinnerModule} from 'primeng/components/spinner/spinner';
 import {DropdownModule} from 'primeng/components/dropdown/dropdown';
+
+
 
 import { AuthenticationService } from './services/authentication.service';
 import { CalendarService } from './services/calendar.service';
