@@ -1,52 +1,71 @@
 import { IEvent } from './event';
 
 export class ServiceCall implements IEvent {
-    id: number;
-    title: string;
+    id: any;
+    title: any;
     start: Date;
     end: Date;
     allDay = false;
     color: string;
     className: string;
-    plantID: number;
+    plantID: any;
+    _plantName: any;
+    typeOfEvent = "ServiceCall";
 
-    plannedBegin: string;
-    plannedEnd: string;
+    plannedBegin: any;
+    plannedEnd: any;
     comment: any;
-    tsticketID: string;
+    tsticketID: any;
     listPeople: any[];
     _people: any;
-    numberOfPeople: number;
+    numberOfPeople: any;
 
-    // event: any;
+    eventServiceCall: any;
     /**
      *
      */
     constructor() {
     }
 
-    getInfo(sc: any) {
-        // this.event = sc;
-      
-      console.log('clicked se: ', sc);
+    initInfo(sc: any) {
+        this.color = "#58585a";
+        this.eventServiceCall = sc;
         this.id = sc.id;
         this.title = sc.kurzbeschreibung;
         this.start = new Date(sc.done_begin ? sc.done_begin : sc.sheduled_begin);
         this.end = new Date(sc.done_end ? sc.done_end : sc.sheduled_end);
         this.plantID = sc.plant_id;
+        this.plantName = sc.plant_id;
         this.plannedBegin = (new Date(sc.sheduled_begin)).toLocaleString();
         this.plannedEnd = (new Date(sc.sheduled_end)).toLocaleString();
         this.comment = sc.sheduled_comment;
         this.tsticketID = sc.tsticket_id;
-        if (sc.people !== undefined && sc.people.length !== 0) {
-            this._people = sc.people[0];
-            // console.log('sc.poeple', sc.people)
-            // this.people = sc.people;
-            // console.log('people from localParticipatingPeople: ', this.people)
-        } else {
-            this.people = ['unknown'];
+        if (this.end.getTime() - this.start.getTime() >= 86400000) {
+            this.allDay = true;
         }
-        this.numberOfPeople = sc.people.length;
+        // if (sc.people !== undefined && sc.people.length !== 0) {
+        //     this._people = sc.people[0];
+        //     // console.log('sc.poeple', sc.people)
+        //     // this.people = sc.people;
+        //     // console.log('people from localParticipatingPeople: ', this.people)
+        // } else {
+        //     this.people = ['unknown'];
+        // }
+        // this.numberOfPeople = sc.people.length;
+    }
+    
+    getInfo(sc: any){
+        console.log('get info scs', sc);
+        this.id = sc.id;
+        this.title = sc.title;
+        this.start = sc.start;
+        this.end = sc.end;
+        this.plantID = sc.extendedProps.plantID;
+        this._plantName = sc.extendedProps.plantName;
+        this.plannedBegin = sc.extendedProps.plannedBegin;
+        this.plannedEnd = sc.extendedProps.plannedEnd;
+        this.comment = sc.extendedProps.comment;
+        this.tsticketID = sc.extendedProps.tsticketID;
     }
 
     get people() {
@@ -75,4 +94,22 @@ export class ServiceCall implements IEvent {
         }
     }
 
+    get plantName() {
+        return this._plantName;
+    }
+    set plantName(plantID: any) {
+        let myItem: any;
+        let key;
+        let listPlant: any[];
+        key = 'localPlant';
+        myItem = sessionStorage.getItem(key);
+        if (myItem !== 'undefined') {
+            myItem = JSON.parse(myItem);
+            listPlant = myItem;
+        }
+        if (listPlant) {
+            this._plantName = listPlant.find( e => e.id == plantID);
+            this._plantName = this._plantName.name;
+        }
+    }
   }

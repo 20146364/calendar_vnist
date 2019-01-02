@@ -14,7 +14,6 @@ import { NewtodoComponent } from './newtodo/newtodo.component';
 import { ComplianceComponent } from './compliance/compliance.component';
 
 import { ScheduleModule } from 'primeng/primeng';
-import { DialogModule } from 'primeng/primeng';
 import { InputTextModule } from 'primeng/primeng';
 import { CalendarModule } from 'primeng/components/calendar/calendar';
 import { CheckboxModule } from 'primeng/primeng';
@@ -33,6 +32,7 @@ import {ScrollPanelModule} from 'primeng/components/scrollpanel/scrollpanel';
 import {SelectButtonModule} from 'primeng/components/selectbutton/selectbutton';
 import {RadioButtonModule} from 'primeng/components/radiobutton/radiobutton';
 import {TableModule} from 'primeng/components/table/table';
+import { DialogModule } from 'primeng/components/dialog/dialog';
 import {SpinnerModule} from 'primeng/components/spinner/spinner';
 import {DropdownModule} from 'primeng/components/dropdown/dropdown';
 

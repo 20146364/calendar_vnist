@@ -9,6 +9,8 @@ export class Outage implements IEvent {
     color: string;
     className: string;
     plantID: number;
+    _plantName: string;
+    typeOfEvent = "Outage";
 
     expectedBegin: string;
     expectedEnd: string;
@@ -16,15 +18,16 @@ export class Outage implements IEvent {
     tsticketID: string;
     outageCategory: string;
 
-    event: any;
+    eventOutage: any;
     /**
      *
      */
     constructor() {
     }
 
-    getInfo(ot: any) {
-        this.event = ot;
+    initInfo(ot: any) {
+        this.color = "#dc5e14";
+        this.eventOutage = ot;
         this.id = ot.id;
         this.title = ot.id;
         this.start = new Date(ot.begin ? ot.begin : ot.expectedbegin);
@@ -35,6 +38,13 @@ export class Outage implements IEvent {
         this.comment = ot.comment;
         this.tsticketID = ot.tsticket_id;
         this.outageCategory = ot.tsoutagecategory.name;
+        if (this.end.getTime() - this.start.getTime() >= 86400000) {
+            this.allDay = true;
+        }
+    }
+
+    getInfo(ot: any){
+        
     }
 
   }

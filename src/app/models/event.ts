@@ -3,11 +3,14 @@ export interface IEvent {
     title: string;
     start: Date;
     end: Date;
-    allDay;
+    allDay: boolean;
     color: string;
     className: string;
     // event: any;
     plantID: number;
+    _plantName: string;
+    typeOfEvent: string;
 
     getInfo(event: any);
+    initInfo(event: any);
   }
