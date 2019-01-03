@@ -22,8 +22,8 @@
       #gotoSelectedDate>
     </p-fullCalendar>
 
-    <!-- Start dialog red event -->
-    <p-dialog [showHeader]="false" [(visible)]="displayRedEvent" [modal]="true" [responsive]="true"
+    <!-- Start dialog outage detail -->
+    <p-dialog *ngIf="eventOT" [showHeader]="false" [(visible)]="displayOutageDetail" [modal]="true" [responsive]="true"
               [style]="{width: '58%', minWidth: '200px'}" [minY]="70"
               [maximizable]="true" [baseZIndex]="10000"
               [dismissableMask]="true">
@@ -33,14 +33,15 @@
           <div class="ui-g-6" >
             <i class="fa fa-bolt" style="color: white; margin-right: 5px" aria-hidden="true"></i>
             <i class="fa fa-calendar" style="color: white" aria-hidden="true"></i>
-            <span style="color: white"> Yield loss on plant </span>
+            <span style="color: white"> {{eventOT.outageCategory || 'unknown'}} on plant </span>
             <i class="fa fa-map-marker" style="color: white" aria-hidden="true"></i>
-            <span style="color: white"> Demo2 </span>
+            <span style="color: white"> {{eventOT.plantName || 'unknown'}} </span>
           </div>
 
           <div class="ui-g-6">
-            <span style="color: white; float: right"> <i class="fa fa-ticket" aria-hidden="true"></i>  #2001 Testticket with outage1 <i
-              class="fa fa-caret-square-o-down" aria-hidden="true"></i></span>
+            <span style="color: white; float: right"> <i class="fa fa-ticket" aria-hidden="true"></i>
+              #{{eventOT.tsticketID || 'unknown'}} {{eventOT.ticketName || 'unknown'}}
+              <i class="fa fa-caret-square-o-down" aria-hidden="true"></i></span>
           </div>
 
         </div>
@@ -73,14 +74,14 @@
           <div class="ui-g-11" style="font-size: small">
             <p>
               <span style="margin-left: 5px">Ticket:</span>
-              <span style="color: #4887ca"> #2001 Testticket with outage1</span>
+              <span style="color: #4887ca"> #{{eventOT.tsticketID || 'unknown'}} {{eventOT.ticketName || 'unknown'}}</span>
             </p>
             <p>
               <span style="margin-left: 5px">Kind of the outage</span>
             </p>
             <span>
-              <span style="font-weight: bold; margin-left: 5px">Yield loss on plant <i
-                class="fa fa-map-marker" aria-hidden="true"></i> Demo 2</span>
+              <span style="font-weight: bold; margin-left: 5px">{{eventOT.outageCategory || 'unknown'}} on plant <i
+                class="fa fa-map-marker" aria-hidden="true"></i> {{eventOT.plantName || 'unknown'}}</span>
             </span>
 
           </div>
@@ -89,25 +90,25 @@
         <hr style="opacity: 0.3; margin-top: 25px"/>
 
         <div style="margin-top: 25px; color: #0e3b61; font-size: small">
-          <p><span>Planned begin: 06/11/2018</span>, <span>10:30</span></p>
+          <p><span>Planned begin: {{eventOT.expectedBegin || 'unknown'}}</span>
 
-          <p><span>Planned end: 06/11/2018</span>, <span>10:30</span></p>
+          <p><span>Planned end: {{eventOT.expectedEnd || 'unknown'}}</span>
         </div>
 
         <hr style="opacity: 0.3; margin-top: 25px"/>
 
         <div style="margin-top: 25px; margin-bottom: 20px; color: #0e3b61; font-size: small">
           <p>Notes about outages:</p>
-          <span>TS_26_11_2018 2</span>
+          <span>{{eventOT.comment || 'unknown'}}</span>
         </div>
 
       </div>
 
     </p-dialog>
-    <!-- End dialog red event -->
+    <!-- End dialog outage detail -->
 
-    <!-- Start dialog blue event -->
-    <p-dialog *ngIf="eventSC" [showHeader]="false" [(visible)]="displayBlueEvent" [modal]="true" [responsive]="true"
+    <!-- Start dialog service call detail -->
+    <p-dialog *ngIf="eventSC" [showHeader]="false" [(visible)]="displayServiceCallDetail" [modal]="true" [responsive]="true"
               [style]="{width: '58%', minWidth: '200px'}" [minY]="70"
               [maximizable]="true" [baseZIndex]="10000"
               [dismissableMask]="true">
@@ -123,8 +124,8 @@
             </div>
 
             <div class="ui-g-5">
-              <span style="color: white; float: right"> <i class="fa fa-user" aria-hidden="true"></i> 1- <i
-                class="fa fa-ticket" aria-hidden="true"></i> #{{eventSC.tsticketID || 'unknown'}} TT_06_11_1018 2</span>
+              <span style="color: white; float: right"> <i class="fa fa-user" aria-hidden="true"></i> {{eventSC.numberOfPeople}}- <i
+                class="fa fa-ticket" aria-hidden="true"></i> #{{eventSC.tsticketID || 'unknown'}} {{eventSC.ticketName || 'unknown'}}</span>
             </div>
 
             <div class="ui-g-12" style="color: white">{{eventSC.plantName || 'unknown'}}</div>
@@ -171,7 +172,7 @@
               <span style="font-weight: bold; color: #2E6E9E"> {{eventSC.plantName || 'unknown'}}</span>
             </div>
             <span style="font-size: small">Ticket:</span>
-            <span style="font-size: medium; font-weight: bold; color: #2E6E9E"> #{{eventSC.tsticketID}} TT_06_11_1018 2</span>
+            <span style="font-size: medium; font-weight: bold; color: #2E6E9E"> #{{eventSC.tsticketID}} {{eventSC.ticketName || 'unknown'}}</span>
             <br/>
             <span style="font-size: small">This service is not based on an action request</span>
           </div>
@@ -183,11 +184,18 @@
 
         <div style="margin-top: 10px; margin-bottom: 20px; font-size: medium">
           <span>Planned Employees: </span>
-          <button><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></button>
+          <!-- <button><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></button> -->
         </div>
 
         <div>
-          <ol style="font-size: small">&#9679; <span style="background: #0e3b61; color: white; padding: 5px"><i class="fa fa-user" aria-hidden="true"></i> Demo Acount <i class="fa fa-times" aria-hidden="true"></i> </span></ol>
+          <li style="font-size: small" *ngFor="let p of eventSC.listPeople">
+            <!-- &#9679; -->
+            <span style="background: #0e3b61; color: white; padding: 5px">
+              <i class="fa fa-user" aria-hidden="true"></i>
+              {{p.nachname}}
+              <!-- <i class="fa fa-times" aria-hidden="true"></i> -->
+            </span>
+          </li>
         </div>
 
         <hr style="opacity: 0.5; margin-top: 25px"/>
@@ -209,7 +217,7 @@
       </div>
 
     </p-dialog>
-    <!-- End dialog blue event -->
+    <!-- End dialog service call detail -->
 
     <!-- Click day -->
 
