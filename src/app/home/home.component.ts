@@ -11,6 +11,7 @@ import { Options } from 'select2';
 
 import { CalendarService} from '../services/calendar.service';
 import { PlantsService} from '../services/plants.service';
+import { TicketsService} from '../services/tickets.service';
 import { ParticipatingPeopleService} from '../services/participating-people.service';
 import { ServicecallOutageService} from '../services/servicecall-outage.service';
 import {OutageCategoryService} from '../services/outage-category.service';
@@ -73,6 +74,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // selected plants
   selectedPlant: any[];
 
+  // Tickets list
+  listTickets: any[];
+
   // time start
   timeStart: Date;
 
@@ -89,6 +93,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   event: IEvent;
   eventSC: ServiceCall;
+  eventOT: Outage;
   eventOutage;
 
   dialogNewVisible = false;
@@ -112,19 +117,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   options: any;
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
 
-  displayBlueEvent = false;
-  showBlueDialog() {
-    this.displayBlueEvent = true;
+  displayServiceCallDetail = false;
+  showServiceCallDetailDialog() {
+    this.displayServiceCallDetail = true;
   }
-  displayRedEvent = false;
-  showRedDialog() {
-    this.displayRedEvent = true;
+  displayOutageDetail = false;
+  showOutageDetailDialog() {
+    this.displayOutageDetail = true;
   }
 
 
   constructor(private http: HttpClient,
               private calendarSrv: CalendarService,
               private plantsSrv: PlantsService,
+              private ticketsSrv: TicketsService,
               private participatingPeopleSrv: ParticipatingPeopleService,
               private scotSrv: ServicecallOutageService,
               private otCategorySrv: OutageCategoryService,
@@ -148,7 +154,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         center: 'title',
         right: 'month,agendaWeek,agendaDay'
       },
-      // allDayDefault: true,
       firstDay: 1,
       showNonCurrentDates: false,
       height: 550,
@@ -180,6 +185,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.initListParticipatingPeople();
     this.initListSCsOutage();
     this.initListPlants();
+    this.initListTickets();
     this.initListOutageCategories();
     this.getSelectedSCsPeople();
     this.getSelectedSCsStatus();
@@ -287,8 +293,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   handleDayClick = (event) => {
     console.log(event);
-    this.showBlueDialog();
-    // this.dialogServiceCallVisible = true;
     // // let offset = new Date().getTimezoneOffset();
     // //  console.log(offset);
     // //  console.log(event.date.subtract(offset, 'minutes'));
@@ -302,40 +306,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   handleEventClick = (e) => {
     console.log(e.event);
-    // console.log('e event people out', typeof e.event.people);
     if (e.event.extendedProps.typeOfEvent === "ServiceCall") {
-      // console.log('e event people in', e.event.people)
       this.eventSC = new ServiceCall();
       this.eventSC.getInfo(e.event);
-      
-      console.log('eventSC: ', this.eventSC);
-      // this.isServiceCall = true;
-      // this.dialogServiceCallVisible = true;
-      this.showBlueDialog();
+      this.showServiceCallDetailDialog();
     } else {
-      // this.event = new Outage();
-      // this.event.getInfo(e.event);
-      // this.isOutage = true;
-      // this.dialogOutageVisible = true;
-      this.showRedDialog();
+      this.eventOT = new Outage();
+      this.eventOT.getInfo(e.event);
+      this.showOutageDetailDialog();
     }
-    // this.showDialog();
-    // this.showBlueDialog();
-    // this.showRedDialog();
   }
-  
-  // handleDayClick(event) {
-  //   return this.showDialog();
-  //   // // let offset = new Date().getTimezoneOffset();
-  //   // //  console.log(offset);
-  //   // //  console.log(event.date.subtract(offset, 'minutes'));
-  //   // //  this.event.start = event.date.add(offset, 'minutes').toDate();
-  //
-  //
-  //   // this.event = new MyEvent();
-  //   // this.event.start = event.date.toDate();
-  //   // this.dialogNewVisible = true;
-  // }
 
   saveEvent() {
     // let offset;
@@ -467,6 +447,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       let tmp;
       tmp = new Promise((resolve, reject) => {
         this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+          // console.log('data: ', data);
           resolve(data);
         });
       });
@@ -507,10 +488,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.listEvents =[];
       rs.forEach(items => {
         items['data'].forEach(item => {
-          console.log('item day:', item);
           if (item['begin'] !== undefined) {
             itemServiceCallOutage = new Outage();
             itemServiceCallOutage.initInfo(item);
+            console.log('outage initinfo:', itemServiceCallOutage);
           } else {
             itemServiceCallOutage = new ServiceCall();
             itemServiceCallOutage.initInfo(item);
@@ -580,19 +561,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     if ((this.outageCategories = this.otCategorySrv.getListOutageCategory()) == null) {
       let listPages: any;
       listPages = [];
-      let totalOutage;
+      let totalOutageCategory;
       try {
         // get total Outages
-        totalOutage  = await new Promise((resolve, reject) => {
-          this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+        totalOutageCategory  = await new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}tsoutagecategories/fetch`, httpOptions).subscribe(data => {
             resolve(data['total']);
           });
         });
-        if ( totalOutage >= 20) {
-          for (let page = 1; page <= Math.floor(totalOutage / 20); page++) {
+        if ( totalOutageCategory >= 20) {
+          for (let page = 1; page <= Math.floor(totalOutageCategory / 20); page++) {
             let tmp;
             tmp = new Promise((resolve, reject) => {
-              this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
+              this.http.get(`${Config.api_endpoint}tsoutagecategories/fetch?page=${page}`, httpOptions).subscribe(data => {
                 resolve(data);
               });
             });
@@ -601,7 +582,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         } else {
           let tmp;
           tmp = new Promise((resolve, reject) => {
-            this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+            this.http.get(`${Config.api_endpoint}tsoutagecategories/fetch`, httpOptions).subscribe(data => {
               resolve(data);
             });
           });
@@ -638,8 +619,58 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     }
   }
 
+  // init tickets list
+  async initListTickets() {
+    let key;
+    key = 'localTicket';
+    if ((this.listTickets = this.ticketsSrv.getListTickets()) == null) {
+      let listPages: any;
+      listPages = [];
+      let totalTicket;
+      try {
+        // get total tickets
+        totalTicket  = await new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}tstickets/fetch`, httpOptions).subscribe(data => {
+            resolve(data['total']);
+          });
+        });
+        if ( totalTicket >= 20) {
+          for (let page = 1; page <= Math.floor(totalTicket / 20); page++) {
+            let tmp;
+            tmp = new Promise((resolve, reject) => {
+              this.http.get(`${Config.api_endpoint}tstickets/fetch?page=${page}`, httpOptions).subscribe(data => {
+                resolve(data);
+              });
+            });
+            listPages.push(tmp);
+          }
+        } else {
+          let tmp;
+          tmp = new Promise((resolve, reject) => {
+            this.http.get(`${Config.api_endpoint}tstickets/fetch`, httpOptions).subscribe(data => {
+              resolve(data);
+            });
+          });
+          listPages.push(tmp);
+        }
+
+        Promise.all(listPages).then(rs => {
+          let addItem = true;
+          this.listTickets = [];
+          rs.forEach(tickets => {
+            tickets['data'].forEach(tk => {
+              this.listTickets.push(tk);
+            });
+          });
+          sessionStorage.setItem(key, JSON.stringify(this.listTickets));
+        });
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
   // init plant list
-  
   initListPlants() {
     let key;
     key = 'localPlant';
@@ -873,7 +904,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       });
       if (listID.length !== 0) {
         this.events.forEach( e => {
-          console.log('this is event', e);
         })
         this.events = this.events.filter(function(e){
           if (e.typeOfEvent === "Outage") {
@@ -903,7 +933,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   filterTimeStartEnd() {
     if ((this.timeStart !== undefined && this.timeStart !== null)
       && (this.timeEnd === undefined || this.timeEnd === null)) {
-        console.log('time start', this.timeStart);
         this.events = this.events.filter(e => {
           let timeStart = new Date(e.start);
           return this.timeStart <= timeStart;
@@ -911,7 +940,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       }
     if ((this.timeStart === undefined || this.timeStart === null)
       && (this.timeEnd !== undefined && this.timeEnd !== null)) {
-        console.log('time end', this.timeEnd);
       this.events = this.events.filter(e => {
         let timeEnd = new Date(e.end);
         return this.timeEnd >= timeEnd;
@@ -919,7 +947,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     } 
     if ((this.timeStart !== undefined && this.timeStart !== null)
     && (this.timeEnd !== undefined && this.timeEnd !== null)) {
-      console.log('time start-end', this.timeStart, this.timeEnd);
       this.events = this.events.filter(e => {
         let timeStart = new Date(e.start);
         let timeEnd = new Date(e.end);
@@ -949,6 +976,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // filter by participating people
   filterParticipatingPeople() {
     var listID = [];
+    // let keepEvent = false;
     if (this.selectedSCsPeople !== null) {
       this.selectedSCsPeople.forEach(personID => {
         listID.push(parseInt(personID));
@@ -958,8 +986,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           if (e.typeOfEvent === "ServiceCall") {
             if (e.eventServiceCall !== undefined
               && e.eventServiceCall.people.length > 0) {
-              return this.indexOf(e.eventServiceCall.people["0"].id) >= 0;
+              for (let i = 0; i < e.eventServiceCall.people.length; i++) {
+                if (this.indexOf(e.eventServiceCall.people[i].id) >= 0) {
+                  return true;
+                }
+              }
             }
+            return false;
           }
           return true;
         }, listID);

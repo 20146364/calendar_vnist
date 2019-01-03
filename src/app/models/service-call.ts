@@ -8,16 +8,17 @@ export class ServiceCall implements IEvent {
     allDay = false;
     color: string;
     className: string;
-    plantID: any;
     _plantName: any;
+    plantID: any;
     typeOfEvent = "ServiceCall";
 
     plannedBegin: any;
     plannedEnd: any;
     comment: any;
     tsticketID: any;
-    listPeople: any[];
-    _people: any;
+    _ticketName: any;
+    listPeopleID: any[];
+    private _listPeople: any[];
     numberOfPeople: any;
 
     eventServiceCall: any;
@@ -36,61 +37,59 @@ export class ServiceCall implements IEvent {
         this.end = new Date(sc.done_end ? sc.done_end : sc.sheduled_end);
         this.plantID = sc.plant_id;
         this.plantName = sc.plant_id;
-        this.plannedBegin = (new Date(sc.sheduled_begin)).toLocaleString();
-        this.plannedEnd = (new Date(sc.sheduled_end)).toLocaleString();
+        this.plannedBegin = (new Date(sc.sheduled_begin ? sc.sheduled_begin : sc.done_begin)).toLocaleString();
+        this.plannedEnd = (new Date(sc.sheduled_end ? sc.sheduled_end : sc.done_end)).toLocaleString();
         this.comment = sc.sheduled_comment;
         this.tsticketID = sc.tsticket_id;
+        this.ticketName = sc.tsticket_id;
         if (this.end.getTime() - this.start.getTime() >= 86400000) {
             this.allDay = true;
         }
-        // if (sc.people !== undefined && sc.people.length !== 0) {
-        //     this._people = sc.people[0];
-        //     // console.log('sc.poeple', sc.people)
-        //     // this.people = sc.people;
-        //     // console.log('people from localParticipatingPeople: ', this.people)
-        // } else {
-        //     this.people = ['unknown'];
-        // }
-        // this.numberOfPeople = sc.people.length;
+        if (sc.people !== undefined && sc.people.length !== 0) {
+            this.listPeopleID = [];
+            sc.people.forEach(p => {
+                this.listPeopleID.push(p.id);
+            });
+            this.numberOfPeople = sc.people.length;
+            this.listPeople = this.listPeopleID;
+        } else {
+            this.listPeople = [];
+            this.numberOfPeople = 0;
+        }
     }
     
     getInfo(sc: any){
-        console.log('get info scs', sc);
         this.id = sc.id;
         this.title = sc.title;
         this.start = sc.start;
         this.end = sc.end;
         this.plantID = sc.extendedProps.plantID;
-        this._plantName = sc.extendedProps.plantName;
+        this._plantName = sc.extendedProps._plantName;
         this.plannedBegin = sc.extendedProps.plannedBegin;
         this.plannedEnd = sc.extendedProps.plannedEnd;
         this.comment = sc.extendedProps.comment;
         this.tsticketID = sc.extendedProps.tsticketID;
+        this._ticketName = sc.extendedProps._ticketName;
+        this.numberOfPeople = sc.extendedProps.numberOfPeople;
+        this._listPeople = sc.extendedProps._listPeople;
     }
 
-    get people() {
-        return this.listPeople;
+    get listPeople() {
+        return this._listPeople;
     }
-    set people(listPeopleID: any[]) {
+    set listPeople(listPeopleID: any[]) {
         let myItem: any;
         let key;
         key = 'localParticipatingPeople';
         myItem = sessionStorage.getItem(key);
         if (myItem !== 'undefined') {
             myItem = JSON.parse(myItem);
-            this.listPeople = myItem;
+            this._listPeople = myItem;
         }
-        console.log('sesion storage', sessionStorage);
-        console.log('list people filter out', this.listPeople);
-        if (this.listPeople) {
-            console.log('people ID', listPeopleID);
-            this.listPeople = this.listPeople.filter(function(e){
-                console.log('person in list people', e);
+        if (this._listPeople) {
+            this._listPeople = this._listPeople.filter(function(e){
                 return this.indexOf(e.id) >= 0;
               }, listPeopleID);
-              console.log('list people filter in', this.listPeople);
-            // this._people = people;
-            // this.people = ;
         }
     }
 
@@ -109,7 +108,30 @@ export class ServiceCall implements IEvent {
         }
         if (listPlant) {
             this._plantName = listPlant.find( e => e.id == plantID);
-            this._plantName = this._plantName.name;
+            if (this._plantName !== undefined) {
+                this._plantName = this._plantName.name;
+            }
+        }
+    }
+
+    get ticketName() {
+        return this._ticketName;
+    }
+    set ticketName(ticketID: any) {
+        let myItem: any;
+        let key;
+        let listTicket: any[];
+        key = 'localTicket';
+        myItem = sessionStorage.getItem(key);
+        if (myItem !== 'undefined') {
+            myItem = JSON.parse(myItem);
+            listTicket = myItem;
+        }
+        if (listTicket) {
+            this._ticketName = listTicket.find( e => e.id == ticketID);
+            if (this._ticketName !== undefined) {
+                this._ticketName = this._ticketName.name;
+            }
         }
     }
   }
