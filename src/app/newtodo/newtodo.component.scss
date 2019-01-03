@@ -6,6 +6,27 @@
   margin-right: 5px;
   zoom: 1;
 }
-.ng-tns-c2-0 .ui-dropdown .ui-widget .ui-state-default .ui-corner-all .ui-helper-clearfix{
-  color: #0a0a0a;
+
+input.toggle-btn {
+  visibility: hidden;
+  margin: 10px;
 }
+input.toggle-btn::before {
+  content: attr(value);
+  background: #dddddd;
+  color: #aaa;
+  height: 25px;
+  width: 25px;
+  display: grid;
+  align-items: center;
+  text-align: center;
+  border-radius: 50%;
+  border: 1px solid #dddddd;
+  visibility: visible;
+}
+input.toggle-btn:checked::before {
+  background: rgb(50,150,250);
+  color: #eee;
+  border-color: rgb(50,150,250);
+}
+

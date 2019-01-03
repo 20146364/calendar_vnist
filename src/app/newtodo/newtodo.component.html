@@ -27,7 +27,52 @@
                   autoWidth="false" [style]="{'width':'90%'}"></p-dropdown>
     </div>
 
-    <p>Repeat on</p>
+    <div style="margin-top: 20px">Repeat on:</div>
+    <div class="row">
+      <input class="toggle-btn" type="checkbox" value="S">
+      <input class="toggle-btn" type="checkbox" value="M">
+      <input class="toggle-btn" type="checkbox" value="T">
+      <input class="toggle-btn" type="checkbox" value="W">
+      <input class="toggle-btn" type="checkbox" value="T">
+      <input class="toggle-btn" type="checkbox" value="F">
+      <input class="toggle-btn" type="checkbox" value="S">
+    </div>
+
+    <div style="margin-top: 10px;">Ends</div>
+
+    <div class="ui-g">
+
+      <div class="ui-g-12" style="margin: auto">
+        <p-radioButton name="group1" value="Never" label="Never" inputId="opt1" [(ngModel)]="val2"></p-radioButton>
+      </div>
+      <div class="ui-g-3" style="margin: auto">
+        <p-radioButton name="group1" value="Option 2" label="On" inputId="opt2" [(ngModel)]="val2"></p-radioButton>
+      </div>
+
+      <div class="ui-g-9" style="margin: auto">
+        <p-calendar [(ngModel)]="date" [locale]="en" dateFormat="M dd, yy"
+                    [inputStyle]="{'width':'55%','background-color': '#dddddd'}"></p-calendar>
+      </div>
+
+      <div class="ui-g-3" style="margin: auto">
+        <p-radioButton name="group1" value="Option 3" label="After" inputId="opt3" [(ngModel)]="val2"></p-radioButton>
+      </div>
+
+      <div class="ui-g-9">
+        <div style="background-color: #dddddd; width: fit-content; padding: 2px; border-radius: 5%">
+          <p-spinner class="block" size="1" [(ngModel)]="val" [min]="1" [max]="80" disabled="true" [inputStyle]="{'background-color': '#dddddd'}"></p-spinner>
+          <span style="margin-left: 5px">occurrences</span>
+        </div>
+      </div>
+
+      <div class="row" style="margin-left: 40%; margin-top: 20px">
+        <button pButton type="button" label="Cancel" class="block ui-button-secondary"></button>
+        <button pButton type="button" label="Save" class="block ui-button-secondary"></button>
+      </div>
+
+
+    </div>
+
   </div>
 
 </div>
