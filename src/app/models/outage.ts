@@ -27,7 +27,6 @@ export class Outage implements IEvent {
     }
 
     initInfo(ot: any) {
-        console.log('ot1:', ot);
         this.color = "#dc5e14";
         this.eventOutage = ot;
         this.id = ot.id;
@@ -48,7 +47,6 @@ export class Outage implements IEvent {
     }
 
     getInfo(ot: any){
-        console.log('ot2:', ot);
         this.id = ot.id;
         this.title = ot.title;
         this.start = ot.start;
