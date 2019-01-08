@@ -13,23 +13,7 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class PlantsService {
+export class ChangesService {
 
   constructor(private http: HttpClient) { }
-
-  getListPlants() {
-    let listPlants = null;
-    let myItem: any;
-    let key;
-    key = 'localPlant';
-    myItem = sessionStorage.getItem(key);
-    if (myItem !== 'undefined' && myItem !== null) {
-      listPlants = JSON.parse(myItem);
-    }
-    return listPlants;
-  }
-
-  getPlants(id) {
-    return this.http.get(`${Config.api_endpoint}plants/fetch?ids=${id}`, httpOptions);
-  }
 }

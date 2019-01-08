@@ -17,7 +17,6 @@ import { ScheduleModule } from 'primeng/primeng';
 import { InputTextModule } from 'primeng/primeng';
 import { CalendarModule } from 'primeng/components/calendar/calendar';
 import { CheckboxModule } from 'primeng/primeng';
-import { ButtonModule } from 'primeng/primeng';
 import { TabViewModule } from 'primeng/primeng';
 import { CodeHighlighterModule } from 'primeng/primeng';
 import { InplaceModule } from 'primeng/primeng';
@@ -35,6 +34,7 @@ import {TableModule} from 'primeng/components/table/table';
 import { DialogModule } from 'primeng/components/dialog/dialog';
 import {SpinnerModule} from 'primeng/components/spinner/spinner';
 import {DropdownModule} from 'primeng/components/dropdown/dropdown';
+import {ButtonModule} from 'primeng/components/button/button';
 
 
 

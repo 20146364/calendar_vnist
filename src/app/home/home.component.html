@@ -16,10 +16,22 @@
   <!-- <div class="ui-g-1"></div> -->
   <!-- FullCalendar -->
   <div class="ui-g-9 ui-g-nopad">
+    <div class="container">
+      <p class="left-button">
+        <p-button label="prev" (onClick)="handlePrevClick($event, fc)"></p-button>
+        <p-button label="next" (onClick)="handleNextClick($event, fc)"></p-button>
+        <p-button label="today" (onClick)="handleTodayClick($event, fc)"></p-button>
+      </p>
+      <p class="right-button">
+        <p-button label="month" (onClick)="handleMonthClick($event, fc)"></p-button>
+        <p-button label="week" (onClick)="handleAgendaWeekClick($event, fc)"></p-button>
+        <p-button label="day" (onClick)="handleAgendaDayClick($event, fc)"></p-button>
+      </p>
+    </div>
     <p-fullCalendar
       [events]="events"
       [options]="options"
-      #gotoSelectedDate>
+      #fc>
     </p-fullCalendar>
 
     <!-- Start dialog outage detail -->
@@ -271,15 +283,15 @@
 
   <!-- Filter -->
   <div class="ui-g-3">
-    <div class="ui-g-12"><br/></div>
+    <!-- <div class="ui-g-12"></div> -->
     <div class="ui-g-12">
-      <p-scrollPanel [style]="{width: '100%', height: '460px'}">
+      <p-scrollPanel [style]="{width: '100%', height: '560px'}">
         <p-calendar [(ngModel)]="selectedDate" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
-                    [inline]="true" (onSelect)="gotoDate($event, gotoSelectedDate)"></p-calendar>
+                    [inline]="true" (onSelect)="gotoDate($event, fc)"></p-calendar>
         <p-accordion [multiple]="true">
-          <p-accordionTab header="Element" class="accordion-header">
+          <p-accordionTab header="Element" class="accordion-header" [selected]="true">
             <p-accordion [multiple]="true">
-              <p-accordionTab header="Services" class="accordion-header">
+              <p-accordionTab header="Services" class="accordion-header" [selected]="true">
                 <!-- select2.org -->
                 <label>Participating People</label>
                 <ng-select2 [(ngModel)]="selectedSCsPeople" (ngModelChange)="filterAll($event)"
@@ -292,7 +304,7 @@
                   <option *ngFor="let s of ticketStatuses" [value]="s.id">{{s.name}}</option>
                 </ng-select2>
               </p-accordionTab>
-              <p-accordionTab header="Outages" class="accordion-header">
+              <p-accordionTab header="Outages" class="accordion-header" [selected]="true">
                 <label>Outages category</label>
                 <ng-select2 [(ngModel)]="selectedOutageCategories" (ngModelChange)="filterAll($event)"
                             [options]="multipleOptions">
@@ -304,11 +316,11 @@
                   <option *ngFor="let s of ticketStatuses" [value]="s.id">{{s.name}}</option>
                 </ng-select2>
               </p-accordionTab>
-              <p-accordionTab header="To-Dos" class="accordion-header">
+              <p-accordionTab header="To-Dos" class="accordion-header" [selected]="true">
               </p-accordionTab>
             </p-accordion>
           </p-accordionTab>
-          <p-accordionTab header="General" class="accordion-header">
+          <p-accordionTab header="General" class="accordion-header" [selected]="true">
             <label>Plants</label>
             <ng-select2 [(ngModel)]="selectedPlant" (ngModelChange)="filterAll($event)"
                         [options]="multiplePlantsOptions">

@@ -87,7 +87,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   // Event
   events: any[];
+  eventsPrev: any[];
+  eventsNext: any[];
   listEvents: any[];
+  listEventsPrev: any[];
+  listEventsNext: any[];
+
+  // current Time
+  currentTimeShow: Date;
 
   header: any;
 
@@ -136,7 +143,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               private otCategorySrv: OutageCategoryService,
               private creatorEditorSrv: CreatorEditorService,
               private router: Router) {
-
+    this.currentTimeShow = new Date();
+    let key = 'currentTimeView';
+    sessionStorage.setItem(key, JSON.stringify(this.currentTimeShow));
     
     // if (this.calendarSrv.getSelectedEvent() !== 0) {
     //   this.selectedEvent = this.calendarSrv.getSelectedEvent();
@@ -150,9 +159,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // fullcalendar's options
     this.options = {
       header: {
-        left: 'prev,next today',
+        left: '',
         center: 'title',
-        right: 'month,agendaWeek,agendaDay'
+        right: ''
       },
       firstDay: 1,
       showNonCurrentDates: false,
@@ -166,7 +175,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       dateClick: this.handleDayClick,
       timezone: "local",
       eventLimit: true,
-      id: "calendar"
+      id: "calendar",
     };
     this.multipleOptions = {
       width: '100%',
@@ -182,11 +191,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       multiple: true,
       tags: true
     };
+    this.initListEvents(this.currentTimeShow, this.currentTimeShow);
+    this.getListEventsPrev(this.currentTimeShow);
+    this.getListEventsNext(this.currentTimeShow);
     this.initListParticipatingPeople();
-    this.initListSCsOutage();
     this.initListPlants();
     this.initListTickets();
     this.initListOutageCategories();
+
+    this.updateChangesFeed();
+    
     this.getSelectedSCsPeople();
     this.getSelectedSCsStatus();
     this.getSelectedOutageStatus();
@@ -195,6 +209,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.getSelectedPlant();
     this.getSelectedTimeStart();
     this.getSelectedTimeEnd();
+    this.setCurrentView('month');
 
     this.ticketStatuses = [
       {
@@ -216,63 +231,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
     ];
 
-  //   this.events = [
-  //     {
-  //       'id': 1,
-  //       'title': '1',
-  //       'start': '2018-12-01'
-  //     },
-  //     {
-  //       'id': 2,
-  //       'title': '2',
-  //       'start': '2018-12-01',
-  //       'end': '2018-12-02'
-  //     },
-  //     {
-  //       'id': 3,
-  //       'title': '3',
-  //       'start': '2018-12-08',
-  //       'className': 'highPriority'
-  //     },
-  //     {
-  //       'id': 4,
-  //       'title': '4',
-  //       'start': '2018-12-16T16:00:00',
-  //       'end': '2018-12-16T17:00:00',
-  //       'color': 'red',
-  //       'className': 'filter-italic'
-  //     },
-  //     {
-  //       'id': 5,
-  //       'title': '5',
-  //       'start': '2018-12-11',
-  //       'end': '2018-12-13',
-  //     },
-  //     {
-  //       'id': 6,
-  //       'title': '6',
-  //       'start': '2018-12-24T09:00:00',
-  //       'end': '2018-12-26T16:00:00',
-  //       'allDayDefault': 'true',
-  //     },
-  //     {
-  //       'id': 7,
-  //       'title': '7',
-  //       'start': '2018-12-24T8:00:00',
-  //       'end': '2018-12-24T16:00:00',
-  //     },
-  //     {
-  //       'id': 8,
-  //       'title': '8',
-  //       'start': '2018-12-23T10:00:00',
-  //       'end': '2018-12-23T17:00:00',
-  //     }
-  // ]
-
   }
 
   ngOnChanges() {
-
   }
 
   ngAfterViewInit() {
@@ -288,11 +249,145 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setSelectedCreatorEditor();
     this.setSelectedTimeStart();
     this.setSelectedTimeEnd();
-    this.setEvents();
+    this.setListServiceCallOutage();
   }
 
-  handleDayClick = (event) => {
-    console.log(event);
+  handlePrevClick = (e, fc) => {
+    fc.calendar.prev();
+    let currentTimeView = this.getCurrentTimeView();
+    let currentView = this.getCurrentView();
+    let beforeTime;
+    let afterTime;
+    let range = 'visible';
+    switch (currentView) {
+      // month
+      case 'month':
+        currentTimeView = this.getAfterTimeMonth(currentTimeView);
+        if ((this.events = this.scotSrv.getListServiceCallOutagePrev()) === null) {
+          beforeTime = this.getBeforeTimeMonth(currentTimeView);
+          afterTime = this.getAfterTimeMonth(currentTimeView);
+          this.getListSCsOutage(afterTime, beforeTime, range);
+        } else {
+          this.listEvents = this.scotSrv.getListEventsPrev()
+        }
+        this.setListServiceCallOutage();
+        this.setListEvents();
+        this.getListEventsNext(currentTimeView);
+        this.getListEventsPrev(currentTimeView);
+        break;
+      // week
+      case 'agendaWeek':
+        
+        break;
+      // day
+      default:
+        // can lau dc ngay dang hien thi
+        currentTimeView = this.getAfterTimeDay(currentTimeView);
+        beforeTime = this.getBeforeTimeMonth(currentTimeView);
+        afterTime = this.getAfterTimeDay(currentTimeView);
+        this.getListSCsOutage(afterTime, beforeTime, range);
+        break;
+    }
+    this.setCurrentTimeView(currentTimeView);
+  }
+  
+  handleNextClick = (e, fc) => {
+    fc.calendar.next();
+    let currentTimeView = this.getCurrentTimeView();
+    let currentView = this.getCurrentView();
+    let beforeTime;
+    let afterTime;
+    let range = 'visible';
+    switch (currentView) {
+      // month
+      case 'month':
+        currentTimeView = this.getBeforeTimeMonth(currentTimeView);
+        if ((this.events = this.scotSrv.getListServiceCallOutageNext()) === null) {
+          beforeTime = this.getBeforeTimeMonth(currentTimeView);
+          afterTime = this.getAfterTimeMonth(currentTimeView);
+          this.getListSCsOutage(afterTime, beforeTime, range);
+        } else {
+          this.listEvents = this.scotSrv.getListEventsNext()
+        }
+        this.setListServiceCallOutage();
+        this.setListEvents();
+        this.getListEventsNext(currentTimeView);
+        this.getListEventsPrev(currentTimeView);
+        break;
+      // week
+      case 'agendaWeek':
+        
+        break;
+      // day
+      default:
+      // can lau dc ngay dang hien thi
+        // afterTime = currentTimeView;
+        currentTimeView = this.getBeforeTimeDay(currentTimeView);
+        beforeTime = this.getBeforeTimeDay(currentTimeView);
+        afterTime = this.getAfterTimeMonth(currentTimeView);
+        this.getListSCsOutage(afterTime, beforeTime, range);
+        break;
+    }
+    this.setCurrentTimeView(currentTimeView);
+  }
+  
+  handleTodayClick = (e, fc) => {
+    fc.calendar.today();
+    let currentTimeView = new Date();
+    let currentView = this.getCurrentView();
+    let beforeTime;
+    let afterTime;
+    let range = 'visible';
+    switch (currentView) {
+      // month
+      case 'month':
+        // if ((this.events = this.scotSrv.getListServiceCallOutageNext()) === null) {
+          beforeTime = this.getBeforeTimeMonth(currentTimeView);
+          afterTime = this.getAfterTimeMonth(currentTimeView);
+          this.getListSCsOutage(afterTime, beforeTime, range);
+        // } else {
+        //   this.listEvents = this.scotSrv.getListEventsNext()
+        // }
+        this.setListServiceCallOutage();
+        this.setListEvents();
+        this.getListEventsNext(currentTimeView);
+        this.getListEventsPrev(currentTimeView);
+
+        break;
+      // week
+      case 'agendaWeek':
+        
+        break;
+      // day
+      default:
+        beforeTime = this.getBeforeTimeDay(currentTimeView);
+        afterTime = this.getAfterTimeDay(currentTimeView);
+        this.getListSCsOutage(afterTime, beforeTime, range);
+        break;
+    }
+    this.setCurrentTimeView(currentTimeView);
+  }
+  
+  handleMonthClick = (e, fc) => {
+    fc.calendar.changeView('month');
+    this.setCurrentView('month');
+    // set Ngay dau tien trong thang
+  }
+  
+  handleAgendaWeekClick = (e, fc) => {
+    fc.calendar.changeView('agendaWeek');
+    this.setCurrentView('agendaWeek');
+    // set Tuan dau tien trong thang
+  }
+  
+  handleAgendaDayClick = (e, fc) => {
+    fc.calendar.changeView('agendaDay');
+    this.setCurrentView('agendaDay');
+    // set Ngay dau tien trong thang
+  }
+
+  handleDayClick = (e) => {
+    // console.log(e);
     // // let offset = new Date().getTimezoneOffset();
     // //  console.log(offset);
     // //  console.log(event.date.subtract(offset, 'minutes'));
@@ -305,7 +400,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   handleEventClick = (e) => {
-    console.log(e.event);
+    // console.log(e.event);
     if (e.event.extendedProps.typeOfEvent === "ServiceCall") {
       this.eventSC = new ServiceCall();
       this.eventSC.getInfo(e.event);
@@ -382,127 +477,261 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   //#region general SCs and OTs
   // init SCs and Outages
-  async initListSCsOutage() {
+  // async initListSCsOutage() {
+  //   let listPages: any;
+  //   listPages = [];
+  //   this.events = this.scotSrv.getListServiceCallOutage();
+  //   if (this.events === null) {
+  //     let totalService;
+  //     let totalOutage;
+  //     try {
+  //       // get total Outages
+  //       totalOutage  = await new Promise((resolve, reject) => {
+  //         this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+  //           resolve(data['total']);
+  //         });
+  //       });
+
+  //       // get listPage of OTs
+  //       this.getListPageOutages(listPages, totalOutage);
+
+  //       // get total Services
+  //       totalService  = await new Promise((resolve, reject) => {
+  //         this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
+  //           resolve(data['total']);
+  //         });
+  //       });
+
+  //       // get listPage of Scs
+  //       this.getListPageServiceCalls(listPages, totalService);
+
+  //       // fetch all OTs and SCs
+  //       this.getOutageServiceCallFromAPI(listPages);
+
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   } else {
+  //     this.listEvents = this.scotSrv.getListEvents()
+  //   }
+
+  //   //get creator and editor from SCs and OTs
+  //   if ((this.listCreatorEditor = this.creatorEditorSrv.getListCreatorEditor()) == null) {
+  //     this.getCreatorEditor(listPages);
+  //   }
+  // }
+
+
+  // init SCs and outages
+  async getListSCsOutage(startTime, endTime, range) {
+    let start = startTime.toISOString();
+    let end  = endTime.toISOString();
     let listPages: any;
     listPages = [];
     this.events = this.scotSrv.getListServiceCallOutage();
-    if (this.events === null) {
       let totalService;
       let totalOutage;
       try {
-        // get total Outages
+        // get Outages
         totalOutage  = await new Promise((resolve, reject) => {
-          this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+          this.http.get(`${Config.api_endpoint}tsoutages/fetch?time_after=${start}&time_before=${end}`, httpOptions).subscribe(data => {
+            // console.log('data outages:', data);
             resolve(data['total']);
           });
         });
+        this.getListPageOutages(listPages, totalOutage, start, end);
 
-        // get listPage of OTs
-        this.getListPageOutages(listPages, totalOutage);
-
-        // get total Services
+        // get Services
         totalService  = await new Promise((resolve, reject) => {
-          this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
+          this.http.get(`${Config.api_endpoint}tsservices/fetch?time_after=${start}&time_before=${end}`, httpOptions).subscribe(data => {
+            // console.log('data services:', data);
+            // console.log('start:', start);
+            // console.log('end:', end);
             resolve(data['total']);
           });
         });
+        this.getListPageServiceCalls(listPages, totalService, start, end);
 
-        // get listPage of Scs
-        this.getListPageServiceCalls(listPages, totalService);
-
-        // fetch all OTs and SCs
-        this.getOutageServiceCallFromAPI(listPages);
-
+        // fetch all OTs and SCs visiable range
+        this.getOutageServiceCallFromAPI(listPages, range);
       } catch (error) {
         throw error;
       }
-    } else {
-      this.listEvents = this.scotSrv.getListEvents()
-    }
-
     //get creator and editor from SCs and OTs
     if ((this.listCreatorEditor = this.creatorEditorSrv.getListCreatorEditor()) == null) {
       this.getCreatorEditor(listPages);
     }
   }
 
-  private setEvents() {
-    let key;
-    key = 'localServiceCallOutage';
+  // init List Events visiable range
+  initListEvents(startTime, endTime) {
+    let range = 'visible';
+    if ((this.events = this.scotSrv.getListServiceCallOutage()) === null) {
+      this.getListSCsOutage(startTime, endTime, range);
+    } else {
+      this.listEvents = this.scotSrv.getListEvents()
+    }
+  }
+
+  // get List Events prev month
+  getListEventsPrev(currentTimeView) {
+    let beforeTime;
+    let afterTime;
+    let range = 'prev';
+    // if ((this.eventsPrev = this.scotSrv.getListServiceCallOutagePrev()) === null) {
+      currentTimeView = this.getAfterTimeMonth(currentTimeView);
+      beforeTime = this.getBeforeTimeMonth(currentTimeView);
+      afterTime = this.getAfterTimeMonth(currentTimeView);
+      this.getListSCsOutage(afterTime, beforeTime, range);
+    // } else {
+    //   this.listEventsPrev = this.scotSrv.getListEventsPrev()
+    // }
+  }
+
+  // get List Events next month
+  getListEventsNext(currentTimeView) {
+    let beforeTime;
+    let afterTime;
+    let range = 'next';
+    // if ((this.eventsNext = this.scotSrv.getListServiceCallOutageNext()) == null) {
+      currentTimeView = this.getBeforeTimeMonth(currentTimeView);
+      beforeTime = this.getBeforeTimeMonth(currentTimeView);
+      afterTime = this.getAfterTimeMonth(currentTimeView);
+      this.getListSCsOutage(afterTime, beforeTime, range);
+    // } else {
+    //   this.listEventsNext = this.scotSrv.getListEventsNext()
+    // }
+  }
+
+  private setListServiceCallOutage() {
+    let key = 'localSCOT';
     sessionStorage.setItem(key, JSON.stringify(this.events));
   }
 
-  private getListPageOutages(listPages, totalOutage) {
-    if ( totalOutage >= 20) {
-      for (let page = 1; page <= Math.floor(totalOutage / 20); page++) {
-        let tmp;
-        tmp = new Promise((resolve, reject) => {
-          this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
-            resolve(data);
-          });
-        });
-        listPages.push(tmp);
-      }
-    } else {
-      let tmp;
+  private setListEvents() {
+    let key = 'localListEvents';
+    sessionStorage.setItem(key, JSON.stringify(this.listEvents));
+  }
+
+  private getListPageOutages(listPages, totalOutage, start, end) {
+    let pages = totalOutage /20;
+    let modulusValue = totalOutage % 20;
+    let tmp;
+    for (let page = 1; page <= Math.floor(pages); page++) {
       tmp = new Promise((resolve, reject) => {
-        this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
-          // console.log('data: ', data);
+        this.http.get(`${Config.api_endpoint}tsoutages/fetch?time_after=${start}&time_before=${end}&page=${page}`, httpOptions).subscribe(data => {
           resolve(data);
         });
       });
       listPages.push(tmp);
     }
-  }
-
-  private getListPageServiceCalls(listPages, totalService) {
-    if ( totalService >= 20) {
-      for (let page = 1; page <= Math.floor(totalService / 20); page++) {
-        let tmp;
-        tmp = new Promise((resolve, reject) => {
-          this.http.get(`${Config.api_endpoint}tsservices/fetch?page=${page}`, httpOptions).subscribe(data => {
-            resolve(data);
-          });
-        });
-        listPages.push(tmp);
-      }
-    } else {
-      let tmp;
-      tmp = new Promise((resolve, reject) => {
-        this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
-          resolve(data);
-        });
+    pages++;
+    tmp = new Promise((resolve, reject) => {
+      this.http.get(`${Config.api_endpoint}tsoutages/fetch?time_after=${start}&time_before=${end}&limit=${modulusValue}&page=${pages}`, httpOptions).subscribe(data => {
+        resolve(data);
       });
-      listPages.push(tmp);
-    }
-  }
-
-  private getOutageServiceCallFromAPI(listPages) {
-    let itemServiceCallOutage: IEvent;
-    let keySCOT = 'localServiceCallOutage';
-    let keyListEvents = 'localListEvents';
-    Promise.all(listPages).then(rs => {
-      let scSet;
-      scSet = new Set();
-      this.events = [];
-      this.listEvents =[];
-      rs.forEach(items => {
-        items['data'].forEach(item => {
-          if (item['begin'] !== undefined) {
-            itemServiceCallOutage = new Outage();
-            itemServiceCallOutage.initInfo(item);
-            console.log('outage initinfo:', itemServiceCallOutage);
-          } else {
-            itemServiceCallOutage = new ServiceCall();
-            itemServiceCallOutage.initInfo(item);
-          }
-          this.events.push(itemServiceCallOutage);
-          this.listEvents.push(itemServiceCallOutage);
-        });
-      });
-      sessionStorage.setItem(keySCOT, JSON.stringify(this.events));
-      sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEvents));
     });
+    listPages.push(tmp);
+  }
+
+  private getListPageServiceCalls(listPages, totalService, startTime, endTime) {
+    // get total Services
+    let pages = totalService /20;
+    let modulusValue = totalService % 20;
+    let tmp;
+    for (let page = 1; page <= Math.floor(pages); page++) {
+      tmp = new Promise((resolve, reject) => {
+        this.http.get(`${Config.api_endpoint}tsservices/fetch?time_after=${startTime}&time_before=${endTime}&page=${page}`, httpOptions).subscribe(data => {
+          resolve(data);
+        });
+      });
+      listPages.push(tmp);
+    }
+    pages++;
+    tmp = new Promise((resolve, reject) => {
+      this.http.get(`${Config.api_endpoint}tsservices/fetch?time_after=${startTime}&time_before=${endTime}&limit=${modulusValue}&page=${pages}`, httpOptions).subscribe(data => {
+        resolve(data);
+      });
+    });
+    listPages.push(tmp);
+  }
+
+  getOutageServiceCallFromAPI(listPages, range) {
+    let itemServiceCallOutage: IEvent;
+    let keySCOT;
+    let keyListEvents;
+    switch (range) {
+      case 'visible':
+        keySCOT = 'localSCOT';
+        keyListEvents = 'localListEvents';
+        Promise.all(listPages).then(rs => {
+          this.events = [];
+          this.listEvents =[];
+          rs.forEach(items => {
+            items['data'].forEach(item => {
+              if (item['begin'] !== undefined) {
+                itemServiceCallOutage = new Outage();
+                itemServiceCallOutage.initInfo(item);
+              } else {
+                itemServiceCallOutage = new ServiceCall();
+                itemServiceCallOutage.initInfo(item);
+              }
+              this.events.push(itemServiceCallOutage);
+              this.listEvents.push(itemServiceCallOutage);
+            });
+          });
+          sessionStorage.setItem(keySCOT, JSON.stringify(this.events));
+          sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEvents));
+        });
+        break;
+      case 'prev':
+        keySCOT = 'localSCOTPrev';
+        keyListEvents = 'localListEventsPrev';
+        Promise.all(listPages).then(rs => {
+          this.eventsPrev = [];
+          this.listEventsPrev =[];
+          rs.forEach(items => {
+            items['data'].forEach(item => {
+              if (item['begin'] !== undefined) {
+                itemServiceCallOutage = new Outage();
+                itemServiceCallOutage.initInfo(item);
+              } else {
+                itemServiceCallOutage = new ServiceCall();
+                itemServiceCallOutage.initInfo(item);
+              }
+              this.eventsPrev.push(itemServiceCallOutage);
+              this.listEventsPrev.push(itemServiceCallOutage);
+            });
+          });
+          sessionStorage.setItem(keySCOT, JSON.stringify(this.eventsPrev));
+          sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEventsPrev));
+        });
+        break;
+      default:
+        keySCOT = 'localSCOTNext';
+        keyListEvents = 'localListEventsNext';
+        Promise.all(listPages).then(rs => {
+          this.eventsNext = [];
+          this.listEventsNext =[];
+          rs.forEach(items => {
+            items['data'].forEach(item => {
+              if (item['begin'] !== undefined) {
+                itemServiceCallOutage = new Outage();
+                itemServiceCallOutage.initInfo(item);
+              } else {
+                itemServiceCallOutage = new ServiceCall();
+                itemServiceCallOutage.initInfo(item);
+              }
+              this.eventsNext.push(itemServiceCallOutage);
+              this.listEventsNext.push(itemServiceCallOutage);
+            });
+          });
+          sessionStorage.setItem(keySCOT, JSON.stringify(this.eventsNext));
+          sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEventsNext));
+        });
+        break;
+    }
+    
   }
 
   private getCreatorEditor(listPages) {
@@ -541,6 +770,55 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
   //#endregion
 
+  // get month before
+  getBeforeTimeMonth(currentTime: Date) {
+    let end = new Date(currentTime);
+    let currentMonth = end.getMonth()
+    let currentYear = end.getFullYear();
+    if (currentMonth != 11) {
+      currentMonth++; 
+    } else {
+      currentMonth = 0;
+      currentYear++;
+    }
+    end = new Date(currentYear, currentMonth, 2);
+    return end;
+  }
+
+  // get month after
+  getAfterTimeMonth(currentTime: Date) {
+    let start = new Date(currentTime);
+    let currentMonth = start.getMonth();
+    let currentYear = start.getFullYear();
+    if (currentMonth != 0) {
+      currentMonth--;
+    } else {
+      currentMonth = 11;
+      currentYear--;
+    }
+    //start = new Date(currentYear, currentMonth + 1, 0);
+    start.setFullYear(currentYear);
+    start.setMonth(currentMonth+1);
+    start.setDate(0);
+    return start;
+  }
+
+  // get month before
+  getBeforeTimeDay(currentTime: Date) {
+    let end = new Date(currentTime);
+    let currentDate = end.getDate();
+    end.setDate(++currentDate);
+    return end;
+  }
+
+  // get month after
+  getAfterTimeDay(currentTime: Date) {
+    let start = new Date(currentTime);
+    let currentDate = start.getDate();
+    start.setDate(--currentDate);
+    return start;
+  }
+
   // init outage Category
   // initListOutageCategories() {
   //   let key;
@@ -565,7 +843,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       try {
         // get total Outages
         totalOutageCategory  = await new Promise((resolve, reject) => {
-          this.http.get(`${Config.api_endpoint}tsoutagecategories/fetch`, httpOptions).subscribe(data => {
+          this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
             resolve(data['total']);
           });
         });
@@ -573,7 +851,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           for (let page = 1; page <= Math.floor(totalOutageCategory / 20); page++) {
             let tmp;
             tmp = new Promise((resolve, reject) => {
-              this.http.get(`${Config.api_endpoint}tsoutagecategories/fetch?page=${page}`, httpOptions).subscribe(data => {
+              this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
                 resolve(data);
               });
             });
@@ -582,7 +860,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         } else {
           let tmp;
           tmp = new Promise((resolve, reject) => {
-            this.http.get(`${Config.api_endpoint}tsoutagecategories/fetch`, httpOptions).subscribe(data => {
+            this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
               resolve(data);
             });
           });
@@ -682,6 +960,128 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         sessionStorage.setItem(key, JSON.stringify(this.listPlants));
       });
     }
+  }
+
+  // check changes feed
+  updateChangesFeed() {
+    let key = 'priorTime';
+    let myItem: any;
+    let priorTime;
+    myItem = sessionStorage.getItem(key);
+    if (myItem !== 'undefined' && myItem !== null) {
+      priorTime = JSON.parse(myItem);
+    } else {
+      priorTime = (new Date()).toISOString();
+    }
+    sessionStorage.setItem(key, JSON.stringify((new Date()).toISOString()));
+
+    key = 'localChangesFeed';
+    let changesFeed;
+    // "2016-10-05T14:48:00.000Z"
+    priorTime ="2018-12-01T14:48:00.000Z";
+    this.http.get(`${Config.api_endpoint}changes?since=${priorTime}`, httpOptions).subscribe(listData => {
+      console.log('changes feed', listData);
+        changesFeed = [];
+        changesFeed = listData['data'];
+        changesFeed.forEach(data => {
+          switch (data.changeType) {
+            case "created":
+              this.createNewData(data);
+              break;
+            case "modified":
+              this.modifyOldData(data);
+              break;
+            default:
+              this.deleteOldData(data);
+              break;
+          }
+        });
+        // sessionStorage.setItem(key, JSON.stringify(changesFeed));
+      });
+  }
+
+  removeEvent(listPlants: any[], id) {
+    listPlants = listPlants.map((p)=>{
+      if (p.id === id) {
+        return false;
+       }
+      return p;
+    }).filter(p => p != false);
+  }
+
+  addEvent(array: any[], element) {
+    array.push(element);
+  }
+
+  // create new data
+  createNewData(data) {
+    console.log('create new data:', data);
+    switch (data.type) {
+      case "Plants":
+        this.plantsSrv.getPlants(data.entity_id).subscribe(plant => {
+          console.log('data of plant in create:', plant[0]);
+        });;
+        break;
+      case "Tsservices":
+        
+        break;
+      case "Tsoutages":
+        
+        break;
+      case "Tstickets":
+        
+        break;
+      case "People":
+        
+        break;
+      case "Tstickets":
+        
+        break;
+      default:
+        break;
+    }
+  }
+  // modify new data
+  modifyOldData(data) {
+    switch (data.type) {
+      case "Plants":
+        let key;
+        key = 'localPlant';
+        this.plantsSrv.getPlants(data.entity_id).subscribe(plant => {
+          this.listPlants = this.listPlants.map((p)=>{
+            if (p.id === data.entity_id) {
+              return false;
+             }
+            return p;
+          }).filter(p => p != false);
+            this.listPlants.push(plant['data'][0]);
+          sessionStorage.setItem(key, JSON.stringify(this.listPlants));
+        });;
+        break;
+      case "Tsservices":
+        
+        break;
+      case "Tsoutages":
+        
+        break;
+      case "Tstickets":
+        
+        break;
+      case "People":
+        
+        break;
+      case "Tstickets":
+        
+        break;
+      default:
+        break;
+    }
+
+  }
+  // delete old data
+  deleteOldData(data) {
+    console.log('delete old data:', data);
+
   }
 
   // init participating people
@@ -880,13 +1280,47 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     sessionStorage.setItem(key, JSON.stringify(this.timeEnd));
   }
 
+  // get current time view
+  getCurrentTimeView() {
+    let myItem: any;
+    let key = 'currentTimeView';
+    myItem = sessionStorage.getItem(key);
+    if (myItem !== 'undefined' && myItem !== null ) {
+      myItem = JSON.parse(myItem);
+      return new Date(myItem);
+    }
+  }
+
+  // set current time view
+  setCurrentTimeView(currentTimeView) {
+    let key = 'currentTimeView';
+    sessionStorage.setItem(key, JSON.stringify(currentTimeView));
+  }
+
+  // get current view
+  getCurrentView() {
+    let myItem: any;
+    let key = 'currentView';
+    myItem = sessionStorage.getItem(key);
+    if (myItem !== 'undefined' && myItem !== null ) {
+      return myItem;
+    }
+  }
+
+  // set current View
+  setCurrentView(viewName) {
+    let key = 'currentView';
+    sessionStorage.setItem(key, viewName);
+  }
+
   // fillter by plants
   filterPlants() {
-    var listID = [];
+    let listID = [];
     if (this.selectedPlant !== null) {
       this.selectedPlant.forEach(plantID => {
         listID.push(parseInt(plantID));
       });
+      // console.log('listID', listID);
       if (listID.length !== 0) {
         this.events = this.events.filter(function(e){
           return this.indexOf(e.plantID) >= 0;
@@ -897,7 +1331,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   
   // filter by creator and editor
   filterCreatorEditor() {
-    var listID = [];
+    let listID = [];
     if (this.selectedCreatorEditor !== null) {
       this.selectedCreatorEditor.forEach(personID => {
         listID.push(parseInt(personID));
@@ -957,7 +1391,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   // filter by outage category
   filterOutagesCategory() {
-    var listID = [];
+    let listID = [];
     if (this.selectedOutageCategories !== null) {
       this.selectedOutageCategories.forEach(categoryID => {
         listID.push(parseInt(categoryID));
@@ -975,7 +1409,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   // filter by participating people
   filterParticipatingPeople() {
-    var listID = [];
+    let listID = [];
     // let keepEvent = false;
     if (this.selectedSCsPeople !== null) {
       this.selectedSCsPeople.forEach(personID => {
@@ -1083,7 +1517,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       }
     }
   }
-
   // filter by All conditions
   filterAll(eventSelected) {
     this.events = this.listEvents;
