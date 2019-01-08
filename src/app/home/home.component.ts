@@ -263,7 +263,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       // month
       case 'month':
         currentTimeView = this.getAfterTimeMonth(currentTimeView);
-        if ((this.events = this.scotSrv.getListServiceCallOutagePrev()) === null) {
+        this.events = this.scotSrv.getListServiceCallOutagePrev();
+        console.log('prev month', this.events)
+        if ((this.events === null) || (this.events == [])) {
           beforeTime = this.getBeforeTimeMonth(currentTimeView);
           afterTime = this.getAfterTimeMonth(currentTimeView);
           this.getListSCsOutage(afterTime, beforeTime, range);
@@ -302,7 +304,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       // month
       case 'month':
         currentTimeView = this.getBeforeTimeMonth(currentTimeView);
-        if ((this.events = this.scotSrv.getListServiceCallOutageNext()) === null) {
+        this.events = this.scotSrv.getListServiceCallOutageNext();
+        console.log('next month', this.events)
+        if (this.events === null || (this.events == [])) {
           beforeTime = this.getBeforeTimeMonth(currentTimeView);
           afterTime = this.getAfterTimeMonth(currentTimeView);
           this.getListSCsOutage(afterTime, beforeTime, range);
