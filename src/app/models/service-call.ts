@@ -8,17 +8,23 @@ export class ServiceCall implements IEvent {
     allDay = false;
     color: string;
     className: string;
-    _plantName: any;
+    private _plantName: any;
     plantID: any;
     typeOfEvent = "ServiceCall";
 
+    deviceplaceholderID: any;
+    tsactionrequestID: any;
+    creatorPersonID: any;
+    modifierPersonID: any;
+    teamID: any;
+    listTasksID: any[];
+    listPeopleID: any[];
+    private _listPeopleID: any[];
     plannedBegin: any;
     plannedEnd: any;
     comment: any;
     tsticketID: any;
-    _ticketName: any;
-    listPeopleID: any[];
-    private _listPeople: any[];
+    private _ticketName: any;
     numberOfPeople: any;
 
     eventServiceCall: any;
@@ -33,14 +39,21 @@ export class ServiceCall implements IEvent {
         this.eventServiceCall = sc;
         this.id = sc.id;
         this.title = sc.kurzbeschreibung;
+        this.plantID = sc.plant_id;
+        this.tsticketID = sc.tsticket_id;
+        this.deviceplaceholderID = sc.deviceplaceholder_id;
+        this.tsactionrequestID = sc.tsactionrequest_id;
+        this.creatorPersonID = sc.creator_person_id;
+        this.modifierPersonID = sc.modifier_person_id;
+        this.listTasksID = sc.tstasks;
+        this.teamID = sc.team_id;
+
         this.start = new Date(sc.done_begin ? sc.done_begin : sc.sheduled_begin);
         this.end = new Date(sc.done_end ? sc.done_end : sc.sheduled_end);
-        this.plantID = sc.plant_id;
         this.plantName = sc.plant_id;
         this.plannedBegin = (new Date(sc.sheduled_begin ? sc.sheduled_begin : sc.done_begin)).toLocaleString();
         this.plannedEnd = (new Date(sc.sheduled_end ? sc.sheduled_end : sc.done_end)).toLocaleString();
         this.comment = sc.sheduled_comment;
-        this.tsticketID = sc.tsticket_id;
         this.ticketName = sc.tsticket_id;
         if (this.end.getTime() - this.start.getTime() >= 86400000) {
             this.allDay = true;
@@ -59,6 +72,7 @@ export class ServiceCall implements IEvent {
     }
     
     getInfo(sc: any){
+        console.log(' get info services call', sc);
         this.id = sc.id;
         this.title = sc.title;
         this.start = sc.start;
@@ -71,11 +85,11 @@ export class ServiceCall implements IEvent {
         this.tsticketID = sc.extendedProps.tsticketID;
         this._ticketName = sc.extendedProps._ticketName;
         this.numberOfPeople = sc.extendedProps.numberOfPeople;
-        this._listPeople = sc.extendedProps._listPeople;
+        this._listPeopleID = sc.extendedProps._listPeopleID;
     }
 
     get listPeople() {
-        return this._listPeople;
+        return this._listPeopleID;
     }
     set listPeople(listPeopleID: any[]) {
         let myItem: any;
@@ -84,10 +98,10 @@ export class ServiceCall implements IEvent {
         myItem = sessionStorage.getItem(key);
         if (myItem !== 'undefined') {
             myItem = JSON.parse(myItem);
-            this._listPeople = myItem;
+            this._listPeopleID = myItem;
         }
-        if (this._listPeople) {
-            this._listPeople = this._listPeople.filter(function(e){
+        if (this._listPeopleID) {
+            this._listPeopleID = this._listPeopleID.filter(function(e){
                 return this.indexOf(e.id) >= 0;
               }, listPeopleID);
         }

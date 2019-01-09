@@ -16,6 +16,7 @@ import { ParticipatingPeopleService} from '../services/participating-people.serv
 import { ServicecallOutageService} from '../services/servicecall-outage.service';
 import {OutageCategoryService} from '../services/outage-category.service';
 import {CreatorEditorService} from '../services/creator-editor.service';
+import {AssociationService} from '../services/association.service';
 
 import { IEvent } from '../models/event';
 import { ServiceCall } from '../models/service-call';
@@ -101,7 +102,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   event: IEvent;
   eventSC: ServiceCall;
   eventOT: Outage;
-  eventOutage;
+  // eventOutage;
 
   dialogNewVisible = false;
   dialogServiceCallVisible: boolean = false;
@@ -137,6 +138,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   constructor(private http: HttpClient,
               private calendarSrv: CalendarService,
               private plantsSrv: PlantsService,
+              private associationSrv: AssociationService,
               private ticketsSrv: TicketsService,
               private participatingPeopleSrv: ParticipatingPeopleService,
               private scotSrv: ServicecallOutageService,
@@ -198,6 +200,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.initListPlants();
     this.initListTickets();
     this.initListOutageCategories();
+    this.initCreatorEditor();
 
     this.updateChangesFeed();
     
@@ -264,7 +267,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       case 'month':
         currentTimeView = this.getAfterTimeMonth(currentTimeView);
         this.events = this.scotSrv.getListServiceCallOutagePrev();
-        console.log('prev month', this.events)
+        // get association visiable from prev
+        this.getAssociationVisiableFromPrev();
+
+
+        // console.log('prev month', this.events)
         if ((this.events === null) || (this.events == [])) {
           beforeTime = this.getBeforeTimeMonth(currentTimeView);
           afterTime = this.getAfterTimeMonth(currentTimeView);
@@ -305,7 +312,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       case 'month':
         currentTimeView = this.getBeforeTimeMonth(currentTimeView);
         this.events = this.scotSrv.getListServiceCallOutageNext();
-        console.log('next month', this.events)
+        // get association visiable from prev
+        this.getAssociationVisiableFromNext();
+
+
+        // console.log('next month', this.events)
         if (this.events === null || (this.events == [])) {
           beforeTime = this.getBeforeTimeMonth(currentTimeView);
           afterTime = this.getAfterTimeMonth(currentTimeView);
@@ -539,7 +550,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         // get Outages
         totalOutage  = await new Promise((resolve, reject) => {
           this.http.get(`${Config.api_endpoint}tsoutages/fetch?time_after=${start}&time_before=${end}`, httpOptions).subscribe(data => {
-            // console.log('data outages:', data);
             resolve(data['total']);
           });
         });
@@ -548,9 +558,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         // get Services
         totalService  = await new Promise((resolve, reject) => {
           this.http.get(`${Config.api_endpoint}tsservices/fetch?time_after=${start}&time_before=${end}`, httpOptions).subscribe(data => {
-            // console.log('data services:', data);
-            // console.log('start:', start);
-            // console.log('end:', end);
             resolve(data['total']);
           });
         });
@@ -561,10 +568,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       } catch (error) {
         throw error;
       }
-    //get creator and editor from SCs and OTs
-    if ((this.listCreatorEditor = this.creatorEditorSrv.getListCreatorEditor()) == null) {
-      this.getCreatorEditor(listPages);
-    }
+
+    // if ((this.listCreatorEditor = this.creatorEditorSrv.getListCreatorEditor()) == null) {
+    //   this.getCreatorEditor(listPages);
+    // }
   }
 
   // init List Events visiable range
@@ -582,14 +589,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let beforeTime;
     let afterTime;
     let range = 'prev';
-    // if ((this.eventsPrev = this.scotSrv.getListServiceCallOutagePrev()) === null) {
-      currentTimeView = this.getAfterTimeMonth(currentTimeView);
-      beforeTime = this.getBeforeTimeMonth(currentTimeView);
-      afterTime = this.getAfterTimeMonth(currentTimeView);
-      this.getListSCsOutage(afterTime, beforeTime, range);
-    // } else {
-    //   this.listEventsPrev = this.scotSrv.getListEventsPrev()
-    // }
+    currentTimeView = this.getAfterTimeMonth(currentTimeView);
+    beforeTime = this.getBeforeTimeMonth(currentTimeView);
+    afterTime = this.getAfterTimeMonth(currentTimeView);
+    this.getListSCsOutage(afterTime, beforeTime, range);
   }
 
   // get List Events next month
@@ -618,10 +621,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   private getListPageOutages(listPages, totalOutage, start, end) {
-    let pages = totalOutage /20;
-    let modulusValue = totalOutage % 20;
+    let pages = Math.ceil(totalOutage /20);
     let tmp;
-    for (let page = 1; page <= Math.floor(pages); page++) {
+    for (let page = 1; page <= pages; page++) {
       tmp = new Promise((resolve, reject) => {
         this.http.get(`${Config.api_endpoint}tsoutages/fetch?time_after=${start}&time_before=${end}&page=${page}`, httpOptions).subscribe(data => {
           resolve(data);
@@ -629,21 +631,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       });
       listPages.push(tmp);
     }
-    pages++;
-    tmp = new Promise((resolve, reject) => {
-      this.http.get(`${Config.api_endpoint}tsoutages/fetch?time_after=${start}&time_before=${end}&limit=${modulusValue}&page=${pages}`, httpOptions).subscribe(data => {
-        resolve(data);
-      });
-    });
-    listPages.push(tmp);
   }
 
   private getListPageServiceCalls(listPages, totalService, startTime, endTime) {
     // get total Services
-    let pages = totalService /20;
-    let modulusValue = totalService % 20;
+    let pages = Math.ceil(totalService /20);
     let tmp;
-    for (let page = 1; page <= Math.floor(pages); page++) {
+    for (let page = 1; page <= pages; page++) {
       tmp = new Promise((resolve, reject) => {
         this.http.get(`${Config.api_endpoint}tsservices/fetch?time_after=${startTime}&time_before=${endTime}&page=${page}`, httpOptions).subscribe(data => {
           resolve(data);
@@ -651,92 +645,597 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       });
       listPages.push(tmp);
     }
-    pages++;
-    tmp = new Promise((resolve, reject) => {
-      this.http.get(`${Config.api_endpoint}tsservices/fetch?time_after=${startTime}&time_before=${endTime}&limit=${modulusValue}&page=${pages}`, httpOptions).subscribe(data => {
-        resolve(data);
-      });
-    });
-    listPages.push(tmp);
   }
 
   getOutageServiceCallFromAPI(listPages, range) {
+    switch (range) {
+      case 'visible':
+        this.getOTSCVisiable(listPages);
+        break;
+      case 'prev':
+        this.getOTSCPrev(listPages);
+        break;
+      // case 'next':
+      // this.getOTSCNext(listPages);
+      // break;
+      default:
+        this.getOTSCNext(listPages);
+        break;
+    }
+  }
+
+  getOTSCVisiable(listPages) {
     let itemServiceCallOutage: IEvent;
     let keySCOT;
     let keyListEvents;
-    switch (range) {
-      case 'visible':
-        keySCOT = 'localSCOT';
-        keyListEvents = 'localListEvents';
-        Promise.all(listPages).then(rs => {
-          this.events = [];
-          this.listEvents =[];
-          rs.forEach(items => {
-            items['data'].forEach(item => {
-              if (item['begin'] !== undefined) {
-                itemServiceCallOutage = new Outage();
-                itemServiceCallOutage.initInfo(item);
-              } else {
-                itemServiceCallOutage = new ServiceCall();
-                itemServiceCallOutage.initInfo(item);
-              }
-              this.events.push(itemServiceCallOutage);
-              this.listEvents.push(itemServiceCallOutage);
-            });
-          });
-          sessionStorage.setItem(keySCOT, JSON.stringify(this.events));
-          sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEvents));
+    keySCOT = 'localSCOT';
+    keyListEvents = 'localListEvents';
+    Promise.all(listPages).then(rs => {
+      this.events = [];
+      this.listEvents =[];
+      rs.forEach(items => {
+        items['data'].forEach(item => {
+          if (item['begin'] !== undefined) {
+            itemServiceCallOutage = new Outage();
+            itemServiceCallOutage.initInfo(item);
+          } else {
+            itemServiceCallOutage = new ServiceCall();
+            itemServiceCallOutage.initInfo(item);
+          }
+          this.events.push(itemServiceCallOutage);
+          this.listEvents.push(itemServiceCallOutage);
         });
-        break;
-      case 'prev':
-        keySCOT = 'localSCOTPrev';
-        keyListEvents = 'localListEventsPrev';
-        Promise.all(listPages).then(rs => {
-          this.eventsPrev = [];
-          this.listEventsPrev =[];
-          rs.forEach(items => {
-            items['data'].forEach(item => {
-              if (item['begin'] !== undefined) {
-                itemServiceCallOutage = new Outage();
-                itemServiceCallOutage.initInfo(item);
-              } else {
-                itemServiceCallOutage = new ServiceCall();
-                itemServiceCallOutage.initInfo(item);
-              }
-              this.eventsPrev.push(itemServiceCallOutage);
-              this.listEventsPrev.push(itemServiceCallOutage);
-            });
-          });
-          sessionStorage.setItem(keySCOT, JSON.stringify(this.eventsPrev));
-          sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEventsPrev));
-        });
-        break;
-      default:
-        keySCOT = 'localSCOTNext';
-        keyListEvents = 'localListEventsNext';
-        Promise.all(listPages).then(rs => {
-          this.eventsNext = [];
-          this.listEventsNext =[];
-          rs.forEach(items => {
-            items['data'].forEach(item => {
-              if (item['begin'] !== undefined) {
-                itemServiceCallOutage = new Outage();
-                itemServiceCallOutage.initInfo(item);
-              } else {
-                itemServiceCallOutage = new ServiceCall();
-                itemServiceCallOutage.initInfo(item);
-              }
-              this.eventsNext.push(itemServiceCallOutage);
-              this.listEventsNext.push(itemServiceCallOutage);
-            });
-          });
-          sessionStorage.setItem(keySCOT, JSON.stringify(this.eventsNext));
-          sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEventsNext));
-        });
-        break;
-    }
+      });
+      sessionStorage.setItem(keySCOT, JSON.stringify(this.events));
+      sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEvents));
+      this.getAssociation(this.listEvents);
+    });
+  }
+
+  getAssociation(eventsPrev) {
+    // general
+    let listDeviceplaceholder = [];
+    let listPlant = [];
+    let listTicket = [];
+    // association service call
+    let listActionrequest = [];
+    let listSCCreator = [];
+    let listSCModifier = [];
+    let listSCTeam = [];
+    let listSCTask = [];
+    let listSCPeople = [];
+    // association outage
+    let listOTCategory = [];
+    let listOTCreator = [];
+    let listOTModifier = [];
+    eventsPrev.forEach(e => {
+      if (e.plantID !== null) {
+        listPlant.push(e.plantID);
+      }
+      if (e.tsticketID !== null) {
+        listTicket.push(e.tsticketID);
+      }
+      if (e.listDeviceplaceholder !== null) {
+        listDeviceplaceholder.push(e.deviceplaceholderID);
+      }
+      switch (e.typeOfEvent) {
+        case 'ServiceCall':
+          if (e.tsactionrequestID !== null) {
+            listActionrequest.push(e.tsactionrequestID);
+          }
+          if (e.creatorPersonID !== null) {
+            listSCCreator.push(e.creatorPersonID);
+          }
+          if (e.modifierPersonID !== null) {
+            listSCModifier.push(e.modifierPersonID);
+          }
+          if (e.teamID !== null) {
+            listSCTask.push(e.teamID);
+          }
+          if (e.listTasksID !== null) {
+            listSCTask = listSCTask.concat(e.creatorPersonID);
+            listSCTask = listSCTask.filter(function(task, index, self) {
+              return index === self.indexOf(task);
+            })
+          }
+          if (e.listPeopleID !== null) {
+            listSCPeople = listSCPeople.concat(e.listPeopleID);
+            listSCPeople = listSCPeople.filter(function(people, index, self) {
+              return index === self.indexOf(people);
+            })
+          }
+          break;
+        default:
+          if (e.tsoutagecategoryID !== null) {
+            listOTCategory.push(e.tsoutagecategoryID);
+          }
+          if (e.creatorID !== null) {
+            listOTCreator.push(e.creatorID);
+          }
+          if (e.modifierID !== null) {
+            listOTModifier.push(e.modifierID);
+          }
+          break;
+      }
+    });
+    let key;
+    key = 'localAssociationPlantsVisiable';
+    this.setAssociationPlant(listPlant, key);
+    key = 'localAssociationDeviceplaceholdersVisiable';
+    this.setAssociationDeviceplaceholder(listDeviceplaceholder, key);
+    key = 'localAssociationTicketsNext';
+    this.setAssociationTicket(listTicket, key);
+    key = 'localAssociationActionrequestsVisiable';
+    this.setAssociationActionrequest(listActionrequest, key);
+    key = 'localAssociationSCCreatorsVisiable';
+    this.setAssociationSCCreator(listSCCreator, key);
+    key = 'localAssociationSCModifiersVisiable';
+    this.setAssociationSCModifier(listSCModifier, key);
+    key = 'localAssociationSCTeamVisiable';
+    this.setAssociationTeam(listSCTeam, key);
+    key = 'localAssociationSCTaskVisiable';
+    this.setAssociationTask(listSCTask, key);
+    key = 'localAssociationSCPeopleVisiable';
+    this.setAssociationPeople(listSCPeople, key);
+    key = 'localAssociationOTCategoriesVisiable';
+    this.setAssociationOTCategory(listOTCategory, key);
+    key = 'localAssociationOTCreatorsVisiable';
+    this.setAssociationOTCreator(listOTCreator, key);
+    key = 'localAssociationOTModifiersVisiable';
+    this.setAssociationOTModifier(listOTModifier, key);
+  }
+
+  getAssociationVisiableFromPrev() {
+    let key;
+    let listItems;
+    key = 'localAssociationPlantsPrev';
+    listItems = this.associationSrv.getListPlants(key);
+    key = 'localAssociationPlants';
+    this.associationSrv.setListPlants(listItems, key);
+
+    key = 'localAssociationDeviceplaceholdersPrev';
+    listItems = this.associationSrv.getListDeviceplaceholders(key);
+    key = 'localAssociationDeviceplaceholders';
+    this.associationSrv.setListDeviceplaceholders(listItems, key);
+    
+    key = 'localAssociationTicketsPrev';
+    listItems = this.associationSrv.getListTickets(key);
+    key = 'localAssociationTickets';
+    this.associationSrv.setListTickets(listItems, key);
+    
+    key = 'localAssociationActionrequestsPrev';
+    listItems = this.associationSrv.getListActionrequests(key);
+    key = 'localAssociationActionrequests';
+    this.associationSrv.setListActionrequests(listItems, key);
+    
+    // key = 'localAssociationSCCreatorsPrev';
+    // this.setAssociationSCCreator(listSCCreator, key);
+    // key = 'localAssociationSCModifiersPrev';
+    // this.setAssociationSCModifier(listSCModifier, key);
+    
+    key = 'localAssociationSCTeamPrev';
+    listItems = this.associationSrv.getListSCTeams(key);
+    key = 'localAssociationSCTeam';
+    this.associationSrv.setListSCTeams(listItems, key);
+
+    key = 'localAssociationSCTaskPrev';
+    listItems = this.associationSrv.getListSCTasks(key);
+    key = 'localAssociationSCTask';
+    this.associationSrv.setListSCTasks(listItems, key);
+
+    key = 'localAssociationSCPeoplePrev';
+    listItems = this.associationSrv.getListSCPeople(key);
+    key = 'localAssociationSCPeople';
+    this.associationSrv.setListSCPeople(listItems, key);
+
+    key = 'localAssociationOTCategoriesPrev';
+    listItems = this.associationSrv.getListOTCategories(key);
+    key = 'localAssociationOTCategories';
+    this.associationSrv.setListOTCategories(listItems, key);
+
+    // key = 'localAssociationOTCreatorsPrev';
+    // this.setAssociationOTCreator(listOTCreator, key);
+    // key = 'localAssociationOTModifiersPrev';
+    // this.setAssociationOTModifier(listOTModifier, key);
+  }
+  
+  getAssociationVisiableFromNext() {
+    let key;
+    let listItems;
+    key = 'localAssociationPlantsNext';
+    listItems = this.associationSrv.getListPlants(key);
+    key = 'localAssociationPlants';
+    this.associationSrv.setListPlants(listItems, key);
+
+    key = 'localAssociationDeviceplaceholdersNext';
+    listItems = this.associationSrv.getListDeviceplaceholders(key);
+    key = 'localAssociationDeviceplaceholders';
+    this.associationSrv.setListDeviceplaceholders(listItems, key);
+    
+    key = 'localAssociationTicketsNext';
+    listItems = this.associationSrv.getListTickets(key);
+    key = 'localAssociationTickets';
+    this.associationSrv.setListTickets(listItems, key);
+    
+    key = 'localAssociationActionrequestsNext';
+    listItems = this.associationSrv.getListActionrequests(key);
+    key = 'localAssociationActionrequests';
+    this.associationSrv.setListActionrequests(listItems, key);
+    
+    // key = 'localAssociationSCCreatorsPrev';
+    // this.setAssociationSCCreator(listSCCreator, key);
+    // key = 'localAssociationSCModifiersPrev';
+    // this.setAssociationSCModifier(listSCModifier, key);
+    
+    key = 'localAssociationSCTeamNext';
+    listItems = this.associationSrv.getListSCTeams(key);
+    key = 'localAssociationSCTeam';
+    this.associationSrv.setListSCTeams(listItems, key);
+
+    key = 'localAssociationSCTaskNext';
+    listItems = this.associationSrv.getListSCTasks(key);
+    key = 'localAssociationSCTask';
+    this.associationSrv.setListSCTasks(listItems, key);
+
+    key = 'localAssociationSCPeopleNext';
+    listItems = this.associationSrv.getListSCPeople(key);
+    key = 'localAssociationSCPeople';
+    this.associationSrv.setListSCPeople(listItems, key);
+
+    key = 'localAssociationOTCategoriesNext';
+    listItems = this.associationSrv.getListOTCategories(key);
+    key = 'localAssociationOTCategories';
+    this.associationSrv.setListOTCategories(listItems, key);
+
+    // key = 'localAssociationOTCreatorsPrev';
+    // this.setAssociationOTCreator(listOTCreator, key);
+    // key = 'localAssociationOTModifiersPrev';
+    // this.setAssociationOTModifier(listOTModifier, key);
     
   }
+
+  getOTSCPrev(listPages) {
+    let itemServiceCallOutage: IEvent;
+    let keySCOT;
+    let keyListEvents;
+    keySCOT = 'localSCOTPrev';
+    keyListEvents = 'localListEventsPrev';
+    Promise.all(listPages).then(rs => {
+      this.eventsPrev = [];
+      this.listEventsPrev =[];
+      rs.forEach(items => {
+        items['data'].forEach(item => {
+          if (item['begin'] !== undefined) {
+            itemServiceCallOutage = new Outage();
+            itemServiceCallOutage.initInfo(item);
+          } else {
+            itemServiceCallOutage = new ServiceCall();
+            itemServiceCallOutage.initInfo(item);
+          }
+          this.eventsPrev.push(itemServiceCallOutage);
+          this.listEventsPrev.push(itemServiceCallOutage);
+        });
+      });
+      sessionStorage.setItem(keySCOT, JSON.stringify(this.eventsPrev));
+      sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEventsPrev));
+      this.getAssociationPrev(this.listEventsPrev);
+    });
+  }
+
+  // get association prev from API to session
+  getAssociationPrev(eventsPrev) {
+    // general
+    let listDeviceplaceholder = [];
+    let listPlant = [];
+    let listTicket = [];
+    // association service call
+    let listActionrequest = [];
+    let listSCCreator = [];
+    let listSCModifier = [];
+    let listSCTeam = [];
+    let listSCTask = [];
+    let listSCPeople = [];
+    // association outage
+    let listOTCategory = [];
+    let listOTCreator = [];
+    let listOTModifier = [];
+    eventsPrev.forEach(e => {
+      if (e.plantID !== null) {
+        listPlant.push(e.plantID);
+      }
+      if (e.tsticketID !== null) {
+        listTicket.push(e.tsticketID);
+      }
+      if (e.listDeviceplaceholder !== null) {
+        listDeviceplaceholder.push(e.deviceplaceholderID);
+      }
+      switch (e.typeOfEvent) {
+        case 'ServiceCall':
+          if (e.tsactionrequestID !== null) {
+            listActionrequest.push(e.tsactionrequestID);
+          }
+          if (e.creatorPersonID !== null) {
+            listSCCreator.push(e.creatorPersonID);
+          }
+          if (e.modifierPersonID !== null) {
+            listSCModifier.push(e.modifierPersonID);
+          }
+          if (e.teamID !== null) {
+            listSCTask.push(e.teamID);
+          }
+          if (e.listTasksID !== null) {
+            listSCTask = listSCTask.concat(e.creatorPersonID);
+            listSCTask = listSCTask.filter(function(task, index, self) {
+              return index === self.indexOf(task);
+            })
+          }
+          if (e.listPeopleID !== null) {
+            listSCPeople = listSCPeople.concat(e.listPeopleID);
+            listSCPeople = listSCPeople.filter(function(people, index, self) {
+              return index === self.indexOf(people);
+            })
+          }
+          break;
+        default:
+          if (e.tsoutagecategoryID !== null) {
+            listOTCategory.push(e.tsoutagecategoryID);
+          }
+          if (e.creatorID !== null) {
+            listOTCreator.push(e.creatorID);
+          }
+          if (e.modifierID !== null) {
+            listOTModifier.push(e.modifierID);
+          }
+          break;
+      }
+    });
+    let key;
+    key = 'localAssociationPlantsPrev';
+    this.setAssociationPlant(listPlant, key);
+    key = 'localAssociationDeviceplaceholdersPrev';
+    this.setAssociationDeviceplaceholder(listDeviceplaceholder, key);
+    key = 'localAssociationTicketsPrev';
+    this.setAssociationTicket(listTicket, key);
+    key = 'localAssociationActionrequestsPrev';
+    this.setAssociationActionrequest(listActionrequest, key);
+    key = 'localAssociationSCCreatorsPrev';
+    this.setAssociationSCCreator(listSCCreator, key);
+    key = 'localAssociationSCModifiersPrev';
+    this.setAssociationSCModifier(listSCModifier, key);
+    key = 'localAssociationSCTeamPrev';
+    this.setAssociationTeam(listSCTeam, key);
+    key = 'localAssociationSCTaskPrev';
+    this.setAssociationTask(listSCTask, key);
+    key = 'localAssociationSCPeoplePrev';
+    this.setAssociationPeople(listSCPeople, key);
+    key = 'localAssociationOTCategoriesPrev';
+    this.setAssociationOTCategory(listOTCategory, key);
+    key = 'localAssociationOTCreatorsPrev';
+    this.setAssociationOTCreator(listOTCreator, key);
+    key = 'localAssociationOTModifiersPrev';
+    this.setAssociationOTModifier(listOTModifier, key);
+  }
+
+  getOTSCNext(listPages) {
+    let itemServiceCallOutage: IEvent;
+    let keySCOT;
+    let keyListEvents;
+    keySCOT = 'localSCOTNext';
+    keyListEvents = 'localListEventsNext';
+    Promise.all(listPages).then(rs => {
+      this.eventsNext = [];
+      this.listEventsNext =[];
+      rs.forEach(items => {
+        items['data'].forEach(item => {
+          if (item['begin'] !== undefined) {
+            itemServiceCallOutage = new Outage();
+            itemServiceCallOutage.initInfo(item);
+          } else {
+            itemServiceCallOutage = new ServiceCall();
+            itemServiceCallOutage.initInfo(item);
+          }
+          this.eventsNext.push(itemServiceCallOutage);
+          this.listEventsNext.push(itemServiceCallOutage);
+        });
+      });
+      sessionStorage.setItem(keySCOT, JSON.stringify(this.eventsNext));
+      sessionStorage.setItem(keyListEvents, JSON.stringify(this.listEventsNext));
+      this.getAssociationNext(this.listEventsNext);
+    });
+  }
+
+  getAssociationNext(eventsNext) {
+    // general
+    let listDeviceplaceholder = [];
+    let listPlant = [];
+    let listTicket = [];
+    // association service call
+    let listActionrequest = [];
+    let listSCCreator = [];
+    let listSCModifier = [];
+    let listSCTeam = [];
+    let listSCTask = [];
+    let listSCPeople = [];
+    // association outage
+    let listOTCategory = [];
+    let listOTCreator = [];
+    let listOTModifier = [];
+    eventsNext.forEach(e => {
+      if (e.plantID !== null) {
+        listPlant.push(e.plantID);
+      }
+      if (e.tsticketID !== null) {
+        listTicket.push(e.tsticketID);
+      }
+      if (e.listDeviceplaceholder !== null) {
+        listDeviceplaceholder.push(e.deviceplaceholderID);
+      }
+      switch (e.typeOfEvent) {
+        case 'ServiceCall':
+          if (e.tsactionrequestID !== null) {
+            listActionrequest.push(e.tsactionrequestID);
+          }
+          if (e.creatorPersonID !== null) {
+            listSCCreator.push(e.creatorPersonID);
+          }
+          if (e.modifierPersonID !== null) {
+            listSCModifier.push(e.modifierPersonID);
+          }
+          if (e.teamID !== null) {
+            listSCTask.push(e.teamID);
+          }
+          if (e.listTasksID !== null) {
+            listSCTask = listSCTask.concat(e.creatorPersonID);
+            listSCTask = listSCTask.filter(function(task, index, self) {
+              return index === self.indexOf(task);
+            })
+          }
+          if (e.listPeopleID !== null) {
+            listSCPeople = listSCPeople.concat(e.listPeopleID);
+            listSCPeople = listSCPeople.filter(function(people, index, self) {
+              return index === self.indexOf(people);
+            })
+          }
+          break;
+        default:
+          if (e.tsoutagecategoryID !== null) {
+            listOTCategory.push(e.tsoutagecategoryID);
+          }
+          if (e.creatorID !== null) {
+            listOTCreator.push(e.creatorID);
+          }
+          if (e.modifierID !== null) {
+            listOTModifier.push(e.modifierID);
+          }
+          break;
+      }
+    });
+    let key;
+    key = 'localAssociationPlantsNext';
+    this.setAssociationPlant(listPlant, key);
+    key = 'localAssociationDeviceplaceholdersNext';
+    this.setAssociationDeviceplaceholder(listDeviceplaceholder, key);
+    key = 'localAssociationTicketsNext';
+    this.setAssociationTicket(listTicket, key);
+    key = 'localAssociationActionrequestsNext';
+    this.setAssociationActionrequest(listActionrequest, key);
+    key = 'localAssociationSCCreatorsNext';
+    this.setAssociationSCCreator(listSCCreator, key);
+    key = 'localAssociationSCModifiersNext';
+    this.setAssociationSCModifier(listSCModifier, key);
+    key = 'localAssociationSCTeamNext';
+    this.setAssociationTeam(listSCTeam, key);
+    key = 'localAssociationSCTaskNext';
+    this.setAssociationTask(listSCTask, key);
+    key = 'localAssociationSCPeopleNext';
+    this.setAssociationPeople(listSCPeople, key);
+    key = 'localAssociationOTCategoriesNext';
+    this.setAssociationOTCategory(listOTCategory, key);
+    key = 'localAssociationOTCreatorsNext';
+    this.setAssociationOTCreator(listOTCreator, key);
+    key = 'localAssociationOTModifiersNext';
+    this.setAssociationOTModifier(listOTModifier, key);
+  }
+
+  //#region get Associations
+  setAssociationPlant(listPlant, key) {
+    if (listPlant.length != 0) {
+      this.associationSrv.getPlants(listPlant).subscribe(plant => {
+        sessionStorage.setItem(key, JSON.stringify(plant['data']));
+      });
+      
+    }
+  }
+
+  setAssociationDeviceplaceholder(listDeviceplaceholder, key) {
+    if (listDeviceplaceholder.length != 0) {
+      this.associationSrv.getDeviceplaceholders(listDeviceplaceholder).subscribe(device => {
+        sessionStorage.setItem(key, JSON.stringify(device['data']));
+      });
+    }
+  }
+
+  setAssociationTicket(listTicket, key) {
+    if (listTicket.length != 0) {
+      this.associationSrv.getTickets(listTicket).subscribe(ticket => {
+        sessionStorage.setItem(key, JSON.stringify(ticket['data']));
+      });
+    }
+  }
+
+  setAssociationActionrequest(listActionrequest, key) {
+    if (listActionrequest.length != 0) {
+      this.associationSrv.getActionrequests(listActionrequest).subscribe(actionrequest => {
+        sessionStorage.setItem(key, JSON.stringify(actionrequest['data']));
+      });
+    }
+  }
+
+  setAssociationSCCreator(listSCCreator, key) {
+    if (listSCCreator.length != 0) {
+      this.associationSrv.getSCCreators(listSCCreator).subscribe(creator => {
+        sessionStorage.setItem(key, JSON.stringify(creator['data']));
+      });
+    }
+  }
+
+  setAssociationSCModifier(listSCModifier, key) {
+    if (listSCModifier.length != 0) {
+      this.associationSrv.getSCModifiers(listSCModifier).subscribe(modifier => {
+        sessionStorage.setItem(key, JSON.stringify(modifier['data']));
+      });
+    }
+  }
+
+  setAssociationTeam(listSCTeam, key) {
+    if (listSCTeam.length != 0) {
+      this.associationSrv.getSCTeams(listSCTeam).subscribe(team => {
+        sessionStorage.setItem(key, JSON.stringify(team['data']));
+      });
+    }
+  }
+
+  setAssociationTask(listTask, key) {
+    if (listTask.length != 0) {
+      console.log('task list:', listTask);
+      this.associationSrv.getSCTasks(listTask).subscribe(task => {
+        sessionStorage.setItem(key, JSON.stringify(task['data']));
+      });
+    }
+  }
+
+  setAssociationPeople(listSCPeople, key) {
+    if (listSCPeople.length != 0) {
+      this.associationSrv.getSCPeople(listSCPeople).subscribe(p => {
+        sessionStorage.setItem(key, JSON.stringify(p['data']));
+      });
+    }
+  }
+
+  setAssociationOTCategory(listOTCategory, key) {
+    if (listOTCategory.length != 0) {
+      this.associationSrv.getOTCategories(listOTCategory).subscribe(otCategory => {
+        sessionStorage.setItem(key, JSON.stringify(otCategory['data']));
+      });
+    }
+  }
+
+  setAssociationOTCreator(listOTCreator, key) {
+    if (listOTCreator.length != 0) {
+      this.associationSrv.getOTCreators(listOTCreator).subscribe(otCreator => {
+        sessionStorage.setItem(key, JSON.stringify(otCreator['data']));
+      });
+    }
+  }
+
+  setAssociationOTModifier(listOTModifier, key) {
+    if (listOTModifier.length != 0) {
+      this.associationSrv.getOTModifiers(listOTModifier).subscribe(otModifier => {
+        sessionStorage.setItem(key, JSON.stringify(otModifier['data']));
+      });
+    }
+  }
+  //#endregion
 
   private getCreatorEditor(listPages) {
     let itemCreatorEditor;
@@ -771,6 +1270,47 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         sessionStorage.setItem(key, JSON.stringify(this.listCreatorEditor));
       });
     });
+  }
+
+  async initCreatorEditor() {
+    let key;
+    key = 'localCreatorEditor';
+    if ((this.listCreatorEditor = this.creatorEditorSrv.getListCreatorEditor()) == null) {
+      let listPages: any;
+      listPages = [];
+      let totalCreatorEditer;
+      try {
+        // get total tickets
+        totalCreatorEditer  = await new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}people/fetch`, httpOptions).subscribe(data => {
+            resolve(data['total']);
+          });
+        });
+        
+        let pages = Math.ceil(totalCreatorEditer /20);
+        let tmp;
+        for (let page = 1; page <= pages; page++) {
+          tmp = new Promise((resolve, reject) => {
+            this.http.get(`${Config.api_endpoint}people/fetch?page=${page}`, httpOptions).subscribe(data => {
+              resolve(data);
+            });
+          });
+          listPages.push(tmp);
+        }
+
+        Promise.all(listPages).then(rs => {
+          this.listCreatorEditor = [];
+          rs.forEach(people => {
+            people['data'].forEach(p => {
+              this.listCreatorEditor.push(p);
+            });
+          });
+          sessionStorage.setItem(key, JSON.stringify(this.listCreatorEditor));
+        });
+      } catch (error) {
+        throw error;
+      }
+    }
   }
   //#endregion
 
@@ -823,20 +1363,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     return start;
   }
 
-  // init outage Category
-  // initListOutageCategories() {
-  //   let key;
-  //   key = 'localOutageCategory';
-  //   if ((this.outageCategories = this.otCategorySrv.getListOutageCategory()) == null) {
-  //     this.http.get(`${Config.api_endpoint}tsoutagecategories/fetch`, httpOptions).subscribe(data => {
-  //       console.log('outage category', data);
-  //       // this.outageCategories = [];
-  //       // this.outageCategories = data['data'];
-  //       // sessionStorage.setItem(key, JSON.stringify(this.outageCategories));
-  //     });
-  //   }
-  // }
-
   async initListOutageCategories() {
     let key;
     key = 'localOutageCategory';
@@ -851,20 +1377,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             resolve(data['total']);
           });
         });
-        if ( totalOutageCategory >= 20) {
-          for (let page = 1; page <= Math.floor(totalOutageCategory / 20); page++) {
-            let tmp;
-            tmp = new Promise((resolve, reject) => {
-              this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
-                resolve(data);
-              });
-            });
-            listPages.push(tmp);
-          }
-        } else {
-          let tmp;
+        let pages = Math.ceil(totalOutageCategory /20);
+        let tmp;
+        for (let page = 1; page <= pages; page++) {
           tmp = new Promise((resolve, reject) => {
-            this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
+            this.http.get(`${Config.api_endpoint}tsoutages/fetch?page=${page}`, httpOptions).subscribe(data => {
               resolve(data);
             });
           });
@@ -916,20 +1433,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             resolve(data['total']);
           });
         });
-        if ( totalTicket >= 20) {
-          for (let page = 1; page <= Math.floor(totalTicket / 20); page++) {
-            let tmp;
-            tmp = new Promise((resolve, reject) => {
-              this.http.get(`${Config.api_endpoint}tstickets/fetch?page=${page}`, httpOptions).subscribe(data => {
-                resolve(data);
-              });
-            });
-            listPages.push(tmp);
-          }
-        } else {
-          let tmp;
+        
+        let pages = Math.ceil(totalTicket /20);
+        let tmp;
+        for (let page = 1; page <= pages; page++) {
           tmp = new Promise((resolve, reject) => {
-            this.http.get(`${Config.api_endpoint}tstickets/fetch`, httpOptions).subscribe(data => {
+            this.http.get(`${Config.api_endpoint}tstickets/fetch?page=${page}`, httpOptions).subscribe(data => {
               resolve(data);
             });
           });
@@ -937,7 +1446,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         }
 
         Promise.all(listPages).then(rs => {
-          let addItem = true;
           this.listTickets = [];
           rs.forEach(tickets => {
             tickets['data'].forEach(tk => {
@@ -953,16 +1461,44 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   // init plant list
-  initListPlants() {
-    let key;
-    key = 'localPlant';
+  async initListPlants() {
+    let key = 'localPlant';
     if ((this.listPlants = this.plantsSrv.getListPlants()) == null) {
-      this.http.get(`${Config.api_endpoint}plants/fetch`, httpOptions).subscribe(data => {
-        this.listPlants = [];
-        this.listPlants = data['data'];
+      let listPages: any;
+      listPages = [];
+      let totalPlant;
+      try {
+        // get total tickets
+        totalPlant  = await new Promise((resolve, reject) => {
+          this.http.get(`${Config.api_endpoint}plants/fetch`, httpOptions).subscribe(data => {
+            resolve(data['total']);
+          });
+        });
+        
+        let pages = Math.ceil(totalPlant /20);
+        let tmp;
+        for (let page = 1; page <= pages; page++) {
+          tmp = new Promise((resolve, reject) => {
+            this.http.get(`${Config.api_endpoint}plants/fetch?page=${page}`, httpOptions).subscribe(data => {
+              console.log('plants:', data);
+              resolve(data);
+            });
+          });
+          listPages.push(tmp);
+        }
 
-        sessionStorage.setItem(key, JSON.stringify(this.listPlants));
-      });
+        Promise.all(listPages).then(rs => {
+          this.listPlants = [];
+          rs.forEach(plants => {
+            plants['data'].forEach(plant => {
+              this.listPlants.push(plant);
+            });
+          });
+          sessionStorage.setItem(key, JSON.stringify(this.listPlants));
+        });
+      } catch (error) {
+        throw error;
+      }
     }
   }
 
@@ -1058,9 +1594,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
              }
             return p;
           }).filter(p => p != false);
-            this.listPlants.push(plant['data'][0]);
+          this.listPlants.push(plant['data'][0]);
           sessionStorage.setItem(key, JSON.stringify(this.listPlants));
-        });;
+        });
         break;
       case "Tsservices":
         
@@ -1097,41 +1633,31 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       listPages = [];
       let totalPerson;
       try {
+        // get total Outages
         totalPerson  = await new Promise((resolve, reject) => {
-          this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
+          this.http.get(`${Config.api_endpoint}people/fetch`, httpOptions).subscribe(data => {
             resolve(data['total']);
           });
         });
-        for (let page = 1; page <= Math.floor(totalPerson / 20); page++) {
-          let tmp;
+        let pages = Math.ceil(totalPerson /20);
+        let tmp;
+        for (let page = 1; page <= pages; page++) {
           tmp = new Promise((resolve, reject) => {
-            this.http.get(`${Config.api_endpoint}tsservices/fetch?page=${page}`, httpOptions).subscribe(data => {
+            this.http.get(`${Config.api_endpoint}people/fetch?page=${page}`, httpOptions).subscribe(data => {
               resolve(data);
             });
           });
           listPages.push(tmp);
         }
+
         Promise.all(listPages).then(rs => {
-          let peopleSet;
-          peopleSet = new Set();
-          rs.forEach(services => {
-            services['data'].forEach(sv => {
-              if (sv['people'].length !== 0) {
-                sv['people'].forEach(person => {
-                  peopleSet.add(person['id']);
-                });
-              }
+          this.listParticipatingPeople = [];
+          rs.forEach(people => {
+            people['data'].forEach(p => {
+              this.listParticipatingPeople.push(p);
             });
           });
-          let listId;
-          listId = [];
-          listId = Array.from(peopleSet);
-          listId = listId.join(',');
-          this.http.get(`${Config.api_endpoint}people/fetch?ids=${listId}`, httpOptions).subscribe(data => {
-            this.listParticipatingPeople = [];
-            this.listParticipatingPeople = data['data'];
-            sessionStorage.setItem(key, JSON.stringify(this.listParticipatingPeople));
-          });
+          sessionStorage.setItem(key, JSON.stringify(this.listParticipatingPeople));
         });
       } catch (error) {
         throw error;
@@ -1354,12 +1880,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             }
           }
           if (e.typeOfEvent === "ServiceCall") {
-            if ((e.eventServiceCall.creator_person_id !== undefined
-              && e.eventServiceCall.creator_person_id !== null)
-              || (e.eventServiceCall.modifier_person_id !== undefined
-              && e.eventServiceCall.modifier_person_id !== null)) {
-                return (this.indexOf(e.eventServiceCall.creator_person_id) >= 0)
-                        || (this.indexOf(e.eventServiceCall.modifier_person_id) >= 0);
+            if ((e.creatorPersonID !== undefined
+              && e.creatorPersonID !== null)
+              || (e.modifierPersonID !== undefined
+              && e.modifierPersonID !== null)) {
+                return (this.indexOf(e.creatorPersonID) >= 0)
+                        || (this.indexOf(e.modifierPersonID) >= 0);
             }
           }
         }, listID);
