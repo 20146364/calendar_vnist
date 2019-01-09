@@ -153,18 +153,18 @@ export class AssociationService {
     return this.http.get(`${Config.api_endpoint}tstasks/fetch?ids=${id}`, httpOptions);
   }
 
-  getListSCPeople(key) {
-    let listSCPeople = null;
+  getListPeople(key) {
+    let listPeople = null;
     let myItem: any;
     myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null) {
-      listSCPeople = JSON.parse(myItem);
+      listPeople = JSON.parse(myItem);
     }
-    return listSCPeople;
+    return listPeople;
   }
 
-  setListSCPeople(listSCPeople, key) {
-    sessionStorage.setItem(key, JSON.stringify(listSCPeople));
+  setListPeople(listPeople, key) {
+    sessionStorage.setItem(key, JSON.stringify(listPeople));
   }
 
   getSCPeople(id) {

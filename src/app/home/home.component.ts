@@ -721,15 +721,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let listTicket = [];
     // association service call
     let listActionrequest = [];
-    let listSCCreator = [];
-    let listSCModifier = [];
     let listSCTeam = [];
     let listSCTask = [];
-    let listSCPeople = [];
+    let listPeople = [];
     // association outage
     let listOTCategory = [];
-    let listOTCreator = [];
-    let listOTModifier = [];
+
+    // let listOTCreator = [];
+    // let listOTModifier = [];
+    // let listSCCreator = [];
+    // let listSCModifier = [];
     eventsPrev.forEach(e => {
       if (e.plantID !== null) {
         listPlant.push(e.plantID);
@@ -746,10 +747,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             listActionrequest.push(e.tsactionrequestID);
           }
           if (e.creatorPersonID !== null) {
-            listSCCreator.push(e.creatorPersonID);
+            listPeople.push(e.creatorPersonID);
           }
           if (e.modifierPersonID !== null) {
-            listSCModifier.push(e.modifierPersonID);
+            listPeople.push(e.modifierPersonID);
           }
           if (e.teamID !== null) {
             listSCTask.push(e.teamID);
@@ -761,10 +762,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             })
           }
           if (e.listPeopleID !== null) {
-            listSCPeople = listSCPeople.concat(e.listPeopleID);
-            listSCPeople = listSCPeople.filter(function(people, index, self) {
-              return index === self.indexOf(people);
-            })
+            listPeople = listPeople.concat(e.listPeopleID);
           }
           break;
         default:
@@ -772,13 +770,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             listOTCategory.push(e.tsoutagecategoryID);
           }
           if (e.creatorID !== null) {
-            listOTCreator.push(e.creatorID);
+            listPeople.push(e.creatorID);
           }
           if (e.modifierID !== null) {
-            listOTModifier.push(e.modifierID);
+            listPeople.push(e.modifierID);
           }
           break;
       }
+      listPeople = listPeople.filter(function(people, index, self) {
+        return index === self.indexOf(people);
+      })
     });
     let key;
     key = 'locAssociationPlantsVisiable';
@@ -790,21 +791,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     key = 'locAssociationActionrequestsVisiable';
     this.setAssociationActionrequest(listActionrequest, key);
     key = 'locAssociationSCCreatorsVisiable';
-    this.setAssociationSCCreator(listSCCreator, key);
-    key = 'locAssociationSCModifiersVisiable';
-    this.setAssociationSCModifier(listSCModifier, key);
     key = 'locAssociationSCTeamVisiable';
     this.setAssociationTeam(listSCTeam, key);
     key = 'locAssociationSCTaskVisiable';
     this.setAssociationTask(listSCTask, key);
-    key = 'locAssociationSCPeopleVisiable';
-    this.setAssociationPeople(listSCPeople, key);
     key = 'locAssociationOTCategoriesVisiable';
     this.setAssociationOTCategory(listOTCategory, key);
-    key = 'locAssociationOTCreatorsVisiable';
-    this.setAssociationOTCreator(listOTCreator, key);
-    key = 'locAssociationOTModifiersVisiable';
-    this.setAssociationOTModifier(listOTModifier, key);
+
+    // key = 'locAssociationOTCreatorsVisiable';
+    // this.setAssociationOTCreator(listOTCreator, key);
+    // key = 'locAssociationOTModifiersVisiable';
+    // this.setAssociationOTModifier(listOTModifier, key);
+    // this.setAssociationSCCreator(listSCCreator, key);
+    // key = 'locAssociationSCModifiersVisiable';
+    // this.setAssociationSCModifier(listSCModifier, key);
+    key = 'locAssociationPeopleVisiable';
+    this.setAssociationPeople(listPeople, key);
   }
 
   getAssociationVisiableFromPrev() {
@@ -845,10 +847,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     key = 'locAssociationSCTaskVisiable';
     this.associationSrv.setListSCTasks(listItems, key);
 
-    key = 'locAssociationSCPeoplePrev';
-    listItems = this.associationSrv.getListSCPeople(key);
-    key = 'locAssociationSCPeopleVisiable';
-    this.associationSrv.setListSCPeople(listItems, key);
+    key = 'locAssociationPeoplePrev';
+    listItems = this.associationSrv.getListPeople(key);
+    key = 'locAssociationPeopleVisiable';
+    this.associationSrv.setListPeople(listItems, key);
 
     key = 'locAssociationOTCategoriesPrev';
     listItems = this.associationSrv.getListOTCategories(key);
@@ -866,22 +868,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let listItems;
     key = 'locAssociationPlantsNext';
     listItems = this.associationSrv.getListPlants(key);
-    key = 'locAssociationPlants';
+    key = 'locAssociationPlantsVisiable';
     this.associationSrv.setListPlants(listItems, key);
 
     key = 'locAssociationDeviceplaceholdersNext';
     listItems = this.associationSrv.getListDeviceplaceholders(key);
-    key = 'locAssociationDeviceplaceholders';
+    key = 'locAssociationDeviceplaceholdersVisiable';
     this.associationSrv.setListDeviceplaceholders(listItems, key);
     
     key = 'locAssociationTicketsNext';
     listItems = this.associationSrv.getListTickets(key);
-    key = 'locAssociationTickets';
+    key = 'locAssociationTicketsVisiable';
     this.associationSrv.setListTickets(listItems, key);
     
     key = 'locAssociationActionrequestsNext';
     listItems = this.associationSrv.getListActionrequests(key);
-    key = 'locAssociationActionrequests';
+    key = 'locAssociationActionrequestsVisiable';
     this.associationSrv.setListActionrequests(listItems, key);
     
     // key = 'locAssociationSCCreatorsPrev';
@@ -891,22 +893,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     
     key = 'locAssociationSCTeamNext';
     listItems = this.associationSrv.getListSCTeams(key);
-    key = 'locAssociationSCTeam';
+    key = 'locAssociationSCTeamVisiable';
     this.associationSrv.setListSCTeams(listItems, key);
 
     key = 'locAssociationSCTaskNext';
     listItems = this.associationSrv.getListSCTasks(key);
-    key = 'locAssociationSCTask';
+    key = 'locAssociationSCTaskVisiable';
     this.associationSrv.setListSCTasks(listItems, key);
 
-    key = 'locAssociationSCPeopleNext';
-    listItems = this.associationSrv.getListSCPeople(key);
-    key = 'locAssociationSCPeople';
-    this.associationSrv.setListSCPeople(listItems, key);
+    key = 'locAssociationPeopleNext';
+    listItems = this.associationSrv.getListPeople(key);
+    key = 'locAssociationPeopleVisiable';
+    this.associationSrv.setListPeople(listItems, key);
 
     key = 'locAssociationOTCategoriesNext';
     listItems = this.associationSrv.getListOTCategories(key);
-    key = 'locAssociationOTCategories';
+    key = 'locAssociationOTCategoriesVisiable';
     this.associationSrv.setListOTCategories(listItems, key);
 
     // key = 'locAssociationOTCreatorsPrev';
@@ -952,15 +954,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let listTicket = [];
     // association service call
     let listActionrequest = [];
-    let listSCCreator = [];
-    let listSCModifier = [];
     let listSCTeam = [];
     let listSCTask = [];
-    let listSCPeople = [];
+    let listPeople = [];
     // association outage
     let listOTCategory = [];
-    let listOTCreator = [];
-    let listOTModifier = [];
+    // let listOTCreator = [];
+    // let listOTModifier = [];
+    // let listSCCreator = [];
+    // let listSCModifier = [];
     eventsPrev.forEach(e => {
       if (e.plantID !== null) {
         listPlant.push(e.plantID);
@@ -977,10 +979,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             listActionrequest.push(e.tsactionrequestID);
           }
           if (e.creatorPersonID !== null) {
-            listSCCreator.push(e.creatorPersonID);
+            listPeople.push(e.creatorPersonID);
           }
           if (e.modifierPersonID !== null) {
-            listSCModifier.push(e.modifierPersonID);
+            listPeople.push(e.modifierPersonID);
           }
           if (e.teamID !== null) {
             listSCTask.push(e.teamID);
@@ -992,10 +994,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             })
           }
           if (e.listPeopleID !== null) {
-            listSCPeople = listSCPeople.concat(e.listPeopleID);
-            listSCPeople = listSCPeople.filter(function(people, index, self) {
-              return index === self.indexOf(people);
-            })
+            listPeople = listPeople.concat(e.listPeopleID);
           }
           break;
         default:
@@ -1003,13 +1002,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             listOTCategory.push(e.tsoutagecategoryID);
           }
           if (e.creatorID !== null) {
-            listOTCreator.push(e.creatorID);
+            listPeople.push(e.creatorID);
           }
           if (e.modifierID !== null) {
-            listOTModifier.push(e.modifierID);
+            listPeople.push(e.modifierID);
           }
           break;
       }
+      listPeople = listPeople.filter(function(people, index, self) {
+        return index === self.indexOf(people);
+      })
     });
     let key;
     key = 'locAssociationPlantsPrev';
@@ -1020,22 +1022,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setAssociationTicket(listTicket, key);
     key = 'locAssociationActionrequestsPrev';
     this.setAssociationActionrequest(listActionrequest, key);
-    key = 'locAssociationSCCreatorsPrev';
-    this.setAssociationSCCreator(listSCCreator, key);
-    key = 'locAssociationSCModifiersPrev';
-    this.setAssociationSCModifier(listSCModifier, key);
     key = 'locAssociationSCTeamPrev';
     this.setAssociationTeam(listSCTeam, key);
     key = 'locAssociationSCTaskPrev';
     this.setAssociationTask(listSCTask, key);
-    key = 'locAssociationSCPeoplePrev';
-    this.setAssociationPeople(listSCPeople, key);
+    key = 'locAssociationPeoplePrev';
+    this.setAssociationPeople(listPeople, key);
     key = 'locAssociationOTCategoriesPrev';
     this.setAssociationOTCategory(listOTCategory, key);
-    key = 'locAssociationOTCreatorsPrev';
-    this.setAssociationOTCreator(listOTCreator, key);
-    key = 'locAssociationOTModifiersPrev';
-    this.setAssociationOTModifier(listOTModifier, key);
+
+    // key = 'locAssociationOTCreatorsPrev';
+    // this.setAssociationOTCreator(listOTCreator, key);
+    // key = 'locAssociationOTModifiersPrev';
+    // this.setAssociationOTModifier(listOTModifier, key);
+    // key = 'locAssociationSCCreatorsPrev';
+    // this.setAssociationSCCreator(listSCCreator, key);
+    // key = 'locAssociationSCModifiersPrev';
+    // this.setAssociationSCModifier(listSCModifier, key);
   }
 
   getOTSCNext(listPages) {
@@ -1073,15 +1076,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let listTicket = [];
     // association service call
     let listActionrequest = [];
-    let listSCCreator = [];
-    let listSCModifier = [];
     let listSCTeam = [];
     let listSCTask = [];
-    let listSCPeople = [];
+    let listPeople = [];
     // association outage
     let listOTCategory = [];
-    let listOTCreator = [];
-    let listOTModifier = [];
+    // let listOTCreator = [];
+    // let listOTModifier = [];
+    // let listSCCreator = [];
+    // let listSCModifier = [];
     eventsNext.forEach(e => {
       if (e.plantID !== null) {
         listPlant.push(e.plantID);
@@ -1098,10 +1101,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             listActionrequest.push(e.tsactionrequestID);
           }
           if (e.creatorPersonID !== null) {
-            listSCCreator.push(e.creatorPersonID);
+            listPeople.push(e.creatorPersonID);
           }
           if (e.modifierPersonID !== null) {
-            listSCModifier.push(e.modifierPersonID);
+            listPeople.push(e.modifierPersonID);
           }
           if (e.teamID !== null) {
             listSCTask.push(e.teamID);
@@ -1113,10 +1116,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             })
           }
           if (e.listPeopleID !== null) {
-            listSCPeople = listSCPeople.concat(e.listPeopleID);
-            listSCPeople = listSCPeople.filter(function(people, index, self) {
-              return index === self.indexOf(people);
-            })
+            listPeople = listPeople.concat(e.listPeopleID);
           }
           break;
         default:
@@ -1124,13 +1124,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             listOTCategory.push(e.tsoutagecategoryID);
           }
           if (e.creatorID !== null) {
-            listOTCreator.push(e.creatorID);
+            listPeople.push(e.creatorID);
           }
           if (e.modifierID !== null) {
-            listOTModifier.push(e.modifierID);
+            listPeople.push(e.modifierID);
           }
           break;
       }
+      listPeople = listPeople.filter(function(people, index, self) {
+        return index === self.indexOf(people);
+      })
     });
     let key;
     key = 'locAssociationPlantsNext';
@@ -1142,21 +1145,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     key = 'locAssociationActionrequestsNext';
     this.setAssociationActionrequest(listActionrequest, key);
     key = 'locAssociationSCCreatorsNext';
-    this.setAssociationSCCreator(listSCCreator, key);
-    key = 'locAssociationSCModifiersNext';
-    this.setAssociationSCModifier(listSCModifier, key);
     key = 'locAssociationSCTeamNext';
     this.setAssociationTeam(listSCTeam, key);
     key = 'locAssociationSCTaskNext';
     this.setAssociationTask(listSCTask, key);
-    key = 'locAssociationSCPeopleNext';
-    this.setAssociationPeople(listSCPeople, key);
     key = 'locAssociationOTCategoriesNext';
     this.setAssociationOTCategory(listOTCategory, key);
-    key = 'locAssociationOTCreatorsNext';
-    this.setAssociationOTCreator(listOTCreator, key);
-    key = 'locAssociationOTModifiersNext';
-    this.setAssociationOTModifier(listOTModifier, key);
+
+    key = 'locAssociationPeopleNext';
+    this.setAssociationPeople(listPeople, key);
+
+    // key = 'locAssociationOTCreatorsNext';
+    // this.setAssociationOTCreator(listOTCreator, key);
+    // key = 'locAssociationOTModifiersNext';
+    // this.setAssociationOTModifier(listOTModifier, key);
+    // this.setAssociationSCCreator(listSCCreator, key);
+    // key = 'locAssociationSCModifiersNext';
+    // this.setAssociationSCModifier(listSCModifier, key);
   }
 
   //#region get Associations
@@ -1200,25 +1205,25 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     }
   }
 
-  setAssociationSCCreator(listSCCreator, key) {
-    if (listSCCreator.length != 0) {
-      this.associationSrv.getSCCreators(listSCCreator).subscribe(creator => {
-        sessionStorage.setItem(key, JSON.stringify(creator['data']));
-      });
-    } else {
-      sessionStorage.setItem(key, JSON.stringify(''));
-    }
-  }
+  // setAssociationSCCreator(listSCCreator, key) {
+  //   if (listSCCreator.length != 0) {
+  //     this.associationSrv.getSCCreators(listSCCreator).subscribe(creator => {
+  //       sessionStorage.setItem(key, JSON.stringify(creator['data']));
+  //     });
+  //   } else {
+  //     sessionStorage.setItem(key, JSON.stringify(''));
+  //   }
+  // }
 
-  setAssociationSCModifier(listSCModifier, key) {
-    if (listSCModifier.length != 0) {
-      this.associationSrv.getSCModifiers(listSCModifier).subscribe(modifier => {
-        sessionStorage.setItem(key, JSON.stringify(modifier['data']));
-      });
-    } else {
-      sessionStorage.setItem(key, JSON.stringify(''));
-    }
-  }
+  // setAssociationSCModifier(listSCModifier, key) {
+  //   if (listSCModifier.length != 0) {
+  //     this.associationSrv.getSCModifiers(listSCModifier).subscribe(modifier => {
+  //       sessionStorage.setItem(key, JSON.stringify(modifier['data']));
+  //     });
+  //   } else {
+  //     sessionStorage.setItem(key, JSON.stringify(''));
+  //   }
+  // }
 
   setAssociationTeam(listSCTeam, key) {
     if (listSCTeam.length != 0) {
@@ -1241,9 +1246,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     }
   }
 
-  setAssociationPeople(listSCPeople, key) {
-    if (listSCPeople.length != 0) {
-      this.associationSrv.getSCPeople(listSCPeople).subscribe(p => {
+  setAssociationPeople(listPeople, key) {
+    if (listPeople.length != 0) {
+      this.associationSrv.getSCPeople(listPeople).subscribe(p => {
         sessionStorage.setItem(key, JSON.stringify(p['data']));
       });
     } else {
@@ -1261,25 +1266,25 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     }
   }
 
-  setAssociationOTCreator(listOTCreator, key) {
-    if (listOTCreator.length != 0) {
-      this.associationSrv.getOTCreators(listOTCreator).subscribe(otCreator => {
-        sessionStorage.setItem(key, JSON.stringify(otCreator['data']));
-      });
-    } else {
-      sessionStorage.setItem(key, JSON.stringify(''));
-    }
-  }
+  // setAssociationOTCreator(listOTCreator, key) {
+  //   if (listOTCreator.length != 0) {
+  //     this.associationSrv.getOTCreators(listOTCreator).subscribe(otCreator => {
+  //       sessionStorage.setItem(key, JSON.stringify(otCreator['data']));
+  //     });
+  //   } else {
+  //     sessionStorage.setItem(key, JSON.stringify(''));
+  //   }
+  // }
 
-  setAssociationOTModifier(listOTModifier, key) {
-    if (listOTModifier.length != 0) {
-      this.associationSrv.getOTModifiers(listOTModifier).subscribe(otModifier => {
-        sessionStorage.setItem(key, JSON.stringify(otModifier['data']));
-      });
-    } else {
-      sessionStorage.setItem(key, JSON.stringify(''));
-    }
-  }
+  // setAssociationOTModifier(listOTModifier, key) {
+  //   if (listOTModifier.length != 0) {
+  //     this.associationSrv.getOTModifiers(listOTModifier).subscribe(otModifier => {
+  //       sessionStorage.setItem(key, JSON.stringify(otModifier['data']));
+  //     });
+  //   } else {
+  //     sessionStorage.setItem(key, JSON.stringify(''));
+  //   }
+  // }
   //#endregion
 
   private getCreatorEditor(listPages) {
