@@ -11,7 +11,7 @@ export class OutageCategoryService {
     let listOutageCategory = null;
     let myItem: any;
     let key;
-    key = 'localOutageCategory';
+    key = 'locOutageCategory';
     myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null) {
       listOutageCategory = JSON.parse(myItem);

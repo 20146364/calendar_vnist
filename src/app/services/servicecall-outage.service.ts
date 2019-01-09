@@ -10,7 +10,7 @@ export class ServicecallOutageService {
   getListServiceCallOutage() {
     let listSCOT = null;
     let mySCOT: any;
-    let keySCOT = 'localSCOT';
+    let keySCOT = 'locSCOT';
     mySCOT = sessionStorage.getItem(keySCOT);
     if (mySCOT !== 'undefined' && mySCOT !== null) {
       listSCOT = JSON.parse(mySCOT);
@@ -21,7 +21,7 @@ export class ServicecallOutageService {
   getListEvents() {
     let listEvents = null;
     let myEvents: any;
-    let keyListEvents = 'localListEvents';
+    let keyListEvents = 'locListEvents';
     myEvents = sessionStorage.getItem(keyListEvents);
     if (myEvents !== 'undefined' && myEvents !== null) {
       listEvents = JSON.parse(myEvents);
@@ -32,7 +32,7 @@ export class ServicecallOutageService {
   getListServiceCallOutagePrev() {
     let listSCOT = null;
     let mySCOT: any;
-    let keySCOT = 'localSCOTPrev';
+    let keySCOT = 'locSCOTPrev';
     mySCOT = sessionStorage.getItem(keySCOT);
     if (mySCOT !== 'undefined' && mySCOT !== null) {
       listSCOT = JSON.parse(mySCOT);
@@ -43,7 +43,7 @@ export class ServicecallOutageService {
   getListEventsPrev() {
     let listEvents = null;
     let myEvents: any;
-    let keyListEvents = 'localListEventsPrev';
+    let keyListEvents = 'locListEventsPrev';
     myEvents = sessionStorage.getItem(keyListEvents);
     if (myEvents !== 'undefined' && myEvents !== null) {
       listEvents = JSON.parse(myEvents);
@@ -54,7 +54,7 @@ export class ServicecallOutageService {
   getListServiceCallOutageNext() {
     let listSCOT = null;
     let mySCOT: any;
-    let keySCOT = 'localSCOTNext';
+    let keySCOT = 'locSCOTNext';
     mySCOT = sessionStorage.getItem(keySCOT);
     if (mySCOT !== 'undefined' && mySCOT !== null) {
       listSCOT = JSON.parse(mySCOT);
@@ -65,7 +65,7 @@ export class ServicecallOutageService {
   getListEventsNext() {
     let listEvents = null;
     let myEvents: any;
-    let keyListEvents = 'localListEventsNext';
+    let keyListEvents = 'locListEventsNext';
     myEvents = sessionStorage.getItem(keyListEvents);
     if (myEvents !== 'undefined' && myEvents !== null) {
       listEvents = JSON.parse(myEvents);

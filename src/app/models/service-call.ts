@@ -94,7 +94,7 @@ export class ServiceCall implements IEvent {
     set listPeople(listPeopleID: any[]) {
         let myItem: any;
         let key;
-        key = 'localParticipatingPeople';
+        key = 'locParticipatingPeople';
         myItem = sessionStorage.getItem(key);
         if (myItem !== 'undefined') {
             myItem = JSON.parse(myItem);
@@ -114,7 +114,7 @@ export class ServiceCall implements IEvent {
         let myItem: any;
         let key;
         let listPlant: any[];
-        key = 'localPlant';
+        key = 'locPlant';
         myItem = sessionStorage.getItem(key);
         if (myItem !== 'undefined') {
             myItem = JSON.parse(myItem);
@@ -135,7 +135,7 @@ export class ServiceCall implements IEvent {
         let myItem: any;
         let key;
         let listTicket: any[];
-        key = 'localTicket';
+        key = 'locTicket';
         myItem = sessionStorage.getItem(key);
         if (myItem !== 'undefined') {
             myItem = JSON.parse(myItem);

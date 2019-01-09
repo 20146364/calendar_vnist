@@ -11,7 +11,7 @@ export class ServiceCallService {
     let listSCs = null;
     let myItem: any;
     let key;
-    key = 'localSCs';
+    key = 'locSCs';
     myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null) {
       listSCs = JSON.parse(myItem);

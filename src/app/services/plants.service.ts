@@ -21,7 +21,7 @@ export class PlantsService {
     let listPlants = null;
     let myItem: any;
     let key;
-    key = 'localPlant';
+    key = 'locPlant';
     myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null) {
       listPlants = JSON.parse(myItem);

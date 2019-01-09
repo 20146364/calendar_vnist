@@ -11,7 +11,7 @@ export class TicketsService {
     let listTickets = null;
     let myItem: any;
     let key;
-    key = 'localTicket';
+    key = 'locTicket';
     myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null) {
       listTickets = JSON.parse(myItem);

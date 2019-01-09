@@ -78,7 +78,7 @@ export class Outage implements IEvent {
         let myItem: any;
         let key;
         let listPlant: any[];
-        key = 'localPlant';
+        key = 'locPlant';
         myItem = sessionStorage.getItem(key);
         if (myItem !== 'undefined') {
             myItem = JSON.parse(myItem);
@@ -99,7 +99,7 @@ export class Outage implements IEvent {
         let myItem: any;
         let key;
         let listTicket: any[];
-        key = 'localTicket';
+        key = 'locTicket';
         myItem = sessionStorage.getItem(key);
         if (myItem !== 'undefined') {
             myItem = JSON.parse(myItem);

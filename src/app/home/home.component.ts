@@ -202,7 +202,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.initListOutageCategories();
     this.initCreatorEditor();
 
-    this.updateChangesFeed();
+    // this.updateChangesFeed();
     
     this.getSelectedSCsPeople();
     this.getSelectedSCsStatus();
@@ -283,6 +283,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         this.setListEvents();
         this.getListEventsNext(currentTimeView);
         this.getListEventsPrev(currentTimeView);
+        
+        this.filterParticipatingPeople();
+        this.filterServiceCallStatus();
+        this.filterOutagesCategory();
+        this.filterOutageStatus();
+        this.filterPlants();
+        this.filterCreatorEditor();
+        this.filterTimeStartEnd();
         break;
       // week
       case 'agendaWeek':
@@ -315,8 +323,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         // get association visiable from prev
         this.getAssociationVisiableFromNext();
 
-
-        // console.log('next month', this.events)
         if (this.events === null || (this.events == [])) {
           beforeTime = this.getBeforeTimeMonth(currentTimeView);
           afterTime = this.getAfterTimeMonth(currentTimeView);
@@ -328,6 +334,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         this.setListEvents();
         this.getListEventsNext(currentTimeView);
         this.getListEventsPrev(currentTimeView);
+
+        this.filterParticipatingPeople();
+        this.filterServiceCallStatus();
+        this.filterOutagesCategory();
+        this.filterOutageStatus();
+        this.filterPlants();
+        this.filterCreatorEditor();
+        this.filterTimeStartEnd();
         break;
       // week
       case 'agendaWeek':
@@ -367,6 +381,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         this.setListEvents();
         this.getListEventsNext(currentTimeView);
         this.getListEventsPrev(currentTimeView);
+
+        this.filterParticipatingPeople();
+        this.filterServiceCallStatus();
+        this.filterOutagesCategory();
+        this.filterOutageStatus();
+        this.filterPlants();
+        this.filterCreatorEditor();
+        this.filterTimeStartEnd();
 
         break;
       // week
@@ -611,12 +633,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   private setListServiceCallOutage() {
-    let key = 'localSCOT';
+    let key = 'locSCOT';
     sessionStorage.setItem(key, JSON.stringify(this.events));
   }
 
   private setListEvents() {
-    let key = 'localListEvents';
+    let key = 'locListEvents';
     sessionStorage.setItem(key, JSON.stringify(this.listEvents));
   }
 
@@ -668,8 +690,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let itemServiceCallOutage: IEvent;
     let keySCOT;
     let keyListEvents;
-    keySCOT = 'localSCOT';
-    keyListEvents = 'localListEvents';
+    keySCOT = 'locSCOT';
+    keyListEvents = 'locListEvents';
     Promise.all(listPages).then(rs => {
       this.events = [];
       this.listEvents =[];
@@ -759,137 +781,137 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       }
     });
     let key;
-    key = 'localAssociationPlantsVisiable';
+    key = 'locAssociationPlantsVisiable';
     this.setAssociationPlant(listPlant, key);
-    key = 'localAssociationDeviceplaceholdersVisiable';
+    key = 'locAssociationDeviceplaceholdersVisiable';
     this.setAssociationDeviceplaceholder(listDeviceplaceholder, key);
-    key = 'localAssociationTicketsNext';
+    key = 'locAssociationTicketsVisiable';
     this.setAssociationTicket(listTicket, key);
-    key = 'localAssociationActionrequestsVisiable';
+    key = 'locAssociationActionrequestsVisiable';
     this.setAssociationActionrequest(listActionrequest, key);
-    key = 'localAssociationSCCreatorsVisiable';
+    key = 'locAssociationSCCreatorsVisiable';
     this.setAssociationSCCreator(listSCCreator, key);
-    key = 'localAssociationSCModifiersVisiable';
+    key = 'locAssociationSCModifiersVisiable';
     this.setAssociationSCModifier(listSCModifier, key);
-    key = 'localAssociationSCTeamVisiable';
+    key = 'locAssociationSCTeamVisiable';
     this.setAssociationTeam(listSCTeam, key);
-    key = 'localAssociationSCTaskVisiable';
+    key = 'locAssociationSCTaskVisiable';
     this.setAssociationTask(listSCTask, key);
-    key = 'localAssociationSCPeopleVisiable';
+    key = 'locAssociationSCPeopleVisiable';
     this.setAssociationPeople(listSCPeople, key);
-    key = 'localAssociationOTCategoriesVisiable';
+    key = 'locAssociationOTCategoriesVisiable';
     this.setAssociationOTCategory(listOTCategory, key);
-    key = 'localAssociationOTCreatorsVisiable';
+    key = 'locAssociationOTCreatorsVisiable';
     this.setAssociationOTCreator(listOTCreator, key);
-    key = 'localAssociationOTModifiersVisiable';
+    key = 'locAssociationOTModifiersVisiable';
     this.setAssociationOTModifier(listOTModifier, key);
   }
 
   getAssociationVisiableFromPrev() {
     let key;
     let listItems;
-    key = 'localAssociationPlantsPrev';
+    key = 'locAssociationPlantsPrev';
     listItems = this.associationSrv.getListPlants(key);
-    key = 'localAssociationPlants';
+    key = 'locAssociationPlantsVisiable';
     this.associationSrv.setListPlants(listItems, key);
 
-    key = 'localAssociationDeviceplaceholdersPrev';
+    key = 'locAssociationDeviceplaceholdersPrev';
     listItems = this.associationSrv.getListDeviceplaceholders(key);
-    key = 'localAssociationDeviceplaceholders';
+    key = 'locAssociationDeviceplaceholdersVisiable';
     this.associationSrv.setListDeviceplaceholders(listItems, key);
     
-    key = 'localAssociationTicketsPrev';
+    key = 'locAssociationTicketsPrev';
     listItems = this.associationSrv.getListTickets(key);
-    key = 'localAssociationTickets';
+    key = 'locAssociationTicketsVisiable';
     this.associationSrv.setListTickets(listItems, key);
     
-    key = 'localAssociationActionrequestsPrev';
+    key = 'locAssociationActionrequestsPrev';
     listItems = this.associationSrv.getListActionrequests(key);
-    key = 'localAssociationActionrequests';
+    key = 'locAssociationActionrequestsVisiable';
     this.associationSrv.setListActionrequests(listItems, key);
     
-    // key = 'localAssociationSCCreatorsPrev';
+    // key = 'locAssociationSCCreatorsPrev';
     // this.setAssociationSCCreator(listSCCreator, key);
-    // key = 'localAssociationSCModifiersPrev';
+    // key = 'locAssociationSCModifiersPrev';
     // this.setAssociationSCModifier(listSCModifier, key);
     
-    key = 'localAssociationSCTeamPrev';
+    key = 'locAssociationSCTeamPrev';
     listItems = this.associationSrv.getListSCTeams(key);
-    key = 'localAssociationSCTeam';
+    key = 'locAssociationSCTeamVisiable';
     this.associationSrv.setListSCTeams(listItems, key);
 
-    key = 'localAssociationSCTaskPrev';
+    key = 'locAssociationSCTaskPrev';
     listItems = this.associationSrv.getListSCTasks(key);
-    key = 'localAssociationSCTask';
+    key = 'locAssociationSCTaskVisiable';
     this.associationSrv.setListSCTasks(listItems, key);
 
-    key = 'localAssociationSCPeoplePrev';
+    key = 'locAssociationSCPeoplePrev';
     listItems = this.associationSrv.getListSCPeople(key);
-    key = 'localAssociationSCPeople';
+    key = 'locAssociationSCPeopleVisiable';
     this.associationSrv.setListSCPeople(listItems, key);
 
-    key = 'localAssociationOTCategoriesPrev';
+    key = 'locAssociationOTCategoriesPrev';
     listItems = this.associationSrv.getListOTCategories(key);
-    key = 'localAssociationOTCategories';
+    key = 'locAssociationOTCategoriesVisiable';
     this.associationSrv.setListOTCategories(listItems, key);
 
-    // key = 'localAssociationOTCreatorsPrev';
+    // key = 'locAssociationOTCreatorsPrev';
     // this.setAssociationOTCreator(listOTCreator, key);
-    // key = 'localAssociationOTModifiersPrev';
+    // key = 'locAssociationOTModifiersPrev';
     // this.setAssociationOTModifier(listOTModifier, key);
   }
   
   getAssociationVisiableFromNext() {
     let key;
     let listItems;
-    key = 'localAssociationPlantsNext';
+    key = 'locAssociationPlantsNext';
     listItems = this.associationSrv.getListPlants(key);
-    key = 'localAssociationPlants';
+    key = 'locAssociationPlants';
     this.associationSrv.setListPlants(listItems, key);
 
-    key = 'localAssociationDeviceplaceholdersNext';
+    key = 'locAssociationDeviceplaceholdersNext';
     listItems = this.associationSrv.getListDeviceplaceholders(key);
-    key = 'localAssociationDeviceplaceholders';
+    key = 'locAssociationDeviceplaceholders';
     this.associationSrv.setListDeviceplaceholders(listItems, key);
     
-    key = 'localAssociationTicketsNext';
+    key = 'locAssociationTicketsNext';
     listItems = this.associationSrv.getListTickets(key);
-    key = 'localAssociationTickets';
+    key = 'locAssociationTickets';
     this.associationSrv.setListTickets(listItems, key);
     
-    key = 'localAssociationActionrequestsNext';
+    key = 'locAssociationActionrequestsNext';
     listItems = this.associationSrv.getListActionrequests(key);
-    key = 'localAssociationActionrequests';
+    key = 'locAssociationActionrequests';
     this.associationSrv.setListActionrequests(listItems, key);
     
-    // key = 'localAssociationSCCreatorsPrev';
+    // key = 'locAssociationSCCreatorsPrev';
     // this.setAssociationSCCreator(listSCCreator, key);
-    // key = 'localAssociationSCModifiersPrev';
+    // key = 'locAssociationSCModifiersPrev';
     // this.setAssociationSCModifier(listSCModifier, key);
     
-    key = 'localAssociationSCTeamNext';
+    key = 'locAssociationSCTeamNext';
     listItems = this.associationSrv.getListSCTeams(key);
-    key = 'localAssociationSCTeam';
+    key = 'locAssociationSCTeam';
     this.associationSrv.setListSCTeams(listItems, key);
 
-    key = 'localAssociationSCTaskNext';
+    key = 'locAssociationSCTaskNext';
     listItems = this.associationSrv.getListSCTasks(key);
-    key = 'localAssociationSCTask';
+    key = 'locAssociationSCTask';
     this.associationSrv.setListSCTasks(listItems, key);
 
-    key = 'localAssociationSCPeopleNext';
+    key = 'locAssociationSCPeopleNext';
     listItems = this.associationSrv.getListSCPeople(key);
-    key = 'localAssociationSCPeople';
+    key = 'locAssociationSCPeople';
     this.associationSrv.setListSCPeople(listItems, key);
 
-    key = 'localAssociationOTCategoriesNext';
+    key = 'locAssociationOTCategoriesNext';
     listItems = this.associationSrv.getListOTCategories(key);
-    key = 'localAssociationOTCategories';
+    key = 'locAssociationOTCategories';
     this.associationSrv.setListOTCategories(listItems, key);
 
-    // key = 'localAssociationOTCreatorsPrev';
+    // key = 'locAssociationOTCreatorsPrev';
     // this.setAssociationOTCreator(listOTCreator, key);
-    // key = 'localAssociationOTModifiersPrev';
+    // key = 'locAssociationOTModifiersPrev';
     // this.setAssociationOTModifier(listOTModifier, key);
     
   }
@@ -898,8 +920,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let itemServiceCallOutage: IEvent;
     let keySCOT;
     let keyListEvents;
-    keySCOT = 'localSCOTPrev';
-    keyListEvents = 'localListEventsPrev';
+    keySCOT = 'locSCOTPrev';
+    keyListEvents = 'locListEventsPrev';
     Promise.all(listPages).then(rs => {
       this.eventsPrev = [];
       this.listEventsPrev =[];
@@ -990,29 +1012,29 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       }
     });
     let key;
-    key = 'localAssociationPlantsPrev';
+    key = 'locAssociationPlantsPrev';
     this.setAssociationPlant(listPlant, key);
-    key = 'localAssociationDeviceplaceholdersPrev';
+    key = 'locAssociationDeviceplaceholdersPrev';
     this.setAssociationDeviceplaceholder(listDeviceplaceholder, key);
-    key = 'localAssociationTicketsPrev';
+    key = 'locAssociationTicketsPrev';
     this.setAssociationTicket(listTicket, key);
-    key = 'localAssociationActionrequestsPrev';
+    key = 'locAssociationActionrequestsPrev';
     this.setAssociationActionrequest(listActionrequest, key);
-    key = 'localAssociationSCCreatorsPrev';
+    key = 'locAssociationSCCreatorsPrev';
     this.setAssociationSCCreator(listSCCreator, key);
-    key = 'localAssociationSCModifiersPrev';
+    key = 'locAssociationSCModifiersPrev';
     this.setAssociationSCModifier(listSCModifier, key);
-    key = 'localAssociationSCTeamPrev';
+    key = 'locAssociationSCTeamPrev';
     this.setAssociationTeam(listSCTeam, key);
-    key = 'localAssociationSCTaskPrev';
+    key = 'locAssociationSCTaskPrev';
     this.setAssociationTask(listSCTask, key);
-    key = 'localAssociationSCPeoplePrev';
+    key = 'locAssociationSCPeoplePrev';
     this.setAssociationPeople(listSCPeople, key);
-    key = 'localAssociationOTCategoriesPrev';
+    key = 'locAssociationOTCategoriesPrev';
     this.setAssociationOTCategory(listOTCategory, key);
-    key = 'localAssociationOTCreatorsPrev';
+    key = 'locAssociationOTCreatorsPrev';
     this.setAssociationOTCreator(listOTCreator, key);
-    key = 'localAssociationOTModifiersPrev';
+    key = 'locAssociationOTModifiersPrev';
     this.setAssociationOTModifier(listOTModifier, key);
   }
 
@@ -1020,8 +1042,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let itemServiceCallOutage: IEvent;
     let keySCOT;
     let keyListEvents;
-    keySCOT = 'localSCOTNext';
-    keyListEvents = 'localListEventsNext';
+    keySCOT = 'locSCOTNext';
+    keyListEvents = 'locListEventsNext';
     Promise.all(listPages).then(rs => {
       this.eventsNext = [];
       this.listEventsNext =[];
@@ -1111,29 +1133,29 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       }
     });
     let key;
-    key = 'localAssociationPlantsNext';
+    key = 'locAssociationPlantsNext';
     this.setAssociationPlant(listPlant, key);
-    key = 'localAssociationDeviceplaceholdersNext';
+    key = 'locAssociationDeviceplaceholdersNext';
     this.setAssociationDeviceplaceholder(listDeviceplaceholder, key);
-    key = 'localAssociationTicketsNext';
+    key = 'locAssociationTicketsNext';
     this.setAssociationTicket(listTicket, key);
-    key = 'localAssociationActionrequestsNext';
+    key = 'locAssociationActionrequestsNext';
     this.setAssociationActionrequest(listActionrequest, key);
-    key = 'localAssociationSCCreatorsNext';
+    key = 'locAssociationSCCreatorsNext';
     this.setAssociationSCCreator(listSCCreator, key);
-    key = 'localAssociationSCModifiersNext';
+    key = 'locAssociationSCModifiersNext';
     this.setAssociationSCModifier(listSCModifier, key);
-    key = 'localAssociationSCTeamNext';
+    key = 'locAssociationSCTeamNext';
     this.setAssociationTeam(listSCTeam, key);
-    key = 'localAssociationSCTaskNext';
+    key = 'locAssociationSCTaskNext';
     this.setAssociationTask(listSCTask, key);
-    key = 'localAssociationSCPeopleNext';
+    key = 'locAssociationSCPeopleNext';
     this.setAssociationPeople(listSCPeople, key);
-    key = 'localAssociationOTCategoriesNext';
+    key = 'locAssociationOTCategoriesNext';
     this.setAssociationOTCategory(listOTCategory, key);
-    key = 'localAssociationOTCreatorsNext';
+    key = 'locAssociationOTCreatorsNext';
     this.setAssociationOTCreator(listOTCreator, key);
-    key = 'localAssociationOTModifiersNext';
+    key = 'locAssociationOTModifiersNext';
     this.setAssociationOTModifier(listOTModifier, key);
   }
 
@@ -1143,7 +1165,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getPlants(listPlant).subscribe(plant => {
         sessionStorage.setItem(key, JSON.stringify(plant['data']));
       });
-      
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1152,6 +1175,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getDeviceplaceholders(listDeviceplaceholder).subscribe(device => {
         sessionStorage.setItem(key, JSON.stringify(device['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1160,6 +1185,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getTickets(listTicket).subscribe(ticket => {
         sessionStorage.setItem(key, JSON.stringify(ticket['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1168,6 +1195,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getActionrequests(listActionrequest).subscribe(actionrequest => {
         sessionStorage.setItem(key, JSON.stringify(actionrequest['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1176,6 +1205,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getSCCreators(listSCCreator).subscribe(creator => {
         sessionStorage.setItem(key, JSON.stringify(creator['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1184,6 +1215,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getSCModifiers(listSCModifier).subscribe(modifier => {
         sessionStorage.setItem(key, JSON.stringify(modifier['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1192,6 +1225,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getSCTeams(listSCTeam).subscribe(team => {
         sessionStorage.setItem(key, JSON.stringify(team['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1201,6 +1236,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getSCTasks(listTask).subscribe(task => {
         sessionStorage.setItem(key, JSON.stringify(task['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1209,6 +1246,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getSCPeople(listSCPeople).subscribe(p => {
         sessionStorage.setItem(key, JSON.stringify(p['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1217,6 +1256,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getOTCategories(listOTCategory).subscribe(otCategory => {
         sessionStorage.setItem(key, JSON.stringify(otCategory['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1225,6 +1266,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getOTCreators(listOTCreator).subscribe(otCreator => {
         sessionStorage.setItem(key, JSON.stringify(otCreator['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
 
@@ -1233,6 +1276,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.associationSrv.getOTModifiers(listOTModifier).subscribe(otModifier => {
         sessionStorage.setItem(key, JSON.stringify(otModifier['data']));
       });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
     }
   }
   //#endregion
@@ -1240,7 +1285,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   private getCreatorEditor(listPages) {
     let itemCreatorEditor;
     let key;
-    key = 'localCreatorEditor';
+    key = 'locCreatorEditor';
     Promise.all(listPages).then(rs => {
       let ceSet;
       ceSet = new Set();
@@ -1274,7 +1319,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   async initCreatorEditor() {
     let key;
-    key = 'localCreatorEditor';
+    key = 'locCreatorEditor';
     if ((this.listCreatorEditor = this.creatorEditorSrv.getListCreatorEditor()) == null) {
       let listPages: any;
       listPages = [];
@@ -1365,7 +1410,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   async initListOutageCategories() {
     let key;
-    key = 'localOutageCategory';
+    key = 'locOutageCategory';
     if ((this.outageCategories = this.otCategorySrv.getListOutageCategory()) == null) {
       let listPages: any;
       listPages = [];
@@ -1421,7 +1466,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // init tickets list
   async initListTickets() {
     let key;
-    key = 'localTicket';
+    key = 'locTicket';
     if ((this.listTickets = this.ticketsSrv.getListTickets()) == null) {
       let listPages: any;
       listPages = [];
@@ -1462,7 +1507,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   // init plant list
   async initListPlants() {
-    let key = 'localPlant';
+    let key = 'locPlant';
     if ((this.listPlants = this.plantsSrv.getListPlants()) == null) {
       let listPages: any;
       listPages = [];
@@ -1515,7 +1560,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     }
     sessionStorage.setItem(key, JSON.stringify((new Date()).toISOString()));
 
-    key = 'localChangesFeed';
+    key = 'locChangesFeed';
     let changesFeed;
     // "2016-10-05T14:48:00.000Z"
     priorTime ="2018-12-01T14:48:00.000Z";
@@ -1586,7 +1631,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     switch (data.type) {
       case "Plants":
         let key;
-        key = 'localPlant';
+        key = 'locPlant';
         this.plantsSrv.getPlants(data.entity_id).subscribe(plant => {
           this.listPlants = this.listPlants.map((p)=>{
             if (p.id === data.entity_id) {
@@ -1627,7 +1672,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // init participating people
   async initListParticipatingPeople() {
     let key;
-    key = 'localParticipatingPeople';
+    key = 'locParticipatingPeople';
     if ((this.listParticipatingPeople = this.participatingPeopleSrv.getListParticipatingPeople()) == null) {
       let listPages: any;
       listPages = [];
@@ -1742,7 +1787,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let myItem: any;
     let key;
     key = 'selectedPlant';
-
     myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined') {
       myItem = JSON.parse(myItem);
