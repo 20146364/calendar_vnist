@@ -35,8 +35,7 @@ import { DialogModule } from 'primeng/components/dialog/dialog';
 import {SpinnerModule} from 'primeng/components/spinner/spinner';
 import {DropdownModule} from 'primeng/components/dropdown/dropdown';
 import {ButtonModule} from 'primeng/components/button/button';
-
-
+import {ProgressBarModule} from 'primeng/components/progressbar/progressbar';
 
 import { AuthenticationService } from './services/authentication.service';
 import { CalendarService } from './services/calendar.service';
@@ -79,6 +78,7 @@ import { ParticipatingPeopleService } from './services/participating-people.serv
     SpinnerModule,
     DropdownModule,
     FullCalendarModule,
+    ProgressBarModule,
     NgSelect2Module,
     AppRoutingModule
   ],

@@ -49,7 +49,8 @@ export class ServiceCall implements IEvent {
         this.teamID = sc.team_id;
 
         this.start = new Date(sc.done_begin ? sc.done_begin : sc.sheduled_begin);
-        this.end = new Date(sc.done_end ? sc.done_end : sc.sheduled_end);
+        this.end = sc.done_end ? sc.done_end : (sc.sheduled_end ? sc.sheduled_end : new Date())
+        this.end = new Date(this.end);
         this.plantName = sc.plant_id;
         this.plannedBegin = (new Date(sc.sheduled_begin ? sc.sheduled_begin : sc.done_begin)).toLocaleString();
         this.plannedEnd = (new Date(sc.sheduled_end ? sc.sheduled_end : sc.done_end)).toLocaleString();

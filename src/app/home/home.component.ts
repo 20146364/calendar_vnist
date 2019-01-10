@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewInit, OnChanges, OnDestroy  } from '@angular/core';
-import { Router } from '@angular/router';
 import * as moment from 'moment';
 import * as crypto from 'crypto-js';
 import { Config } from '../services/config';
@@ -125,15 +124,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   options: any;
   // constructor(private nodeService: NodeService, private messageService: MessageService) { }
 
+  prevStatus = true;
+  nextStatus = true;
+  todayStatus = true;
+
   displayServiceCallDetail = false;
   showServiceCallDetailDialog() {
     this.displayServiceCallDetail = true;
   }
+
   displayOutageDetail = false;
   showOutageDetailDialog() {
     this.displayOutageDetail = true;
   }
-
 
   constructor(private http: HttpClient,
               private calendarSrv: CalendarService,
@@ -143,8 +146,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
               private participatingPeopleSrv: ParticipatingPeopleService,
               private scotSrv: ServicecallOutageService,
               private otCategorySrv: OutageCategoryService,
-              private creatorEditorSrv: CreatorEditorService,
-              private router: Router) {
+              private creatorEditorSrv: CreatorEditorService) {
     this.currentTimeShow = new Date();
     let key = 'currentTimeView';
     sessionStorage.setItem(key, JSON.stringify(this.currentTimeShow));
@@ -194,8 +196,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       tags: true
     };
     this.initListEvents(this.currentTimeShow, this.currentTimeShow);
-    this.getListEventsPrev(this.currentTimeShow);
-    this.getListEventsNext(this.currentTimeShow);
     this.initListParticipatingPeople();
     this.initListPlants();
     this.initListTickets();
@@ -213,6 +213,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.getSelectedTimeStart();
     this.getSelectedTimeEnd();
     this.setCurrentView('month');
+    this.getListEventsNext(this.currentTimeShow);
+    this.getListEventsPrev(this.currentTimeShow);
 
     this.ticketStatuses = [
       {
@@ -252,10 +254,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setSelectedCreatorEditor();
     this.setSelectedTimeStart();
     this.setSelectedTimeEnd();
-    this.setListServiceCallOutage();
+    this.setListServiceCallOutage(this.events);
+  }
+
+  enableButton() {
+    this.prevStatus = false;
+    this.nextStatus = false;
+    this.todayStatus = false;
+  }
+
+  disableButton() {
+    this.prevStatus = true;
+    this.nextStatus = true;
+    this.todayStatus = true;
   }
 
   handlePrevClick = (e, fc) => {
+    this.disableButton();
     fc.calendar.prev();
     let currentTimeView = this.getCurrentTimeView();
     let currentView = this.getCurrentView();
@@ -269,28 +284,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         this.events = this.scotSrv.getListServiceCallOutagePrev();
         // get association visiable from prev
         this.getAssociationVisiableFromPrev();
-
-
-        // console.log('prev month', this.events)
         if ((this.events === null) || (this.events == [])) {
           beforeTime = this.getBeforeTimeMonth(currentTimeView);
           afterTime = this.getAfterTimeMonth(currentTimeView);
-          this.getListSCsOutage(afterTime, beforeTime, range);
+          this.getListEvents(afterTime, beforeTime, range);
         } else {
           this.listEvents = this.scotSrv.getListEventsPrev()
+          this.filterAllTodayDate();
         }
-        this.setListServiceCallOutage();
-        this.setListEvents();
+        this.setListServiceCallOutage(this.events);
+        this.setListEvents(this.listEvents);
         this.getListEventsNext(currentTimeView);
         this.getListEventsPrev(currentTimeView);
-        
-        this.filterParticipatingPeople();
-        this.filterServiceCallStatus();
-        this.filterOutagesCategory();
-        this.filterOutageStatus();
-        this.filterPlants();
-        this.filterCreatorEditor();
-        this.filterTimeStartEnd();
         break;
       // week
       case 'agendaWeek':
@@ -302,13 +307,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         currentTimeView = this.getAfterTimeDay(currentTimeView);
         beforeTime = this.getBeforeTimeMonth(currentTimeView);
         afterTime = this.getAfterTimeDay(currentTimeView);
-        this.getListSCsOutage(afterTime, beforeTime, range);
+        this.getListEvents(afterTime, beforeTime, range);
         break;
     }
     this.setCurrentTimeView(currentTimeView);
   }
   
   handleNextClick = (e, fc) => {
+    this.disableButton();
     fc.calendar.next();
     let currentTimeView = this.getCurrentTimeView();
     let currentView = this.getCurrentView();
@@ -322,26 +328,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         this.events = this.scotSrv.getListServiceCallOutageNext();
         // get association visiable from prev
         this.getAssociationVisiableFromNext();
-
         if (this.events === null || (this.events == [])) {
           beforeTime = this.getBeforeTimeMonth(currentTimeView);
           afterTime = this.getAfterTimeMonth(currentTimeView);
-          this.getListSCsOutage(afterTime, beforeTime, range);
+          this.getListEvents(afterTime, beforeTime, range);
         } else {
           this.listEvents = this.scotSrv.getListEventsNext()
+          this.filterAllTodayDate();
         }
-        this.setListServiceCallOutage();
-        this.setListEvents();
+        this.setListServiceCallOutage(this.events);
+        this.setListEvents(this.listEvents);
         this.getListEventsNext(currentTimeView);
         this.getListEventsPrev(currentTimeView);
-
-        this.filterParticipatingPeople();
-        this.filterServiceCallStatus();
-        this.filterOutagesCategory();
-        this.filterOutageStatus();
-        this.filterPlants();
-        this.filterCreatorEditor();
-        this.filterTimeStartEnd();
         break;
       // week
       case 'agendaWeek':
@@ -354,13 +352,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         currentTimeView = this.getBeforeTimeDay(currentTimeView);
         beforeTime = this.getBeforeTimeDay(currentTimeView);
         afterTime = this.getAfterTimeMonth(currentTimeView);
-        this.getListSCsOutage(afterTime, beforeTime, range);
+        this.getListEvents(afterTime, beforeTime, range);
         break;
     }
     this.setCurrentTimeView(currentTimeView);
   }
   
   handleTodayClick = (e, fc) => {
+    this.disableButton();
     fc.calendar.today();
     let currentTimeView = new Date();
     let currentView = this.getCurrentView();
@@ -373,23 +372,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         // if ((this.events = this.scotSrv.getListServiceCallOutageNext()) === null) {
           beforeTime = this.getBeforeTimeMonth(currentTimeView);
           afterTime = this.getAfterTimeMonth(currentTimeView);
-          this.getListSCsOutage(afterTime, beforeTime, range);
+          this.getListEvents(afterTime, beforeTime, range);
         // } else {
         //   this.listEvents = this.scotSrv.getListEventsNext()
         // }
-        this.setListServiceCallOutage();
-        this.setListEvents();
+        this.events = [];
+        this.listEvents = [];
+        this.setListServiceCallOutage(this.events);
+        this.setListEvents(this.listEvents);
         this.getListEventsNext(currentTimeView);
         this.getListEventsPrev(currentTimeView);
-
-        this.filterParticipatingPeople();
-        this.filterServiceCallStatus();
-        this.filterOutagesCategory();
-        this.filterOutageStatus();
-        this.filterPlants();
-        this.filterCreatorEditor();
-        this.filterTimeStartEnd();
-
+        // this.filterAllTodayDate();
         break;
       // week
       case 'agendaWeek':
@@ -399,7 +392,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       default:
         beforeTime = this.getBeforeTimeDay(currentTimeView);
         afterTime = this.getAfterTimeDay(currentTimeView);
-        this.getListSCsOutage(afterTime, beforeTime, range);
+        this.getListEvents(afterTime, beforeTime, range);
         break;
     }
     this.setCurrentTimeView(currentTimeView);
@@ -507,60 +500,31 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   gotoDate(event, selectedDate) {
+    this.disableButton();
     let date;
     date = new Date(event);
     selectedDate.calendar.gotoDate(date);
+    console.log('clicked date', date);
+    this.setCurrentTimeView(date);
+    let beforeTime;
+    let afterTime;
+    beforeTime = this.getBeforeTimeMonth(date);
+    afterTime = this.getAfterTimeMonth(date);
+    console.log('after', afterTime);
+    console.log('before', beforeTime);
+    this.events = [];
+    this.listEvents = [];
+    this.setListServiceCallOutage([]);
+    this.setListEvents([]);
+    this.initListEvents(afterTime, beforeTime);
+    this.getListEventsNext(date);
+    this.getListEventsPrev(date);
+    this.filterAllTodayDate();
   }
 
   //#region general SCs and OTs
-  // init SCs and Outages
-  // async initListSCsOutage() {
-  //   let listPages: any;
-  //   listPages = [];
-  //   this.events = this.scotSrv.getListServiceCallOutage();
-  //   if (this.events === null) {
-  //     let totalService;
-  //     let totalOutage;
-  //     try {
-  //       // get total Outages
-  //       totalOutage  = await new Promise((resolve, reject) => {
-  //         this.http.get(`${Config.api_endpoint}tsoutages/fetch`, httpOptions).subscribe(data => {
-  //           resolve(data['total']);
-  //         });
-  //       });
-
-  //       // get listPage of OTs
-  //       this.getListPageOutages(listPages, totalOutage);
-
-  //       // get total Services
-  //       totalService  = await new Promise((resolve, reject) => {
-  //         this.http.get(`${Config.api_endpoint}tsservices/fetch`, httpOptions).subscribe(data => {
-  //           resolve(data['total']);
-  //         });
-  //       });
-
-  //       // get listPage of Scs
-  //       this.getListPageServiceCalls(listPages, totalService);
-
-  //       // fetch all OTs and SCs
-  //       this.getOutageServiceCallFromAPI(listPages);
-
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   } else {
-  //     this.listEvents = this.scotSrv.getListEvents()
-  //   }
-
-  //   //get creator and editor from SCs and OTs
-  //   if ((this.listCreatorEditor = this.creatorEditorSrv.getListCreatorEditor()) == null) {
-  //     this.getCreatorEditor(listPages);
-  //   }
-  // }
-
-
   // init SCs and outages
-  async getListSCsOutage(startTime, endTime, range) {
+  async getListEvents(startTime, endTime, range) {
     let start = startTime.toISOString();
     let end  = endTime.toISOString();
     let listPages: any;
@@ -580,11 +544,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         // get Services
         totalService  = await new Promise((resolve, reject) => {
           this.http.get(`${Config.api_endpoint}tsservices/fetch?time_after=${start}&time_before=${end}`, httpOptions).subscribe(data => {
+            console.log('servicecall', data);
             resolve(data['total']);
           });
         });
         this.getListPageServiceCalls(listPages, totalService, start, end);
-
+        
         // fetch all OTs and SCs visiable range
         this.getOutageServiceCallFromAPI(listPages, range);
       } catch (error) {
@@ -596,13 +561,39 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // }
   }
 
+  // init SCs and outages
+  async getListTodoMain() {
+    let listPages: any;
+    listPages = [];
+    this.events = this.scotSrv.getListServiceCallOutage();
+    let totalTodoMain;
+    try {
+      //get TodoMain
+      totalTodoMain = await new Promise((resolve, reject) => {
+        this.http.get(`${Config.api_endpoint}todomains/fetch?ids=${1}`, httpOptions).subscribe(data => {
+          console.log('todo main:', data);
+          resolve(data);
+        })
+      })
+      // this.getListPageTodoMain();
+      // this.getTodoMainFromAPI(listPages);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // init List Events visiable range
   initListEvents(startTime, endTime) {
     let range = 'visible';
-    if ((this.events = this.scotSrv.getListServiceCallOutage()) === null) {
-      this.getListSCsOutage(startTime, endTime, range);
+    this.events = this.scotSrv.getListServiceCallOutage();
+    console.log('list events:', this.events);
+    if (this.events === null || this.events.length == 0) {
+      console.log('fetch API');
+      this.getListEvents(startTime, endTime, range);
     } else {
-      this.listEvents = this.scotSrv.getListEvents()
+      console.log('hereeeee session');
+      this.listEvents = this.scotSrv.getListEvents();
+      this.filterAllTodayDate();
     }
   }
 
@@ -614,7 +605,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     currentTimeView = this.getAfterTimeMonth(currentTimeView);
     beforeTime = this.getBeforeTimeMonth(currentTimeView);
     afterTime = this.getAfterTimeMonth(currentTimeView);
-    this.getListSCsOutage(afterTime, beforeTime, range);
+    this.getListEvents(afterTime, beforeTime, range);
   }
 
   // get List Events next month
@@ -626,20 +617,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       currentTimeView = this.getBeforeTimeMonth(currentTimeView);
       beforeTime = this.getBeforeTimeMonth(currentTimeView);
       afterTime = this.getAfterTimeMonth(currentTimeView);
-      this.getListSCsOutage(afterTime, beforeTime, range);
+      this.getListEvents(afterTime, beforeTime, range);
     // } else {
     //   this.listEventsNext = this.scotSrv.getListEventsNext()
     // }
   }
 
-  private setListServiceCallOutage() {
+  private setListServiceCallOutage(events) {
     let key = 'locSCOT';
-    sessionStorage.setItem(key, JSON.stringify(this.events));
+    sessionStorage.setItem(key, JSON.stringify(events));
   }
 
-  private setListEvents() {
+  private setListEvents(events) {
     let key = 'locListEvents';
-    sessionStorage.setItem(key, JSON.stringify(this.listEvents));
+    sessionStorage.setItem(key, JSON.stringify(events));
   }
 
   private getListPageOutages(listPages, totalOutage, start, end) {
@@ -677,9 +668,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       case 'prev':
         this.getOTSCPrev(listPages);
         break;
-      // case 'next':
-      // this.getOTSCNext(listPages);
-      // break;
       default:
         this.getOTSCNext(listPages);
         break;
@@ -782,8 +770,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       })
     });
     let key;
-    key = 'locAssociationPlantsVisiable';
-    this.setAssociationPlant(listPlant, key);
     key = 'locAssociationDeviceplaceholdersVisiable';
     this.setAssociationDeviceplaceholder(listDeviceplaceholder, key);
     key = 'locAssociationTicketsVisiable';
@@ -797,6 +783,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setAssociationTask(listSCTask, key);
     key = 'locAssociationOTCategoriesVisiable';
     this.setAssociationOTCategory(listOTCategory, key);
+    key = 'locAssociationPeopleVisiable';
+    this.setAssociationPeople(listPeople, key);
+    key = 'locAssociationPlantsVisiable';
+    this.setAssociationPlant(listPlant, key);
 
     // key = 'locAssociationOTCreatorsVisiable';
     // this.setAssociationOTCreator(listOTCreator, key);
@@ -805,8 +795,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // this.setAssociationSCCreator(listSCCreator, key);
     // key = 'locAssociationSCModifiersVisiable';
     // this.setAssociationSCModifier(listSCModifier, key);
-    key = 'locAssociationPeopleVisiable';
-    this.setAssociationPeople(listPeople, key);
   }
 
   getAssociationVisiableFromPrev() {
@@ -832,11 +820,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     key = 'locAssociationActionrequestsVisiable';
     this.associationSrv.setListActionrequests(listItems, key);
     
-    // key = 'locAssociationSCCreatorsPrev';
-    // this.setAssociationSCCreator(listSCCreator, key);
-    // key = 'locAssociationSCModifiersPrev';
-    // this.setAssociationSCModifier(listSCModifier, key);
-    
     key = 'locAssociationSCTeamPrev';
     listItems = this.associationSrv.getListSCTeams(key);
     key = 'locAssociationSCTeamVisiable';
@@ -861,6 +844,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // this.setAssociationOTCreator(listOTCreator, key);
     // key = 'locAssociationOTModifiersPrev';
     // this.setAssociationOTModifier(listOTModifier, key);
+    // key = 'locAssociationSCCreatorsPrev';
+    // this.setAssociationSCCreator(listSCCreator, key);
+    // key = 'locAssociationSCModifiersPrev';
+    // this.setAssociationSCModifier(listSCModifier, key);
   }
   
   getAssociationVisiableFromNext() {
@@ -886,11 +873,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     key = 'locAssociationActionrequestsVisiable';
     this.associationSrv.setListActionrequests(listItems, key);
     
-    // key = 'locAssociationSCCreatorsPrev';
-    // this.setAssociationSCCreator(listSCCreator, key);
-    // key = 'locAssociationSCModifiersPrev';
-    // this.setAssociationSCModifier(listSCModifier, key);
-    
     key = 'locAssociationSCTeamNext';
     listItems = this.associationSrv.getListSCTeams(key);
     key = 'locAssociationSCTeamVisiable';
@@ -915,6 +897,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     // this.setAssociationOTCreator(listOTCreator, key);
     // key = 'locAssociationOTModifiersPrev';
     // this.setAssociationOTModifier(listOTModifier, key);
+    // key = 'locAssociationSCCreatorsPrev';
+    // this.setAssociationSCCreator(listSCCreator, key);
+    // key = 'locAssociationSCModifiersPrev';
+    // this.setAssociationSCModifier(listSCModifier, key);
     
   }
 
@@ -1014,8 +1000,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       })
     });
     let key;
-    key = 'locAssociationPlantsPrev';
-    this.setAssociationPlant(listPlant, key);
     key = 'locAssociationDeviceplaceholdersPrev';
     this.setAssociationDeviceplaceholder(listDeviceplaceholder, key);
     key = 'locAssociationTicketsPrev';
@@ -1030,6 +1014,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setAssociationPeople(listPeople, key);
     key = 'locAssociationOTCategoriesPrev';
     this.setAssociationOTCategory(listOTCategory, key);
+    key = 'locAssociationPlantsPrev';
+    this.setAssociationPlantPrev(listPlant, key);
 
     // key = 'locAssociationOTCreatorsPrev';
     // this.setAssociationOTCreator(listOTCreator, key);
@@ -1136,8 +1122,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       })
     });
     let key;
-    key = 'locAssociationPlantsNext';
-    this.setAssociationPlant(listPlant, key);
     key = 'locAssociationDeviceplaceholdersNext';
     this.setAssociationDeviceplaceholder(listDeviceplaceholder, key);
     key = 'locAssociationTicketsNext';
@@ -1151,9 +1135,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.setAssociationTask(listSCTask, key);
     key = 'locAssociationOTCategoriesNext';
     this.setAssociationOTCategory(listOTCategory, key);
-
     key = 'locAssociationPeopleNext';
     this.setAssociationPeople(listPeople, key);
+    key = 'locAssociationPlantsNext';
+    this.setAssociationPlant(listPlant, key);
 
     // key = 'locAssociationOTCreatorsNext';
     // this.setAssociationOTCreator(listOTCreator, key);
@@ -1169,9 +1154,24 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     if (listPlant.length != 0) {
       this.associationSrv.getPlants(listPlant).subscribe(plant => {
         sessionStorage.setItem(key, JSON.stringify(plant['data']));
+        console.log('filter plant');
+        this.filterAllTodayDate();
       });
     } else {
       sessionStorage.setItem(key, JSON.stringify(''));
+      this.filterAllTodayDate();
+    }
+  }
+
+  setAssociationPlantPrev(listPlant, key) {
+    if (listPlant.length != 0) {
+      this.associationSrv.getPlants(listPlant).subscribe(plant => {
+        sessionStorage.setItem(key, JSON.stringify(plant['data']));
+        this.enableButton();
+      });
+    } else {
+      sessionStorage.setItem(key, JSON.stringify(''));
+      this.enableButton();
     }
   }
 
@@ -1892,7 +1892,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     sessionStorage.setItem(key, viewName);
   }
 
-  // fillter by plants
+  // filter by plants
   filterPlants() {
     let listID = [];
     if (this.selectedPlant !== null) {
@@ -2096,8 +2096,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       }
     }
   }
+  
   // filter by All conditions
-  filterAll(eventSelected) {
+  filterAll(eventSelected: any) {
     this.events = this.listEvents;
     if (eventSelected.value === undefined) {
       this.filterParticipatingPeople();
@@ -2108,6 +2109,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       this.filterCreatorEditor();
       this.filterTimeStartEnd();
     }
+  }
+
+  // filter when click today or selected date in calendar
+  filterAllTodayDate() {
+    this.filterParticipatingPeople();
+    this.filterServiceCallStatus();
+    this.filterOutagesCategory();
+    this.filterOutageStatus();
+    this.filterPlants();
+    this.filterCreatorEditor();
+    this.filterTimeStartEnd();
   }
 }
 

@@ -18,14 +18,14 @@
   <div class="ui-g-9 ui-g-nopad">
     <div class="container">
       <p class="left-button">
-        <p-button label="prev" (onClick)="handlePrevClick($event, fc)"></p-button>
-        <p-button label="next" (onClick)="handleNextClick($event, fc)"></p-button>
-        <p-button label="today" (onClick)="handleTodayClick($event, fc)"></p-button>
+        <p-button label="prev" (onClick)="handlePrevClick($event, fc)" [disabled]="prevStatus"></p-button>
+        <p-button label="next" (onClick)="handleNextClick($event, fc)" [disabled]="nextStatus"></p-button>
+        <p-button label="today" (onClick)="handleTodayClick($event, fc)" [disabled]="todayStatus"></p-button>
       </p>
       <p class="right-button">
         <p-button label="month" (onClick)="handleMonthClick($event, fc)"></p-button>
-        <p-button label="week" (onClick)="handleAgendaWeekClick($event, fc)"></p-button>
-        <p-button label="day" (onClick)="handleAgendaDayClick($event, fc)"></p-button>
+        <!-- <p-button label="week" (onClick)="handleAgendaWeekClick($event, fc)"></p-button>
+        <p-button label="day" (onClick)="handleAgendaDayClick($event, fc)"></p-button> -->
       </p>
     </div>
     <p-fullCalendar
@@ -316,8 +316,8 @@
                   <option *ngFor="let s of ticketStatuses" [value]="s.id">{{s.name}}</option>
                 </ng-select2>
               </p-accordionTab>
-              <p-accordionTab header="To-Dos" class="accordion-header" [selected]="true">
-              </p-accordionTab>
+              <!-- <p-accordionTab header="To-Dos" class="accordion-header" [selected]="true">
+              </p-accordionTab> -->
             </p-accordion>
           </p-accordionTab>
           <p-accordionTab header="General" class="accordion-header" [selected]="true">
