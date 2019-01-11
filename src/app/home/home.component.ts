@@ -213,8 +213,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     this.getSelectedTimeStart();
     this.getSelectedTimeEnd();
     this.setCurrentView('month');
-    this.getListEventsNext(this.currentTimeShow);
-    this.getListEventsPrev(this.currentTimeShow);
+    this.getListEventsNextMonth(this.currentTimeShow);
+    this.getListEventsPrevMonth(this.currentTimeShow);
 
     this.ticketStatuses = [
       {
@@ -294,8 +294,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         }
         this.setListServiceCallOutage(this.events);
         this.setListEvents(this.listEvents);
-        this.getListEventsNext(currentTimeView);
-        this.getListEventsPrev(currentTimeView);
+        this.getListEventsNextMonth(currentTimeView);
+        this.getListEventsPrevMonth(currentTimeView);
         break;
       // week
       case 'agendaWeek':
@@ -303,11 +303,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         break;
       // day
       default:
-        // can lau dc ngay dang hien thi
         currentTimeView = this.getAfterTimeDay(currentTimeView);
-        beforeTime = this.getBeforeTimeMonth(currentTimeView);
-        afterTime = this.getAfterTimeDay(currentTimeView);
-        this.getListEvents(afterTime, beforeTime, range);
+        this.events = this.scotSrv.getListServiceCallOutagePrev();
+        this.getAssociationVisiableFromPrev();
+        if ((this.events === null) || (this.events == [])) {
+          beforeTime = this.getBeforeTimeDay(currentTimeView);
+          afterTime = this.getAfterTimeDay(currentTimeView);
+          this.getListEvents(afterTime, beforeTime, range);
+        } else {
+          this.listEvents = this.scotSrv.getListEventsPrev()
+          this.filterAllTodayDate();
+        }
+        this.setListServiceCallOutage(this.events);
+        this.setListEvents(this.listEvents);
+        this.getListEventsNextDay(currentTimeView);
+        this.getListEventsPrevDay(currentTimeView);
         break;
     }
     this.setCurrentTimeView(currentTimeView);
@@ -338,8 +348,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         }
         this.setListServiceCallOutage(this.events);
         this.setListEvents(this.listEvents);
-        this.getListEventsNext(currentTimeView);
-        this.getListEventsPrev(currentTimeView);
+        this.getListEventsNextMonth(currentTimeView);
+        this.getListEventsPrevMonth(currentTimeView);
         break;
       // week
       case 'agendaWeek':
@@ -348,11 +358,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       // day
       default:
       // can lau dc ngay dang hien thi
-        // afterTime = currentTimeView;
         currentTimeView = this.getBeforeTimeDay(currentTimeView);
-        beforeTime = this.getBeforeTimeDay(currentTimeView);
-        afterTime = this.getAfterTimeMonth(currentTimeView);
-        this.getListEvents(afterTime, beforeTime, range);
+        this.events = this.scotSrv.getListServiceCallOutageNext();
+        this.getAssociationVisiableFromNext();
+        if ((this.events === null) || (this.events == [])) {
+          beforeTime = this.getBeforeTimeDay(currentTimeView);
+          afterTime = this.getAfterTimeDay(currentTimeView);
+          this.getListEvents(afterTime, beforeTime, range);
+        } else {
+          this.listEvents = this.scotSrv.getListEventsNext()
+          this.filterAllTodayDate();
+        }
+        this.setListServiceCallOutage(this.events);
+        this.setListEvents(this.listEvents);
+        this.getListEventsNextDay(currentTimeView);
+        this.getListEventsPrevDay(currentTimeView);
         break;
     }
     this.setCurrentTimeView(currentTimeView);
@@ -374,15 +394,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           afterTime = this.getAfterTimeMonth(currentTimeView);
           this.getListEvents(afterTime, beforeTime, range);
         // } else {
-        //   this.listEvents = this.scotSrv.getListEventsNext()
+        //   this.listEvents = this.scotSrv.getListEventsNextMonth()
         // }
         this.events = [];
         this.listEvents = [];
         this.setListServiceCallOutage(this.events);
         this.setListEvents(this.listEvents);
-        this.getListEventsNext(currentTimeView);
-        this.getListEventsPrev(currentTimeView);
-        // this.filterAllTodayDate();
+        this.getListEventsNextMonth(currentTimeView);
+        this.getListEventsPrevMonth(currentTimeView);
         break;
       // week
       case 'agendaWeek':
@@ -393,27 +412,75 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         beforeTime = this.getBeforeTimeDay(currentTimeView);
         afterTime = this.getAfterTimeDay(currentTimeView);
         this.getListEvents(afterTime, beforeTime, range);
+        this.events = [];
+        this.listEvents = [];
+        this.setListServiceCallOutage(this.events);
+        this.setListEvents(this.listEvents);
+        this.getListEventsNextDay(currentTimeView);
+        this.getListEventsPrevDay(currentTimeView);
         break;
     }
     this.setCurrentTimeView(currentTimeView);
   }
   
   handleMonthClick = (e, fc) => {
-    fc.calendar.changeView('month');
-    this.setCurrentView('month');
-    // set Ngay dau tien trong thang
+    let currentView = this.getCurrentView();
+    if (currentView != 'month') {
+      this.disableButton();
+      fc.calendar.changeView('month');
+      this.setCurrentView('month');
+      let currentTimeView = this.getCurrentTimeView();
+      let beforeTime;
+      let afterTime;
+      let range = 'visible';
+      beforeTime = this.getBeforeTimeMonth(currentTimeView);
+      afterTime = this.getAfterTimeMonth(currentTimeView);
+      this.getListEvents(afterTime, beforeTime, range);
+      this.events = [];
+      this.listEvents = [];
+      this.setListServiceCallOutage(this.events);
+      this.setListEvents(this.listEvents);
+      this.initListEvents(afterTime, beforeTime);
+      this.getListEventsNextMonth(currentTimeView);
+      this.getListEventsPrevMonth(currentTimeView);
+    }
   }
   
   handleAgendaWeekClick = (e, fc) => {
-    fc.calendar.changeView('agendaWeek');
-    this.setCurrentView('agendaWeek');
-    // set Tuan dau tien trong thang
+    console.log('handle week click', new Date(e));
+    console.log('fc', fc.calendar.getDate());
+    let currentView = this.getCurrentView();
+    if (currentView != 'agendaWeek') {
+      // this.disableButton();
+      fc.calendar.changeView('agendaWeek');
+      this.setCurrentView('agendaWeek');
+      // set Tuan dau tien trong thang
+    }
   }
   
   handleAgendaDayClick = (e, fc) => {
-    fc.calendar.changeView('agendaDay');
-    this.setCurrentView('agendaDay');
-    // set Ngay dau tien trong thang
+    let currentView = this.getCurrentView();
+    let currentTimeView = fc.calendar.getDate();
+    if (currentView != 'agendaDay') {
+      this.disableButton();
+      fc.calendar.changeView('agendaDay');
+      this.setCurrentView('agendaDay');
+      this.setCurrentTimeView(currentTimeView);
+      let beforeTime;
+      let afterTime;
+      let range = 'visible';
+      beforeTime = this.getBeforeTimeDay(currentTimeView);
+      afterTime = this.getAfterTimeDay(currentTimeView);
+      
+      this.getListEvents(afterTime, beforeTime, range);
+      this.events = [];
+      this.listEvents = [];
+      this.setListServiceCallOutage(this.events);
+      this.setListEvents(this.listEvents);
+      this.initListEvents(afterTime, beforeTime);
+      this.getListEventsNextDay(currentTimeView);
+      this.getListEventsPrevDay(currentTimeView);
+    }
   }
 
   handleDayClick = (e) => {
@@ -504,22 +571,42 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     let date;
     date = new Date(event);
     selectedDate.calendar.gotoDate(date);
-    console.log('clicked date', date);
     this.setCurrentTimeView(date);
     let beforeTime;
     let afterTime;
-    beforeTime = this.getBeforeTimeMonth(date);
-    afterTime = this.getAfterTimeMonth(date);
-    console.log('after', afterTime);
-    console.log('before', beforeTime);
-    this.events = [];
-    this.listEvents = [];
-    this.setListServiceCallOutage([]);
-    this.setListEvents([]);
-    this.initListEvents(afterTime, beforeTime);
-    this.getListEventsNext(date);
-    this.getListEventsPrev(date);
-    this.filterAllTodayDate();
+    let currentView = this.getCurrentView();
+    switch (currentView) {
+      case 'month':
+        beforeTime = this.getBeforeTimeMonth(date);
+        afterTime = this.getAfterTimeMonth(date);
+        this.events = [];
+        this.listEvents = [];
+        this.setListServiceCallOutage([]);
+        this.setListEvents([]);
+        this.initListEvents(afterTime, beforeTime);
+        this.getListEventsNextMonth(date);
+        this.getListEventsPrevMonth(date);
+        break;
+      case 'agendaweek':
+
+        break;
+      default:
+        beforeTime = this.getBeforeTimeDay(date);
+        afterTime = this.getAfterTimeDay(date);
+        this.events = [];
+        this.listEvents = [];
+        this.setListServiceCallOutage([]);
+        this.setListEvents([]);
+        console.log('date: ', date);
+        console.log('beforeTime: ', beforeTime);
+        this.initListEvents(date, beforeTime);
+        this.getListEventsNextDay(beforeTime);
+        this.getListEventsPrevDay(afterTime);
+        break;
+    }
+
+    // week
+    // day
   }
 
   //#region general SCs and OTs
@@ -544,7 +631,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         // get Services
         totalService  = await new Promise((resolve, reject) => {
           this.http.get(`${Config.api_endpoint}tsservices/fetch?time_after=${start}&time_before=${end}`, httpOptions).subscribe(data => {
-            console.log('servicecall', data);
             resolve(data['total']);
           });
         });
@@ -586,19 +672,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   initListEvents(startTime, endTime) {
     let range = 'visible';
     this.events = this.scotSrv.getListServiceCallOutage();
-    console.log('list events:', this.events);
     if (this.events === null || this.events.length == 0) {
-      console.log('fetch API');
       this.getListEvents(startTime, endTime, range);
     } else {
-      console.log('hereeeee session');
       this.listEvents = this.scotSrv.getListEvents();
       this.filterAllTodayDate();
     }
   }
 
   // get List Events prev month
-  getListEventsPrev(currentTimeView) {
+  getListEventsPrevMonth(currentTimeView) {
     let beforeTime;
     let afterTime;
     let range = 'prev';
@@ -609,7 +692,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   }
 
   // get List Events next month
-  getListEventsNext(currentTimeView) {
+  getListEventsNextMonth(currentTimeView) {
     let beforeTime;
     let afterTime;
     let range = 'next';
@@ -619,8 +702,30 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
       afterTime = this.getAfterTimeMonth(currentTimeView);
       this.getListEvents(afterTime, beforeTime, range);
     // } else {
-    //   this.listEventsNext = this.scotSrv.getListEventsNext()
+    //   this.listEventsNext = this.scotSrv.getListEventsNextMonth()
     // }
+  }
+
+  // get List Events prev day
+  getListEventsPrevDay(currentTimeView) {
+    let beforeTime;
+    // let afterTime;
+    let range = 'prev';
+    currentTimeView = this.getAfterTimeDay(currentTimeView);
+    beforeTime = this.getBeforeTimeDay(currentTimeView);
+    // afterTime = this.getAfterTimeDay(currentTimeView);
+    this.getListEvents(currentTimeView, beforeTime, range);
+  }
+
+  // get List Events next day
+  getListEventsNextDay(currentTimeView) {
+    let beforeTime;
+    // let afterTime;
+    let range = 'next';
+    currentTimeView = this.getBeforeTimeDay(currentTimeView);
+    beforeTime = this.getBeforeTimeDay(currentTimeView);
+    // afterTime = this.getAfterTimeDay(currentTimeView);
+    this.getListEvents(currentTimeView, beforeTime, range);
   }
 
   private setListServiceCallOutage(events) {
@@ -1154,7 +1259,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
     if (listPlant.length != 0) {
       this.associationSrv.getPlants(listPlant).subscribe(plant => {
         sessionStorage.setItem(key, JSON.stringify(plant['data']));
-        console.log('filter plant');
         this.filterAllTodayDate();
       });
     } else {
@@ -1237,7 +1341,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
 
   setAssociationTask(listTask, key) {
     if (listTask.length != 0) {
-      console.log('task list:', listTask);
       this.associationSrv.getSCTasks(listTask).subscribe(task => {
         sessionStorage.setItem(key, JSON.stringify(task['data']));
       });
@@ -1530,7 +1633,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         for (let page = 1; page <= pages; page++) {
           tmp = new Promise((resolve, reject) => {
             this.http.get(`${Config.api_endpoint}plants/fetch?page=${page}`, httpOptions).subscribe(data => {
-              console.log('plants:', data);
               resolve(data);
             });
           });
@@ -1904,6 +2006,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         this.events = this.events.filter(function(e){
           return this.indexOf(e.plantID) >= 0;
         }, listID);
+        this.eventsPrev = this.eventsPrev.filter(function(e){
+          return this.indexOf(e.plantID) >= 0;
+        }, listID);
+        this.eventsNext = this.eventsNext.filter(function(e){
+          return this.indexOf(e.plantID) >= 0;
+        }, listID);
       }
     }
   }
@@ -1916,9 +2024,49 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         listID.push(parseInt(personID));
       });
       if (listID.length !== 0) {
-        this.events.forEach( e => {
-        })
+        // this.events.forEach( e => {
+        // })
         this.events = this.events.filter(function(e){
+          if (e.typeOfEvent === "Outage") {
+            if ((e.eventOutage.creator_id !== undefined
+              && e.eventOutage.creator_id !== null)
+              || (e.eventOutage.modifier_id !== undefined
+              && e.eventOutage.modifier_id !== null)) {
+                return (this.indexOf(e.eventOutage.creator_id) >= 0)
+                        || (this.indexOf(e.eventOutage.modifier_id) >= 0);
+            }
+          }
+          if (e.typeOfEvent === "ServiceCall") {
+            if ((e.creatorPersonID !== undefined
+              && e.creatorPersonID !== null)
+              || (e.modifierPersonID !== undefined
+              && e.modifierPersonID !== null)) {
+                return (this.indexOf(e.creatorPersonID) >= 0)
+                        || (this.indexOf(e.modifierPersonID) >= 0);
+            }
+          }
+        }, listID);
+        this.eventsPrev = this.eventsPrev.filter(function(e){
+          if (e.typeOfEvent === "Outage") {
+            if ((e.eventOutage.creator_id !== undefined
+              && e.eventOutage.creator_id !== null)
+              || (e.eventOutage.modifier_id !== undefined
+              && e.eventOutage.modifier_id !== null)) {
+                return (this.indexOf(e.eventOutage.creator_id) >= 0)
+                        || (this.indexOf(e.eventOutage.modifier_id) >= 0);
+            }
+          }
+          if (e.typeOfEvent === "ServiceCall") {
+            if ((e.creatorPersonID !== undefined
+              && e.creatorPersonID !== null)
+              || (e.modifierPersonID !== undefined
+              && e.modifierPersonID !== null)) {
+                return (this.indexOf(e.creatorPersonID) >= 0)
+                        || (this.indexOf(e.modifierPersonID) >= 0);
+            }
+          }
+        }, listID);
+        this.eventsNext = this.eventsNext.filter(function(e){
           if (e.typeOfEvent === "Outage") {
             if ((e.eventOutage.creator_id !== undefined
               && e.eventOutage.creator_id !== null)
@@ -1950,6 +2098,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           let timeStart = new Date(e.start);
           return this.timeStart <= timeStart;
         });
+        this.eventsPrev = this.eventsPrev.filter(e => {
+          let timeStart = new Date(e.start);
+          return this.timeStart <= timeStart;
+        });
+        this.eventsNext = this.eventsNext.filter(e => {
+          let timeStart = new Date(e.start);
+          return this.timeStart <= timeStart;
+        });
       }
     if ((this.timeStart === undefined || this.timeStart === null)
       && (this.timeEnd !== undefined && this.timeEnd !== null)) {
@@ -1957,10 +2113,28 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
         let timeEnd = new Date(e.end);
         return this.timeEnd >= timeEnd;
       });
+      this.eventsPrev = this.eventsPrev.filter(e => {
+        let timeEnd = new Date(e.end);
+        return this.timeEnd >= timeEnd;
+      });
+      this.eventsNext = this.eventsNext.filter(e => {
+        let timeEnd = new Date(e.end);
+        return this.timeEnd >= timeEnd;
+      });
     } 
     if ((this.timeStart !== undefined && this.timeStart !== null)
     && (this.timeEnd !== undefined && this.timeEnd !== null)) {
       this.events = this.events.filter(e => {
+        let timeStart = new Date(e.start);
+        let timeEnd = new Date(e.end);
+        return (this.timeStart <= timeStart) && (this.timeEnd >= timeEnd);
+      });
+      this.eventsPrev = this.eventsPrev.filter(e => {
+        let timeStart = new Date(e.start);
+        let timeEnd = new Date(e.end);
+        return (this.timeStart <= timeStart) && (this.timeEnd >= timeEnd);
+      });
+      this.eventsNext = this.eventsNext.filter(e => {
         let timeStart = new Date(e.start);
         let timeEnd = new Date(e.end);
         return (this.timeStart <= timeStart) && (this.timeEnd >= timeEnd);
@@ -1982,6 +2156,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
           }
           return true;
         }, listID);
+        this.eventsPrev = this.eventsPrev.filter(function(e){
+          if (e.typeOfEvent === "Outage") {
+            return this.indexOf(e.eventOutage.tsoutagecategory.id) >= 0;
+          }
+          return true;
+        }, listID);
+        this.eventsNext = this.eventsNext.filter(function(e){
+          if (e.typeOfEvent === "Outage") {
+            return this.indexOf(e.eventOutage.tsoutagecategory.id) >= 0;
+          }
+          return true;
+        }, listID);
       }
     }
   }
@@ -1989,13 +2175,40 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
   // filter by participating people
   filterParticipatingPeople() {
     let listID = [];
-    // let keepEvent = false;
     if (this.selectedSCsPeople !== null) {
       this.selectedSCsPeople.forEach(personID => {
         listID.push(parseInt(personID));
       });
       if (listID.length !== 0) {
         this.events = this.events.filter(function(e){
+          if (e.typeOfEvent === "ServiceCall") {
+            if (e.eventServiceCall !== undefined
+              && e.eventServiceCall.people.length > 0) {
+              for (let i = 0; i < e.eventServiceCall.people.length; i++) {
+                if (this.indexOf(e.eventServiceCall.people[i].id) >= 0) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          }
+          return true;
+        }, listID);
+        this.eventsPrev = this.eventsPrev.filter(function(e){
+          if (e.typeOfEvent === "ServiceCall") {
+            if (e.eventServiceCall !== undefined
+              && e.eventServiceCall.people.length > 0) {
+              for (let i = 0; i < e.eventServiceCall.people.length; i++) {
+                if (this.indexOf(e.eventServiceCall.people[i].id) >= 0) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          }
+          return true;
+        }, listID);
+        this.eventsNext = this.eventsNext.filter(function(e){
           if (e.typeOfEvent === "ServiceCall") {
             if (e.eventServiceCall !== undefined
               && e.eventServiceCall.people.length > 0) {
@@ -2029,6 +2242,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             }
             return true;
           });
+          this.eventsPrev = this.eventsPrev.filter(e => {
+            if (e.typeOfEvent === "ServiceCall") {
+              let timeStart = new Date(e.start);
+              return timeStart > today;
+            }
+            return true;
+          });
+          this.eventsNext = this.eventsNext.filter(e => {
+            if (e.typeOfEvent === "ServiceCall") {
+              let timeStart = new Date(e.start);
+              return timeStart > today;
+            }
+            return true;
+          });
           break;
         case '3':
           // start
@@ -2040,10 +2267,40 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             }
             return true;
           });
+          this.eventsPrev = this.eventsPrev.filter(e => {
+            if (e.typeOfEvent === "ServiceCall") {
+              let timeStart = new Date(e.start);
+              let timeEnd = new Date(e.end);
+              return (timeStart <= today) && (timeEnd >= today);
+            }
+            return true;
+          });
+          this.eventsNext = this.eventsNext.filter(e => {
+            if (e.typeOfEvent === "ServiceCall") {
+              let timeStart = new Date(e.start);
+              let timeEnd = new Date(e.end);
+              return (timeStart <= today) && (timeEnd >= today);
+            }
+            return true;
+          });
           break;
         default:
           // end
           this.events = this.events.filter(e => {
+            if (e.typeOfEvent === "ServiceCall") {
+              let timeEnd = new Date(e.end);
+              return timeEnd < today;
+            }
+            return true;
+          });
+          this.eventsPrev = this.eventsPrev.filter(e => {
+            if (e.typeOfEvent === "ServiceCall") {
+              let timeEnd = new Date(e.end);
+              return timeEnd < today;
+            }
+            return true;
+          });
+          this.eventsNext = this.eventsNext.filter(e => {
             if (e.typeOfEvent === "ServiceCall") {
               let timeEnd = new Date(e.end);
               return timeEnd < today;
@@ -2071,6 +2328,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             }
             return true;
           });
+          this.eventsPrev = this.eventsPrev.filter(e => {
+            if (e.typeOfEvent === "Outage") {
+              let timeStart = new Date(e.start);
+              return timeStart > today;
+            }
+            return true;
+          });
+          this.eventsNext = this.eventsNext.filter(e => {
+            if (e.typeOfEvent === "Outage") {
+              let timeStart = new Date(e.start);
+              return timeStart > today;
+            }
+            return true;
+          });
           break;
         case '3':
           // start
@@ -2082,10 +2353,40 @@ export class HomeComponent implements OnInit, AfterViewInit, OnChanges, OnDestro
             }
             return true;
           });
+          this.eventsPrev = this.eventsPrev.filter(e => {
+            if (e.typeOfEvent === "Outage") {
+              let timeStart = new Date(e.start);
+              let timeEnd = new Date(e.end);
+              return (timeStart <= today) && (timeEnd >= today);
+            }
+            return true;
+          });
+          this.eventsNext = this.eventsNext.filter(e => {
+            if (e.typeOfEvent === "Outage") {
+              let timeStart = new Date(e.start);
+              let timeEnd = new Date(e.end);
+              return (timeStart <= today) && (timeEnd >= today);
+            }
+            return true;
+          });
           break;
         default:
           // end
           this.events = this.events.filter(e => {
+            if (e.typeOfEvent === "Outage") {
+              let timeEnd = new Date(e.end);
+              return timeEnd < today;
+            }
+            return true;
+          });
+          this.eventsPrev = this.eventsPrev.filter(e => {
+            if (e.typeOfEvent === "Outage") {
+              let timeEnd = new Date(e.end);
+              return timeEnd < today;
+            }
+            return true;
+          });
+          this.eventsNext = this.eventsNext.filter(e => {
             if (e.typeOfEvent === "Outage") {
               let timeEnd = new Date(e.end);
               return timeEnd < today;
