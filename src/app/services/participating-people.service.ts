@@ -11,7 +11,7 @@ export class ParticipatingPeopleService {
     let listParticipatingPeople = null;
     let myItem: any;
     let key;
-    key = 'localParticipatingPeople';
+    key = 'locParticipatingPeople';
     myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null) {
       listParticipatingPeople = JSON.parse(myItem);

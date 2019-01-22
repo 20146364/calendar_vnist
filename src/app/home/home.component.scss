@@ -49,3 +49,23 @@ body .ui-accordion .ui-accordion-content {
   zoom: 1;
 }
 
+.container {
+  width: 100%;
+  display: flex;
+}
+
+.left-button {
+  width: 30%;
+  margin-right: auto;
+}
+
+.right-button {
+  text-align: right;
+  width: 30%;
+  margin-left: auto;
+}
+
+a#ui-accordiontab-2.ng-tns-c4-4{
+  color: red;
+}
+

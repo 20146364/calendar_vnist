@@ -11,7 +11,7 @@ export class CreatorEditorService {
     let listCreatorEditor = null;
     let myItem: any;
     let key;
-    key = 'localCreatorEditor';
+    key = 'locCreatorEditor';
     myItem = sessionStorage.getItem(key);
     if (myItem !== 'undefined' && myItem !== null) {
       listCreatorEditor = JSON.parse(myItem);
