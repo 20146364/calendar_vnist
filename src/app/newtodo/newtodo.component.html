@@ -15,7 +15,23 @@
 
 <div class="ui-g">
   <div class="ui-g-8">
+    <div style="border: 1px solid #dddddd;">
+      <h2 style="background: #dddddd; margin: 10px; padding: 10px; color: #2399e5">Creat new todo</h2>
 
+      <div style="margin-bottom: 10px;">
+        <h3 style="margin-left:10px;padding: 8px; background: #dddddd; color: #2399e5; width: 50%; ">Ticket name*</h3>
+        <label style="margin-left: 10px">
+          <input type="text" size="103" pInputText style="height: 40px"/>
+        </label>
+      </div>
+
+      <div style="margin: 10px;">
+        <h3 style="padding: 8px; background: #dddddd; color: #2399e5; width: 50%; ">Description*</h3>
+        <p-editor [(ngModel)]="text" [style]="{'height':'320px'}"></p-editor>
+      </div>
+
+
+    </div>
   </div>
 
   <div class="ui-g-4">
@@ -29,13 +45,27 @@
 
     <div style="margin-top: 20px">Repeat on:</div>
     <div class="row">
-      <input class="toggle-btn" type="checkbox" value="S">
-      <input class="toggle-btn" type="checkbox" value="M">
-      <input class="toggle-btn" type="checkbox" value="T">
-      <input class="toggle-btn" type="checkbox" value="W">
-      <input class="toggle-btn" type="checkbox" value="T">
-      <input class="toggle-btn" type="checkbox" value="F">
-      <input class="toggle-btn" type="checkbox" value="S">
+      <label>
+        <input class="toggle-btn" type="checkbox" value="S">
+      </label>
+      <label>
+        <input class="toggle-btn" type="checkbox" value="M">
+      </label>
+      <label>
+        <input class="toggle-btn" type="checkbox" value="T">
+      </label>
+      <label>
+        <input class="toggle-btn" type="checkbox" value="W">
+      </label>
+      <label>
+        <input class="toggle-btn" type="checkbox" value="T">
+      </label>
+      <label>
+        <input class="toggle-btn" type="checkbox" value="F">
+      </label>
+      <label>
+        <input class="toggle-btn" type="checkbox" value="S">
+      </label>
     </div>
 
     <div style="margin-top: 10px;">Ends</div>
@@ -60,7 +90,8 @@
 
       <div class="ui-g-9">
         <div style="background-color: #dddddd; width: fit-content; padding: 2px; border-radius: 5%">
-          <p-spinner class="block" size="1" [(ngModel)]="val" [min]="1" [max]="80" disabled="true" [inputStyle]="{'background-color': '#dddddd'}"></p-spinner>
+          <p-spinner class="block" size="1" [(ngModel)]="val" [min]="1" [max]="80" disabled="true"
+                     [inputStyle]="{'background-color': '#dddddd'}"></p-spinner>
           <span style="margin-left: 5px">occurrences</span>
         </div>
       </div>

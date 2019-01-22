@@ -13,9 +13,11 @@
   </div>
 </p-toolbar>
 <div class="ui-g">
+
   <!-- <div class="ui-g-1"></div> -->
   <!-- FullCalendar -->
   <div class="ui-g-9 ui-g-nopad">
+
     <p-fullCalendar
       [events]="events"
       [options]="options"
@@ -30,7 +32,7 @@
       <div style="width: 100%; height: auto; background-color: #dc5e14">
 
         <div class="ui-g" style="font-size: small">
-          <div class="ui-g-6" >
+          <div class="ui-g-6">
             <i class="fa fa-bolt" style="color: white; margin-right: 5px" aria-hidden="true"></i>
             <i class="fa fa-calendar" style="color: white" aria-hidden="true"></i>
             <span style="color: white"> {{eventOT.outageCategory || 'unknown'}} on plant </span>
@@ -74,7 +76,8 @@
           <div class="ui-g-11" style="font-size: small">
             <p>
               <span style="margin-left: 5px">Ticket:</span>
-              <span style="color: #4887ca"> #{{eventOT.tsticketID || 'unknown'}} {{eventOT.ticketName || 'unknown'}}</span>
+              <span
+                style="color: #4887ca"> #{{eventOT.tsticketID || 'unknown'}} {{eventOT.ticketName || 'unknown'}}</span>
             </p>
             <p>
               <span style="margin-left: 5px">Kind of the outage</span>
@@ -108,24 +111,28 @@
     <!-- End dialog outage detail -->
 
     <!-- Start dialog service call detail -->
-    <p-dialog *ngIf="eventSC" [showHeader]="false" [(visible)]="displayServiceCallDetail" [modal]="true" [responsive]="true"
+    <p-dialog *ngIf="eventSC" [showHeader]="false" [(visible)]="displayServiceCallDetail" [modal]="true"
+              [responsive]="true"
               [style]="{width: '58%', minWidth: '200px'}" [minY]="70"
               [maximizable]="true" [baseZIndex]="10000"
               [dismissableMask]="true">
       <div style="width: 100%; height: auto; background-color: #58585a">
         <div class="ui-g">
-          <div class="ui-g-11"  style="font-size: small">
+          <div class="ui-g-11" style="font-size: small">
             <div class="ui-g-7">
               <i class="fa fa-wrench" style="color: white; margin-right: 5px" aria-hidden="true"></i>
               <i class="fa fa-calendar" style="color: white" aria-hidden="true"></i>
-              <span style="color: white"> {{eventSC.title || 'unknown'}} (<i class="fa fa-hospital-o" aria-hidden="true"></i> Demo Instance)</span>
+              <span style="color: white"> {{eventSC.title || 'unknown'}} (<i class="fa fa-hospital-o"
+                                                                             aria-hidden="true"></i> Demo Instance)</span>
               <i class="fa fa-long-arrow-right" style="margin-right: 5px; color: white" aria-hidden="true"></i>
               <i class="fa fa-map-marker" style="color: white" aria-hidden="true"></i>
             </div>
 
             <div class="ui-g-5">
-              <span style="color: white; float: right"> <i class="fa fa-user" aria-hidden="true"></i> {{eventSC.numberOfPeople}}- <i
-                class="fa fa-ticket" aria-hidden="true"></i> #{{eventSC.tsticketID || 'unknown'}} {{eventSC.ticketName || 'unknown'}}</span>
+              <span style="color: white; float: right"> <i class="fa fa-user"
+                                                           aria-hidden="true"></i> {{eventSC.numberOfPeople}}- <i
+                class="fa fa-ticket"
+                aria-hidden="true"></i> #{{eventSC.tsticketID || 'unknown'}} {{eventSC.ticketName || 'unknown'}}</span>
             </div>
 
             <div class="ui-g-12" style="color: white">{{eventSC.plantName || 'unknown'}}</div>
@@ -172,7 +179,8 @@
               <span style="font-weight: bold; color: #2E6E9E"> {{eventSC.plantName || 'unknown'}}</span>
             </div>
             <span style="font-size: small">Ticket:</span>
-            <span style="font-size: medium; font-weight: bold; color: #2E6E9E"> #{{eventSC.tsticketID}} {{eventSC.ticketName || 'unknown'}}</span>
+            <span
+              style="font-size: medium; font-weight: bold; color: #2E6E9E"> #{{eventSC.tsticketID}} {{eventSC.ticketName || 'unknown'}}</span>
             <br/>
             <span style="font-size: small">This service is not based on an action request</span>
           </div>
@@ -277,9 +285,9 @@
         <p-calendar [(ngModel)]="selectedDate" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
                     [inline]="true" (onSelect)="gotoDate($event, gotoSelectedDate)"></p-calendar>
         <p-accordion [multiple]="true">
-          <p-accordionTab header="Element" class="accordion-header">
+          <p-accordionTab header="Element" class="accordion-header" selected="true">
             <p-accordion [multiple]="true">
-              <p-accordionTab header="Services" class="accordion-header">
+              <p-accordionTab header="Services" class="accordion-header" selected="true">
                 <!-- select2.org -->
                 <label>Participating People</label>
                 <ng-select2 [(ngModel)]="selectedSCsPeople" (ngModelChange)="filterAll($event)"
@@ -292,7 +300,7 @@
                   <option *ngFor="let s of ticketStatuses" [value]="s.id">{{s.name}}</option>
                 </ng-select2>
               </p-accordionTab>
-              <p-accordionTab header="Outages" class="accordion-header">
+              <p-accordionTab header="Outages" class="accordion-header" selected="true">
                 <label>Outages category</label>
                 <ng-select2 [(ngModel)]="selectedOutageCategories" (ngModelChange)="filterAll($event)"
                             [options]="multipleOptions">

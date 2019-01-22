@@ -20,6 +20,7 @@ export class NewtodoComponent implements OnInit {
   date: Date;
   en: any;
   val2 =  'Never';
+  text: string;
 
 
   constructor() {

@@ -14,7 +14,7 @@ import { NewtodoComponent } from './newtodo/newtodo.component';
 import { ComplianceComponent } from './compliance/compliance.component';
 
 import { ScheduleModule } from 'primeng/primeng';
-import { InputTextModule } from 'primeng/primeng';
+import { InputTextModule } from 'primeng/components/inputtext/inputtext';
 import { CalendarModule } from 'primeng/components/calendar/calendar';
 import { CheckboxModule } from 'primeng/primeng';
 import { ButtonModule } from 'primeng/primeng';
@@ -35,7 +35,7 @@ import {TableModule} from 'primeng/components/table/table';
 import { DialogModule } from 'primeng/components/dialog/dialog';
 import {SpinnerModule} from 'primeng/components/spinner/spinner';
 import {DropdownModule} from 'primeng/components/dropdown/dropdown';
-
+import {EditorModule} from 'primeng/components/editor/editor';
 
 
 import { AuthenticationService } from './services/authentication.service';
@@ -80,6 +80,7 @@ import { ParticipatingPeopleService } from './services/participating-people.serv
     DropdownModule,
     FullCalendarModule,
     NgSelect2Module,
+    EditorModule,
     AppRoutingModule
   ],
   providers: [AuthenticationService, CalendarService, PlantsService, ParticipatingPeopleService],
